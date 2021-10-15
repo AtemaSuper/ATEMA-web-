@@ -1,34 +1,46 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <!-- ごちゃごちゃしていたのを全て消して、ボタンを配置 -->
-    <button @click='post'>click me</button>
+    <button @click="post">click me</button>
+    <div>
+       <Counter/>
+    </div>
   </div>
 </template>
 
 <script>
-import Methods from '@/api/methods'
+import Counter from './Counter.vue'
+import Methods from "@/api/methods";
 
 export default {
-  name: 'HelloWorld',
-  data () {
+  name: "HelloWorld",
+   components: {
+    Counter
+  },
+  conputed: {
+    count() {
+      return this.$store.state.count;
+    },
+  },
+  data() {
     return {
-      msg: 'Welcome to Your Vue.js App'
-    }
+      msg: "Welcome to Your Vue.js App",
+    };
   },
   methods: {
     // サーバーから返ってくる値をログに出力したいのでasyncとawaitを行う
     async post() {
-      let response = await Methods.testPosting()
-      console.log(response)
+      let response = await Methods.testPosting();
+      console.log(response);
     }
-  }
-}
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
+h1,
+h2 {
   font-weight: normal;
 }
 ul {
