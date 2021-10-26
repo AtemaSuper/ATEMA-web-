@@ -1,7 +1,7 @@
 <template>
   <div>
-    <button @click="increment" value="+">increment + </button>
-    <button @click="dicrement" value="-">dicrement - </button>
+    <v-btn @click="increment" value="+">increment + </v-btn>
+    <v-btn @click="dicrement" value="-">dicrement - </v-btn>
     <div> {{ count }}</div>
   </div>
 </template>
