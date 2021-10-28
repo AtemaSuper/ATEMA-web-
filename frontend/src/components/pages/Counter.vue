@@ -7,20 +7,20 @@
 </template>
 
 <script>
-  export default {
-    name: "Counter",
-    computed: {
-      count() { return this.$store.getters.count}
+export default {
+  name: 'Counter',
+  computed: {
+    count () { return this.$store.getters.count }
+  },
+  methods: {
+    increment () {
+      this.$store.dispatch('increment')
     },
-    methods: {
-      increment() {
-        this.$store.dispatch('increment')
-      },
-      dicrement() {
-        this.$store.dispatch('dicrement')
-      }
+    dicrement () {
+      this.$store.dispatch('dicrement')
     }
   }
+}
 </script>
 
 <style scoped>

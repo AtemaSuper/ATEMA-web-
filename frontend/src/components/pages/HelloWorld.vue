@@ -26,34 +26,34 @@
 </template>
 
 <script>
-/**外部コンポーネントの呼び出し */
-import Counter from "./Counter.vue";
-/**外部コンポーネントの呼び出し */
-import Methods from "@/api/methods";
+/** 外部コンポーネントの呼び出し */
+import Counter from './Counter.vue'
+/** 外部コンポーネントの呼び出し */
+import Methods from '@/api/methods'
 
 export default {
-  name: "HelloWorld",
+  name: 'HelloWorld',
   components: {
-    Counter,
+    Counter
   },
   conputed: {
-    count() {
-      return this.$store.state.count;
-    },
+    count () {
+      return this.$store.state.count
+    }
   },
   data: () => ({
-      drawer: false,
-      group: null,
-      msg:'dekitayo',
-    }),
+    drawer: false,
+    group: null,
+    msg: 'dekitayo'
+  }),
   methods: {
     // サーバーから返ってくる値をログに出力したいのでasyncとawaitを行う
-    async post() {
-      let response = await Methods.testPosting();
-      console.log(response);
-    },
-  },
-};
+    async post () {
+      let response = await Methods.testPosting()
+      console.log(response)
+    }
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

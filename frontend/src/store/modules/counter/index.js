@@ -1,32 +1,32 @@
 const state = {
-    count: 0
+  count: 0
+}
+
+const getters = {
+  count: state => state.count
+}
+
+const actions = {
+  increment ({ commit }) {
+    commit('increment')
+  },
+  dicrement ({ commit }) {
+    commit('dicrement')
   }
-  
-  const getters = {
-    count: state => state.count
+}
+
+const mutations = {
+  increment (state) {
+    state.count++
+  },
+  dicrement (state) {
+    state.count--
   }
-  
-  const actions = {
-    increment({ commit }) {
-      commit('increment')
-    },
-    dicrement({ commit }) {
-        commit('dicrement')
-      }
-  }
-  
-  const mutations = {
-    increment (state) {
-      state.count++ 
-    },
-    dicrement (state) {
-        state.count--
-      }
-  }
-  
-  export default {
-    state,
-    getters,
-    actions,
-    mutations
-  }
+}
+
+export default {
+  state,
+  getters,
+  actions,
+  mutations
+}
