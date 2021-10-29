@@ -14,6 +14,7 @@
         </v-app-bar>
 
         <v-main>
+          <router-link to="/login">login</router-link>
           <h1>{{ msg }}</h1>
           <button @click="post">click me</button>
           <div>
@@ -21,13 +22,14 @@
           </div>
         </v-main>
       </v-app>
+
     </div>
   </div>
 </template>
 
 <script>
 /** 外部コンポーネントの呼び出し */
-import Counter from './Counter.vue'
+import Counter from '../parts/Counter.vue'
 /** 外部コンポーネントの呼び出し */
 import Methods from '@/api/methods'
 
@@ -44,7 +46,7 @@ export default {
   data: () => ({
     drawer: false,
     group: null,
-    msg: 'dekitayo'
+    msg: 'Welcome To ATEMA ! ! ! ! !'
   }),
   methods: {
     // サーバーから返ってくる値をログに出力したいのでasyncとawaitを行う
