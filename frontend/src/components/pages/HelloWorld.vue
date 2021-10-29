@@ -15,6 +15,7 @@
 
         <v-main>
           <router-link to="/login">login</router-link>
+          <router-link to="/passwordReset">passwordReset</router-link>
           <h1>{{ msg }}</h1>
           <button @click="post">click me</button>
           <div>
@@ -22,7 +23,6 @@
           </div>
         </v-main>
       </v-app>
-
     </div>
   </div>
 </template>
