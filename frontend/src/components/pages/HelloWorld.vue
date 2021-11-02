@@ -1,6 +1,5 @@
 <template>
-  <div class="hello">
-    <div>
+
       <v-app id="inspire">
         <v-navigation-drawer v-model="drawer" app>
           <!--  -->
@@ -23,8 +22,6 @@
           </div>
         </v-main>
       </v-app>
-    </div>
-  </div>
 </template>
 
 <script>

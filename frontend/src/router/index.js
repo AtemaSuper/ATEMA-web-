@@ -1,4 +1,4 @@
-/** 画面遷移についてはここに記述 */
+/** 画面遷移についてはこのファイルに記述 */
 import Vue from 'vue'
 import Router from 'vue-router'
 /** componentsのインポート  */
