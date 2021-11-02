@@ -1,13 +1,40 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+  <v-app id="app">
+    <template v-if="!$route.path.includes('login')">
+    <Header/>
+    </template>
+      <v-main>
+         <keep-alive :include="['login']">
+         <router-view/>
+         </keep-alive>
+    </v-main>
+   </v-app>
 </template>
 
 <script>
+
 export default {
-  name: 'App'
+
+  data: () => ({
+    drawer: false
+  }),
+  props: {
+    source: String
+  }
 }
+</script>
+
+<script>
+import Header from './components/globals/header.vue'
+export default {
+  components: { Header },
+   name: 'App',
+   data() {
+      return {
+         drawer: false,
+      };
+   },
+};
 </script>
 
 <style>

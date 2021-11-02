@@ -29,7 +29,7 @@
           </v-form>
         <!-- <v-btn block color="primary" @click="login" :loading="loading">ログイン</v-btn> -->
         <v-card-actions class="justify-center">
-          <v-btn>ログイン</v-btn>
+          <v-btn to="/">ログイン</v-btn>
         </v-card-actions>
         <v-spacer />
         <v-card-actions class="justify-center">
