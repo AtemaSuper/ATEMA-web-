@@ -1,13 +1,11 @@
 <template>
-  <v-app id="app">
+  <v-app id="app" >
     <template v-if="!$route.path.includes('login')">
     <Header/>
     </template>
-      <v-main>
          <keep-alive :include="['login']">
          <router-view/>
          </keep-alive>
-    </v-main>
    </v-app>
 </template>
 
@@ -38,8 +36,10 @@ export default {
 </script>
 
 <style>
+.v-application{
+    font-family: "Zen Kaku Gothic New" !important;
+}
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
