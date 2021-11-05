@@ -1,14 +1,32 @@
 <template>
-  <div>
-    <!-- ここにパスワード変更画面用プログラムを記述-->
-    <h1 class="password-henkou">パスワード再設定</h1>
-    <p class="password-bun">パスワード再設定用URLを送信しますので、ご登録いただいたメールアドレスを入力し、送信ボタンを押してください。</p>
-    <div class="form-address">
-      メールアドレス:<input name="text">
-      <form action="hoge.cgi" method="POST" enctype="multipart/form-data"></form>
-    </div>
-    <div class="botan"><input type=submit value="送信"></div>
-  </div>
+  <v-app>
+    <h1 class="password-title">パスワード再設定</h1>
+    <p class="password-text">
+      パスワード再設定用URLを送信しますので、ご登録いただいたメールアドレスを入力し、送信ボタンを押してください。
+    </p>
+    <v-card class="mx-auto" max-width="600" outlined>
+      <v-card-text>
+        <v-card-title primary-title class="justify-center">
+          <div>
+            <h2 class="headline font-weight-bold orange--text text--accent-2">
+              管理者用ログイン
+            </h2>
+          </div>
+        </v-card-title>
+        <v-form ref="loginForm">
+          <v-text-field
+            name="password"
+            label="パスワード"
+            id="password"
+            type="password"
+            required
+          ></v-text-field>
+        </v-form>
+        <v-spacer />
+      </v-card-text>
+    </v-card>
+    <v-btn color="primary" to="/">ログイン</v-btn>
+  </v-app>
 </template>
 
 <script>
@@ -16,24 +34,24 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1{
+h1 {
   font-weight: normal;
 }
-.password-henkou{
+.password-title {
   width: auto;
   margin-right: 60%;
 }
-.password-bun{
+.password-text {
   margin-right: 1%;
   padding: 2%;
 }
-.form-address{
+.form-address {
   margin-left: 20%;
   width: 60%;
   border: solid;
   padding: 1%;
 }
-.botan{
+.botan {
   padding: 3%;
   color: skyblue;
 }
