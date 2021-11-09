@@ -33,7 +33,7 @@ export default {
     email: null,
     emailRules: [
       value => !!value || '未入力です。',
-      value => (value || '').length <= 20 || 'Max 20 characters',
+      value => (value || '').length <= 100 || '入力をできる文字数を超えています。',
       value => {
         const pattern = /^(([^<>()[\]\\.,;:\s@]+(\.[^<>()[\]\\.,;:\s@]+)*)|(.+))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
         return pattern.test(value) || 'メールアドレス形式ではありません。'
