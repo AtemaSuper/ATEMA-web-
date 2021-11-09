@@ -8,15 +8,12 @@
       <v-col cols="3">
         <v-text-field
           outlined
-          :append-icon="show4 ? 'mdi-eye' : 'mdi-eye-off'"
           :rules="[rules.required, rules.emailMatch]"
-          :type="show4 ? 'text' : 'password'"
           name="input-10-2"
           label="Error"
           hint="At least 8 characters"
           value="Pa"
           error
-          @click:append="show4 = !show4"
         ></v-text-field>
       </v-col>
     </v-row>
