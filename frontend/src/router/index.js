@@ -4,6 +4,7 @@ import Router from 'vue-router'
 /** componentsのインポート  */
 import HelloWorld from '@/components/pages/HelloWorld'
 import login from '@/components/pages/login'
+import main from '@/components/pages/main'
 import passwordReset from '@/components/pages/passwordReset'
 
 Vue.use(Router)
@@ -24,6 +25,11 @@ export default new Router({
       path: '/passwordReset',
       name: 'passwordReset',
       component: passwordReset
+    },
+    {/** main.vue */
+      path: '/main',
+      name: 'main',
+      component: main
     }
   ]
 })
