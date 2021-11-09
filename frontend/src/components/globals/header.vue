@@ -1,5 +1,4 @@
 <template>
-  <v-app id="inspire">
     <!-- ヘッダー部 -->
     <v-app-bar app color="pink darken-1" max-height="64px">
       <v-img
@@ -54,7 +53,6 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-  </v-app>
 </template>
 
 <script>

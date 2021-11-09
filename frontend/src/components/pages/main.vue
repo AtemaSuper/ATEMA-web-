@@ -77,7 +77,7 @@ export default {
     async post () {
     },
     pagePush (pageName) {
-      console.log(pageName)
+      this.$router.push(pageName)
     }
   }
 }

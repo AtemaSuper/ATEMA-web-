@@ -6,10 +6,12 @@ import HelloWorld from '@/components/pages/HelloWorld'
 import login from '@/components/pages/login'
 import main from '@/components/pages/main'
 import passwordReset from '@/components/pages/passwordReset'
+import attendanceManage from '@/components/pages/attendanceManage'
 
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   routes: [
     {/** 初期位置 */
       path: '/',
@@ -30,6 +32,11 @@ export default new Router({
       path: '/main',
       name: 'main',
       component: main
+    },
+    {/** attendanceManage.vue */
+      path: '/attendanceManage',
+      name: 'attendanceManage',
+      component: attendanceManage
     }
   ]
 })
