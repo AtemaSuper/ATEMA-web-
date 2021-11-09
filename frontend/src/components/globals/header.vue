@@ -1,5 +1,4 @@
 <template>
-  <v-app id="inspire">
     <!-- ヘッダー部 -->
     <v-app-bar app color="pink darken-1" max-height="64px">
       <v-img
@@ -22,7 +21,7 @@
           </v-btn>
         </template>
         <v-list class="header-menu-list">
-          <v-list-item @click="trantision()">
+          <v-list-item @click="trantision('/ownCompany')">
             <v-list-item-title>設定</v-list-item-title>
           </v-list-item>
           <v-list-item @click="trantision()">
@@ -54,7 +53,6 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-  </v-app>
 </template>
 
 <script>
@@ -88,7 +86,7 @@ export default {
     logout () {
       this.dialog = false
       // TODO ログイン情報を破棄する
-      this.transition('login.vue')
+      this.transition('/login')
     }
   },
   mounted: {
