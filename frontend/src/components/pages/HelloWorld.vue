@@ -3,6 +3,7 @@
         <v-main>
           <router-link to="/login">login</router-link>
           <router-link to="/passwordReset">passwordReset</router-link>
+          <router-link to="/clientField">clientField</router-link>
           <h1>{{ msg }}</h1>
           <button @click="post">click me</button>
           <div>
