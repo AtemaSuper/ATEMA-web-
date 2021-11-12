@@ -7,6 +7,7 @@ import login from '@/components/pages/login'
 import main from '@/components/pages/main'
 import passwordReset from '@/components/pages/passwordReset'
 import ownCompany from '@/components/pages/ownCompany'
+import clientField from '@/components/pages/clientField'
 
 Vue.use(Router)
 
@@ -36,6 +37,11 @@ export default new Router({
       path: '/main',
       name: 'main',
       component: main
+    },
+    {/** clientField.vue */
+      path: '/clientField',
+      name: 'clientField',
+      component: clientField
     }
   ]
 })
