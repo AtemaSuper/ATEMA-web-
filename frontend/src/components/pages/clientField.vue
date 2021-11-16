@@ -17,79 +17,57 @@
       </template>
       <v-card>
         <v-card-title>
-          <span class="text-h5">User Profile</span>
+          <v-row>
+          <v-col cols=12 lg=12 sm=12 align="center">
+          <span class="text-h5 ">客先追加</span>
+          </v-col>
+          </v-row>
         </v-card-title>
         <v-card-text>
-          <v-container>
             <v-row>
               <v-col
                 cols="12"
                 sm="6"
-                md="4"
+                md="6"
               >
-                <v-text-field
-                  label="Legal first name*"
-                  required
-                ></v-text-field>
+              <p>客先名</p>
               </v-col>
               <v-col
                 cols="12"
                 sm="6"
-                md="4"
+                md="6"
               >
                 <v-text-field
-                  label="Legal middle name"
-                  hint="example of helper text only on focus"
-                ></v-text-field>
-              </v-col>
-              <v-col
-                cols="12"
-                sm="6"
-                md="4"
-              >
-                <v-text-field
-                  label="Legal last name*"
-                  hint="example of persistent helper text"
-                  persistent-hint
+                  v-model="firstname"
+                  :rules="nameRules"
+                  label="(例)株式会社ABC"
                   required
                 ></v-text-field>
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  label="Email*"
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  label="Password*"
-                  type="password"
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col
-                cols="12"
-                sm="6"
-              >
-                <v-select
-                  :items="['0-17', '18-29', '30-54', '54+']"
-                  label="Age*"
-                  required
-                ></v-select>
-              </v-col>
-              <v-col
-                cols="12"
-                sm="6"
-              >
-                <v-autocomplete
-                  :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
-                  label="Interests"
-                  multiple
-                ></v-autocomplete>
               </v-col>
             </v-row>
-          </v-container>
-          <small>*indicates required field</small>
+            <v-row>
+              <v-col
+                cols="12"
+                sm="6"
+              >ステータス
+              </v-col>
+              <v-col>
+              <v-radio-group
+               v-model="row"
+               row
+               mandatory
+              >
+              <v-radio
+                 label="進行中"
+                 value="radio-1"
+                 ></v-radio>
+                 <v-radio
+                 label="未進行"
+                 value="radio-2"
+               ></v-radio>
+               </v-radio-group>
+              </v-col>
+            </v-row>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -98,14 +76,14 @@
             text
             @click="dialog = false"
           >
-            Close
+            確定
           </v-btn>
           <v-btn
             color="blue darken-1"
             text
             @click="dialog = false"
           >
-            Save
+            キャンセル
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -120,10 +98,14 @@ export default {
   conputed: {
   },
   data: () => ({
-    dialog: false
+    dialog: false,
+    valid: false,
+    firstname: '',
+    nameRules: [
+      v => !!v || '会社名が未入力です。'
+    ]
   }),
   methods: {
-
   }
 }
 </script>
