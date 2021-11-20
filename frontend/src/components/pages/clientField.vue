@@ -16,9 +16,12 @@
         </v-card-title>
         <v-card-text>
           <v-row align="center">
-            <v-col cols="12" sm="6" md="6">
+            <v-col cols="12" sm="4" md="4">
               <p class="text-h5">客先名</p>
             </v-col>
+              <v-col cols="12" class="red--text" lg="2" sm="2">
+                <p>※必須</p>
+              </v-col>
             <v-col cols="12" sm="6" md="6">
               <v-text-field
                 v-model="firstname"
@@ -81,8 +84,11 @@
               </v-col>
             </v-row>
             <v-row align="center">
-              <v-col cols="12" sm="6" md="4">
+              <v-col cols="12" sm="4" md="4">
                 <p class="text-h5">現場名</p>
+              </v-col>
+              <v-col cols="12" class="red--text" lg="2" sm="2">
+                <p>※必須</p>
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <v-text-field v-model="fieldname" :rules="fieldRules" outlined label="現場名を入力してください" required></v-text-field>
