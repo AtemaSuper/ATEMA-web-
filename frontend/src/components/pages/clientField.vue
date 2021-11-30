@@ -33,8 +33,11 @@
             </v-col>
           </v-row>
           <v-row align="center">
-            <v-col cols="12" sm="6">
+            <v-col cols="12" sm="4">
               <p class="text-h5">ステータス</p>
+            </v-col>
+            <v-col cols="12" class="red--text" lg="2" sm="2">
+                <p>※必須</p>
             </v-col>
             <v-col>
               <v-radio-group v-model="row" row mandatory>
@@ -71,10 +74,13 @@
         </v-card-title>
         <v-card-text>
             <v-row align="center">
-              <v-col cols="12" sm="6">
+              <v-col cols="12" sm="4">
                 <p class="text-h5">客先名</p>
               </v-col>
-                <v-col cols="12" sm="6">
+              <v-col cols="12" class="red--text" lg="2" sm="2">
+                <p>※必須</p>
+              </v-col>
+              <v-col cols="12" sm="6">
                 <v-select
                   :items="['株式会社A', '株式会社B', '株式会社C', '株式会社D']"
                   outlined
@@ -95,8 +101,11 @@
               </v-col>
             </v-row>
           <v-row align="center">
-            <v-col cols="12" sm="6">
+            <v-col cols="12" sm="4">
               <p class="text-h5">ステータス</p>
+            </v-col>
+            <v-col cols="12" class="red--text" lg="2" sm="2">
+              <p>※必須</p>
             </v-col>
             <v-col>
               <v-radio-group v-model="row" row mandatory>
