@@ -8,7 +8,7 @@
         <h1>出退勤管理</h1>
         <v-sheet color="white" height="250" rounded outlined>
           <v-row align="center">
-            <!-- 日時選択 -->
+            <!-- 日付選択 -->
             <v-col cols="12" sm="4" md="2">
               <v-menu
                 ref="menu"
@@ -22,7 +22,7 @@
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
                     v-model="date"
-                    label="日時を選択"
+                    label="日付を選択"
                     prepend-inner-icon="mdi-calendar"
                     readonly
                     v-bind="attrs"
@@ -36,7 +36,6 @@
                   locale="jp-ja"
                   :day-format="(date) => new Date(date).getDate()"
                 >
-                  <v-spacer></v-spacer>
                   <v-btn text color="primary" @click="menu = false">
                     Cancel
                   </v-btn>
@@ -83,17 +82,21 @@
             </v-col>
           </v-row>
           <div>
-            <!-- 出退勤情報表示箇所 -->
+            <!-- data teble-->
+            <!--ToDo  keyの値にnameを設定すると同名で重複エラーが出現するので、基本的にはDB取得時の各レコードごとのユニークIDを設定する -->
             <v-data-table
               :headers="headers"
               :items="getAttendanceList"
-              item-key="name"
-              class="elevation-1"
               :search="search"
               :custom-filter="filterOnlyCapsText"
+              :items-per-page="-1"
+              item-key="name"
+              class="elevation-1"
+              rowsPerPage: All
             >
               <template v-slot:top> </template>
               <template v-slot:[`body.append`]> </template>
+
               <!-- status Row -->
               <template v-slot:[`item.status`]="{ item }">
                 <v-edit-dialog
@@ -116,6 +119,210 @@
                   </template>
                 </v-edit-dialog>
               </template>
+
+              <!-- field Row -->
+              <!--ToDo  現状は1レコードに対してダイアログが生成されているので、テーブル全体で共通のダイアログを使用し、必要な値のみ受け渡し表示できるようにする -->
+              <template v-slot:[`item.field`]="{ item }">
+                <v-dialog v-model="fieldDialog" max-width="300">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn outlined v-bind="attrs" v-on="on">
+                      {{ item.field }}
+                    </v-btn>
+                  </template>
+                  <v-card>
+                    <v-card-title class="text-h5 grey lighten-2">
+                      現場詳細表示
+                    </v-card-title>
+
+                    <v-card-text>
+                      現場名以外内容はベタ書きです
+                      <v-row>
+                        <v-col cols="12" sm="4" md="4" align="right">
+                          <h4>jobNo:</h4>
+                        </v-col>
+                        <v-col cols="12" sm="8" md="8" align="left">
+                          <h4>21-1234</h4>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" sm="4" md="4" align="right">
+                          <h4>客先:</h4>
+                        </v-col>
+                        <v-col cols="12" sm="8" md="8" align="left">
+                          <h4>株式会社ABC運送</h4>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" sm="4" md="4" align="right">
+                          <h4>現場名:</h4>
+                        </v-col>
+                        <v-col cols="12" sm="8" md="8" align="left">
+                          <h4>{{ item.field }}</h4>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" sm="4" md="4" align="right">
+                          <h4>工事件名:</h4>
+                        </v-col>
+                        <v-col cols="12" sm="8" md="8" align="left">
+                          <h4>
+                            ダクト修繕・改築工事ダクト修繕・改築工事ダクト修繕・改築工事
+                          </h4>
+                        </v-col>
+                      </v-row>
+                    </v-card-text>
+
+                    <v-divider></v-divider>
+
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+              </template>
+
+              <!-- contract Row -->
+              <template v-slot:[`item.contract`]="{ item }">
+                <v-edit-dialog
+                  :return-value.sync="item.contract"
+                  large
+                  @save="setItem(item.contract)"
+                >
+                  <v-chip>
+                    {{ item.contract }}
+                  </v-chip>
+                  <template v-slot:input>
+                    <div class="mt-4 text-h6">請負形式を選択</div>
+                    <v-select
+                      v-model="item.contract"
+                      :items="contractItems"
+                      label="Outlined style"
+                      outlined
+                      autofocus
+                    ></v-select>
+                  </template>
+                </v-edit-dialog>
+              </template>
+
+              <!-- startTime Row -->
+              <template v-slot:[`item.start`]="{ item }">
+                <v-edit-dialog
+                  :return-value.sync="item.start"
+                  large
+                  @save="setItem(item.start)"
+                >
+                <v-chip
+                label
+                outlined
+                >{{ item.start }}
+                </v-chip>
+                  <template v-slot:input>
+                    <vue-timepicker
+                     format="HH:mm"
+                     manual-input
+                     hide-dropdown
+                     v-model="item.start">
+                     </vue-timepicker>
+                  </template>
+                </v-edit-dialog>
+              </template>
+
+            <!-- restStart Row -->
+              <template v-slot:[`item.restStart`]="{ item }">
+                <v-edit-dialog
+                  :return-value.sync="item.restStart"
+                  large
+                  @save="setItem(item.restStart)"
+                >
+                <v-chip
+                label
+                outlined
+                >{{ item.restStart }}
+                </v-chip>
+                  <template v-slot:input>
+                    <vue-timepicker
+                     format="HH:mm"
+                     manual-input
+                     hide-dropdown
+                     v-model="item.restStart">
+                     </vue-timepicker>
+                  </template>
+                </v-edit-dialog>
+              </template>
+
+              <!-- restEnd Row -->
+              <template v-slot:[`item.restEnd`]="{ item }">
+                <v-edit-dialog
+                  :return-value.sync="item.restEnd"
+                  large
+                  @save="setItem(item.restEnd)"
+                >
+                <v-chip
+                label
+                outlined
+                >{{ item.restEnd }}
+                </v-chip>
+                  <template v-slot:input>
+                   <vue-timepicker
+                     format="HH:mm"
+                     manual-input
+                     hide-dropdown
+                     v-model="item.restEnd">
+                     </vue-timepicker>
+                  </template>
+                </v-edit-dialog>
+              </template>
+
+              <!-- end Row -->
+              <template v-slot:[`item.end`]="{ item }">
+                <v-edit-dialog
+                  :return-value.sync="item.end"
+                  large
+                  @save="setItem(item.end)"
+                >
+                <v-chip
+                label
+                outlined
+                >{{ item.end }}
+                </v-chip>
+                  <template v-slot:input>
+                    <vue-timepicker
+                     format="HH:mm"
+                     manual-input
+                     hide-dropdown
+                     v-model="item.end">
+                     </vue-timepicker>
+                  </template>
+                </v-edit-dialog>
+              </template>
+              <!-- end Row -->
+              <template v-slot:[`item.note`]="{ item }">
+                <v-dialog v-model="noteDialog" max-width="300">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn outlined v-bind="attrs" v-on="on">
+                      {{ item.note }}
+                    </v-btn>
+                  </template>
+                  <v-card>
+                    <v-card-title class="text-h5 grey lighten-2">
+                      備考欄
+                    </v-card-title>
+                    <v-card-text>
+                      <v-textarea
+                      v-model="item.noteContents"
+                      outlined
+                      name="input-7-4"
+                      value= item.noteContents
+                      ></v-textarea>
+                    </v-card-text>
+                    <v-divider></v-divider>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+              </template>
+
             </v-data-table>
           </div>
         </v-sheet>
@@ -125,17 +332,30 @@
 </template>
 
 <script>
+/** VueTimepicker（時刻選択用ライブラリ） */
+import VueTimepicker from 'vue2-timepicker'
+import 'vue2-timepicker/dist/VueTimepicker.css'
+
 export default {
   name: 'attendanceManage',
   components: {
+    VueTimepicker
   },
+  data: () => ({
+    search: '',
+    status: '',
+    menu: false,
+    date: '',
+    statusItems: ['出勤中', '休憩中', '退勤中', '早出', '深夜'],
+    contractItems: ['請負', '常用']
+  }),
   computed: {
     /** v-tableのヘッダーを設定 */
     headers () {
       return [
         {
           text: '氏名',
-          align: 'start',
+          align: 'center',
           sortable: false,
           value: 'name'
         },
@@ -149,15 +369,15 @@ export default {
             return value < parseInt(this.status)
           }
         },
-        { text: '現場名', value: 'field' },
-        { text: '契約', value: 'contract' },
-        { text: '開始', value: 'start' },
-        { text: '休憩', value: 'restStart' },
-        { text: '戻り', value: 'restEnd' },
-        { text: '終了', value: 'end' },
-        { text: '時間外', value: 'overTime' },
-        { text: '深夜', value: 'midNight' },
-        { text: '備考', value: 'note', sortable: false }
+        { text: '現場名', value: 'field', align: 'center' },
+        { text: '契約', value: 'contract', align: 'center' },
+        { text: '開始', value: 'start', align: 'center' },
+        { text: '休憩', value: 'restStart', align: 'center' },
+        { text: '戻り', value: 'restEnd', align: 'center' },
+        { text: '終了', value: 'end', align: 'center' },
+        { text: '時間外', value: 'overTime', align: 'center' },
+        { text: '深夜', value: 'midNight', align: 'center' },
+        { text: '備考', value: 'note', sortable: false, align: 'center' }
       ]
     },
     /** Vuex storeで設定した値を取得 (オブジェクトで取得するので、配列を指名して)リターン */
@@ -167,11 +387,6 @@ export default {
       return this.$store.state.attendanceList.attendanceList
     }
   },
-  data: () => ({
-    search: '',
-    status: '',
-    statusItems: ['出勤中', '休憩中', '退勤中', '早出', '深夜']
-  }),
   methods: {
     // ページ遷移処理
     download (format) {
