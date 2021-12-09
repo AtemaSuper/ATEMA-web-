@@ -121,64 +121,10 @@
               </template>
 
               <!-- field Row -->
-              <!--ToDo  現状は1レコードに対してダイアログが生成されているので、テーブル全体で共通のダイアログを使用し、必要な値のみ受け渡し表示できるようにする -->
               <template v-slot:[`item.field`]="{ item }">
-                <v-dialog v-model="fieldDialog" max-width="300">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn outlined v-bind="attrs" v-on="on">
+                <v-btn outlined  @click="fieldContents(item)">
                       {{ item.field }}
                     </v-btn>
-                  </template>
-                  <v-card>
-                    <v-card-title class="text-h5 grey lighten-2">
-                      現場詳細表示
-                    </v-card-title>
-
-                    <v-card-text>
-                      現場名以外内容はベタ書きです
-                      <v-row>
-                        <v-col cols="12" sm="4" md="4" align="right">
-                          <h4>jobNo:</h4>
-                        </v-col>
-                        <v-col cols="12" sm="8" md="8" align="left">
-                          <h4>21-1234</h4>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" sm="4" md="4" align="right">
-                          <h4>客先:</h4>
-                        </v-col>
-                        <v-col cols="12" sm="8" md="8" align="left">
-                          <h4>株式会社ABC運送</h4>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" sm="4" md="4" align="right">
-                          <h4>現場名:</h4>
-                        </v-col>
-                        <v-col cols="12" sm="8" md="8" align="left">
-                          <h4>{{ item.field }}</h4>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" sm="4" md="4" align="right">
-                          <h4>工事件名:</h4>
-                        </v-col>
-                        <v-col cols="12" sm="8" md="8" align="left">
-                          <h4>
-                            ダクト修繕・改築工事ダクト修繕・改築工事ダクト修繕・改築工事
-                          </h4>
-                        </v-col>
-                      </v-row>
-                    </v-card-text>
-
-                    <v-divider></v-divider>
-
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
               </template>
 
               <!-- contract Row -->
@@ -295,24 +241,27 @@
                   </template>
                 </v-edit-dialog>
               </template>
-              <!-- end Row -->
-              <template v-slot:[`item.note`]="{ item }">
-                <v-dialog v-model="noteDialog" max-width="300">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn outlined v-bind="attrs" v-on="on">
+              <!-- noteContents Row -->
+              <template v-slot:[`item.note`]="{ item }" >
+                <v-btn outlined @click="noteContents(item)">
                       {{ item.note }}
                     </v-btn>
-                  </template>
-                  <v-card>
+              </template>
+            </v-data-table>
+          </div>
+        </v-sheet>
+        <!-- noteContentsDialog-->
+        <v-dialog v-model="noteContentsDialog" max-width="300">
+           <v-card>
                     <v-card-title class="text-h5 grey lighten-2">
                       備考欄
                     </v-card-title>
                     <v-card-text>
                       <v-textarea
-                      v-model="item.noteContents"
+                      v-model="ditaileEdit.noteContents"
                       outlined
                       name="input-7-4"
-                      value= item.noteContents
+                      value= ditaileEdit.noteContents
                       ></v-textarea>
                     </v-card-text>
                     <v-divider></v-divider>
@@ -320,12 +269,59 @@
                       <v-spacer></v-spacer>
                     </v-card-actions>
                   </v-card>
-                </v-dialog>
-              </template>
+              </v-dialog>
+<!--fieldDialog-->
+              <v-dialog v-model="fieldDialog" max-width="300">
+                  <v-card>
+                    <v-card-title class="text-h5 grey lighten-2">
+                      現場詳細表示
+                    </v-card-title>
 
-            </v-data-table>
-          </div>
-        </v-sheet>
+                    <v-card-text>
+                      現場名以外内容はベタ書きです
+                      <v-row>
+                        <v-col cols="12" sm="4" md="4" align="right">
+                          <h4>jobNo:</h4>
+                        </v-col>
+                        <v-col cols="12" sm="8" md="8" align="left">
+                          <h4>21-1234</h4>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" sm="4" md="4" align="right">
+                          <h4>客先:</h4>
+                        </v-col>
+                        <v-col cols="12" sm="8" md="8" align="left">
+                          <h4>株式会社ABC運送</h4>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" sm="4" md="4" align="right">
+                          <h4>現場名:</h4>
+                        </v-col>
+                        <v-col cols="12" sm="8" md="8" align="left">
+                          <h4>{{ ditaileEdit.field }}</h4>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" sm="4" md="4" align="right">
+                          <h4>工事件名:</h4>
+                        </v-col>
+                        <v-col cols="12" sm="8" md="8" align="left">
+                          <h4>
+                            ダクト修繕・改築工事ダクト修繕・改築工事ダクト修繕・改築工事
+                          </h4>
+                        </v-col>
+                      </v-row>
+                    </v-card-text>
+
+                    <v-divider></v-divider>
+
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
       </v-container>
     </v-main>
   </v-app>
@@ -347,7 +343,10 @@ export default {
     menu: false,
     date: '',
     statusItems: ['出勤中', '休憩中', '退勤中', '早出', '深夜'],
-    contractItems: ['請負', '常用']
+    contractItems: ['請負', '常用'],
+    ditaileEdit: {},
+    noteContentsDialog: false,
+    fieldDialog: false
   }),
   computed: {
     /** v-tableのヘッダーを設定 */
@@ -411,7 +410,16 @@ export default {
       /** 2-Vuex attendanceListで定義したActionメソッドをここで呼び出し 変更箇所の引数あり */
       /** 1-NCMBのデータ更新処理呼び出し express側定義 axioメソッド */
       console.log(item)
+    },
+    noteContents (item) {
+      this.ditaileEdit = item
+      this.noteContentsDialog = true
+    },
+    fieldContents (item) {
+      this.ditaileEdit = item
+      this.fieldDialog = true
     }
+
   }
 }
 </script>
