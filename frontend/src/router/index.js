@@ -9,10 +9,12 @@ import passwordReset from '@/components/pages/passwordReset'
 import ownCompany from '@/components/pages/ownCompany'
 import clientField from '@/components/pages/clientField'
 import workField from '@/components/pages/workField'
+import attendanceManage from '@/components/pages/attendanceManage'
 
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   routes: [
     {/** 初期位置 */
       path: '/',
@@ -48,6 +50,11 @@ export default new Router({
       path: '/workField',
       name: 'workField',
       component: workField
+    },
+    {/** attendanceManage.vue */
+      path: '/attendanceManage',
+      name: 'attendanceManage',
+      component: attendanceManage
     }
   ]
 })
