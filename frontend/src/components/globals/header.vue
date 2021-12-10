@@ -5,6 +5,7 @@
         :src="require('@/assets/images/logo.png')"
         max-height="64px"
         max-width="256px"
+        @click="trantision('/main')"
       ></v-img>
       <v-spacer></v-spacer>
       <v-toolbar-title class="header-user-info"
@@ -21,13 +22,13 @@
           </v-btn>
         </template>
         <v-list class="header-menu-list">
-          <v-list-item @click="trantision('/ownCompany')">
+          <v-list-item @click="transition('/ownCompany')">
             <v-list-item-title>設定</v-list-item-title>
           </v-list-item>
-          <v-list-item @click="trantision()">
+          <v-list-item @click="transition('/paymentManage')">
             <v-list-item-title>プラン・お支払方法変更</v-list-item-title>
           </v-list-item>
-          <v-list-item @click="trantision()">
+          <v-list-item @click="transition('/help')">
             <v-list-item-title>ヘルプ</v-list-item-title>
           </v-list-item>
           <v-dialog v-model="dialog" max-width="500" persistent>

@@ -8,12 +8,8 @@
       <v-col cols="3">
         <v-text-field
           outlined
-          :rules="[rules.required, rules.emailMatch]"
+          :rules="[rules.required]"
           name="input-10-2"
-          label="Error"
-          hint="At least 8 characters"
-          value="Pa"
-          error
         ></v-text-field>
       </v-col>
     </v-row>

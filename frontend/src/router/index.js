@@ -3,10 +3,10 @@ import Vue from 'vue'
 import Router from 'vue-router'
 /** componentsのインポート  */
 import HelloWorld from '@/components/pages/HelloWorld'
-import login from '@/components/pages/login'
-import main from '@/components/pages/main'
-import passwordReset from '@/components/pages/passwordReset'
-import ownCompany from '@/components/pages/ownCompany'
+import Main from '@/components/pages/main'
+import Login from '@/components/pages/login'
+import PasswordReset from '@/components/pages/passwordReset'
+import OwnCompany from '@/components/pages/ownCompany'
 
 Vue.use(Router)
 
@@ -20,22 +20,22 @@ export default new Router({
     {/** login.vue */
       path: '/login',
       name: 'login',
-      component: login
+      component: Login
     },
     {/** passwordReset.vue */
       path: '/passwordReset',
       name: 'passwordReset',
-      component: passwordReset
+      component: PasswordReset
     },
     {/** ownCompany.vue */
       path: '/ownCompany',
       name: 'ownCompany',
-      component: ownCompany
+      component: OwnCompany
     },
     {/** main.vue */
       path: '/main',
       name: 'main',
-      component: main
+      component: Main
     }
   ]
 })
