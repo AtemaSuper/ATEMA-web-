@@ -47,6 +47,12 @@ export default {
           return 'Header'
         case '/main':
           return 'Header'
+        case '/attendanceManage':
+          return 'Header'
+        case '/clientField':
+          return 'Header'
+        case '/workField':
+          return 'Header'
         default:
           return ''
       }
@@ -56,6 +62,10 @@ export default {
       switch (this.$route.path) {
         case '/ownCompany':
           return 'SideMenu'
+        case '/clientField':
+          return true
+        case '/workField':
+          return true
         default:
           return ''
       }
@@ -66,6 +76,10 @@ export default {
       switch (this.$route.path) {
         case '/ownCompany':
           return true
+        case '/clientField':
+          return true
+        case '/workField':
+          return true
         default:
           return false
       }
@@ -74,6 +88,10 @@ export default {
     showTitleComponent () {
       switch (this.$route.path) {
         case '/ownCompany':
+          return true
+        case '/clientField':
+          return true
+        case '/workField':
           return true
         default:
           return false
