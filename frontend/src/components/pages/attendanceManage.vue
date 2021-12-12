@@ -6,7 +6,7 @@
           <a @click="$router.back()"><v-icon left>mdi-home</v-icon>戻る</a>
         </p>
         <h1>出退勤管理</h1>
-        <v-sheet color="white" height="250" rounded outlined>
+        <v-sheet color="white" rounded outlined>
           <v-row align="center">
             <!-- 日付選択 -->
             <v-col cols="12" sm="4" md="2">
