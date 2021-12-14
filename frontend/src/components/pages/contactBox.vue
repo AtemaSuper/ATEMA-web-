@@ -7,36 +7,82 @@
         </p>
         <h1>管理者通知</h1>
         <v-sheet color="white" rounded outlined>
-          <v-data-table :headers="headers" :items="getAttendanceList" item-key="name" class="elevation-1 pa-6">
-        <template v-slot:top>
-
-            <!-- v-container, v-col and v-row are just for decoration purposes. -->
-            <v-container fluid>
-                <v-row>
-
-                    <v-col cols="6">
-                        <v-row class="pa-6">
-                            <!-- Filter for dessert name-->
-                            <v-text-field v-model="dessertFilterValue" type="text" label="Name"></v-text-field>
-                        </v-row>
-                    </v-col>
-
-                    <v-col cols="6">
-                        <v-row class="pa-6">
-                            <!-- Filter for calories -->
-                            <v-select
-                                    :items="caloriesList"
-                                    v-model="caloriesFilterValue"
-                                    label="Calories"
-                            ></v-select>
-                        </v-row>
-                    </v-col>
-
+          <v-container fluid>
+            <v-row>
+              <v-col cols="4">
+                <v-row class="pa-6">
+                  <!-- Filter for ALL-->
+                  <v-text-field
+                    v-model="search"
+                    type="text"
+                    label="検索"
+                  ></v-text-field>
                 </v-row>
-            </v-container>
-
-        </template>
-    </v-data-table>
+              </v-col>
+              <v-col cols="4">
+                <v-row class="pa-6">
+                  <!-- Filter for status -->
+                  <v-select
+                    :items="statusList"
+                    v-model="statusFilterValue"
+                    label="ステータスを選択"
+                  ></v-select>
+                </v-row>
+              </v-col>
+              <v-col cols="4">
+                <v-row class="pa-6">
+                  <!-- Filter for startDate -->
+                </v-row>
+              </v-col>
+              <v-col cols="4">
+                <v-row class="pa-6">
+                  <!-- Filter for endDate-->
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-container>
+          <v-data-table
+            :search="search"
+            :headers="headers"
+            :items="getContactList"
+            item-key="name"
+            class="elevation-1 pa-6"
+            sort-by="createDate"
+            :sort-desc="true"
+          >
+            <!-- status Row -->
+            <template v-slot:[`item.status`]="{ item }">
+              <v-edit-dialog
+                :return-value.sync="item.status"
+                large
+                @save="setItem(item.status)"
+              >
+                <v-chip
+                  :color="getColor(item.status)"
+                  label
+                  outlined
+                >
+                  <!-- statusの真偽判定-->
+                  {{ item.status ? "既読" : "未読" }}</v-chip
+                >
+                <template v-slot:input>
+                  <div class="mt-4 text-h6">ステータスを変更</div>
+                  <v-select
+                    v-model="item.status"
+                    :items="statusItems"
+                    label="Outlined style"
+                    outlined
+                    autofocus
+                  ></v-select>
+                </template>
+              </v-edit-dialog>
+            </template>
+            <!-- createDate Row -->
+            <template v-slot:[`item.createDate`]="{ item }">
+              <!-- ISO8601 形式の変換-->
+              {{ new Date(item.createDate).toLocaleString() }}
+            </template>
+          </v-data-table>
         </v-sheet>
       </v-container>
     </v-main>
@@ -50,77 +96,82 @@ export default {
   },
   data: () => ({
     // We need some values for our select.
-    caloriesList: [
-      {text: 'All', value: null},
-      {text: 'Only 237', value: 237},
-      {text: 'Only 305', value: 305}
+    statusList: [
+      {text: '全て', value: null},
+      {text: '既読', value: true},
+      {text: '未読', value: false}
+    ],
+    statusItems: [
+      {text: '既読', value: true},
+      {text: '未読', value: false}
     ],
     // Filter models.
-    dessertFilterValue: '',
-    caloriesFilterValue: null
+    search: '',
+    statusFilterValue: null
   }),
   computed: {
     /** v-tableのヘッダーを設定 */
     headers () {
       return [
         {
-          text: '氏名',
-          align: 'center',
-          sortable: false,
-          value: 'name',
-          filter: this.nameFilter
-        },
-        {
-          text: '勤怠ステータス',
+          text: '状態',
           value: 'status',
           align: 'center',
-          filter: this.caloriesFilter
+          filter: this.statusFilter,
+          width: '10%'
         },
-        { text: '現場名', value: 'field', align: 'center' },
-        { text: '契約', value: 'contract', align: 'center' },
-        { text: '開始', value: 'start', align: 'center' },
-        { text: '休憩', value: 'restStart', align: 'center' },
-        { text: '戻り', value: 'restEnd', align: 'center' },
-        { text: '終了', value: 'end', align: 'center' },
-        { text: '時間外', value: 'overTime', align: 'center' },
-        { text: '深夜', value: 'midNight', align: 'center' },
-        { text: '備考', value: 'note', sortable: false, align: 'center' }
+        {
+          text: 'タイトル',
+          value: 'contactTitle',
+          align: 'center',
+          width: '10%'
+        },
+        { text: '送信者',
+          value: 'sendUser',
+          align: 'center',
+          width: '20%' },
+        { text: '内容',
+          value: 'contents',
+          align: 'center',
+          width: '40%' },
+        { text: '送信日時',
+          value: 'createDate',
+          align: 'center',
+          width: '20%' }
       ]
     },
     /** Vuex storeで設定した値を取得 (オブジェクトで取得するので、配列を指名して)リターン */
-    getAttendanceList () {
+    getContactList () {
       /** ToDo */
-      /** Vuex attendanceListで定義したActionメソッドをここで呼び出し */
-      return this.$store.state.attendanceList.attendanceList
+      /** Vuex contactListで定義したActionメソッドをここで呼び出し */
+      return this.$store.state.contactList.contactList
     }
   },
   methods: {/**
-       * Filter for dessert names column.
-       * @param value Value to be tested.
-       * @returns {boolean}
-       */
-    nameFilter (value) {
-      // If this filter has no value we just skip the entire filter.
-      if (!this.dessertFilterValue) {
-        return true
-      }
-      // Check if the current loop value (The dessert name)
-      // partially contains the searched word.
-      return value.toLowerCase().includes(this.dessertFilterValue.toLowerCase())
-    },
     /**
        * Filter for calories column.
        * @param value Value to be tested.
        * @returns {boolean}
        */
-    caloriesFilter (value) {
+    statusFilter (value) {
       // If this filter has no value we just skip the entire filter.
-      if (!this.caloriesFilterValue) {
+      if (!this.statusFilterValue) {
         return true
       }
       // Check if the current loop value (The calories value)
       // equals to the selected value at the <v-select>.
-      return value === this.caloriesFilterValue
+      return value === this.statusFilterValue
+    },
+    /** ステータスカラーの変更 */
+    getColor (status) {
+      return status ? 'green' : 'red'
+    },
+    /** データ変更処理 */
+    setItem (item) {
+      /** ToDo vuex 必要ないかも？ */
+      /** 2-Vuex attendanceListで定義したActionメソッドをここで呼び出し 変更箇所の引数あり */
+      /** 1-NCMBのデータ更新処理呼び出し express側定義 axioメソッド */
+      console.log(item)
     }
   }
 }
