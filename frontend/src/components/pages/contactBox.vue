@@ -251,9 +251,6 @@ export default {
        * @returns {boolean}
        */
     dateFilter (value) {
-      console.log(new Date(value), new Date(this.endDate + 'T23:59:59'))
-      console.log(new Date(value) <= new Date(this.endDate + 'T23:59:59'))
-      console.log(new Date(value).toLocaleDateString() >= new Date(this.startDate + 'T00:00:00Z').getTime())
       // 日付が選択されていない（偽＝初期値）の場合全件表示
       if (!this.startDate && !this.endDate) return value
       // 2つの日付が指定されている場合
