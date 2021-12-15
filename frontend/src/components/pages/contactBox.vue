@@ -29,18 +29,101 @@
                   ></v-select>
                 </v-row>
               </v-col>
-              <v-col cols="4">
+              <v-col cols="2">
                 <v-row class="pa-6">
                   <!-- Filter for startDate -->
+                  <v-menu
+                    ref="startDateMenu"
+                    v-model="startDateMenu"
+                    :close-on-content-click="false"
+                    :return-value.sync="startDate"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="auto"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        v-model="startDate"
+                        label="日付を選択"
+                        prepend-inner-icon="mdi-calendar"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="startDate"
+                      no-title
+                      scrollable
+                      locale="jp-ja"
+                      :day-format="(startDate) => new Date(startDate).getDate()"
+                    >
+                      <v-btn
+                        text
+                        color="primary"
+                        @click="startDateMenu = false"
+                      >
+                        Cancel
+                      </v-btn>
+                      <v-btn
+                        text
+                        color="primary"
+                        @click="$refs.startDateMenu.save(startDate)"
+                      >
+                        OK
+                      </v-btn>
+                    </v-date-picker>
+                  </v-menu>
                 </v-row>
               </v-col>
-              <v-col cols="4">
+              <v-col cols="2">
                 <v-row class="pa-6">
                   <!-- Filter for endDate-->
+                  <v-menu
+                    ref="endDateMenu"
+                    v-model="endDateMenu"
+                    :close-on-content-click="false"
+                    :return-value.sync="endDate"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="auto"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        v-model="endDate"
+                        label="日付を選択"
+                        prepend-inner-icon="mdi-calendar"
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="endDate"
+                      no-title
+                      scrollable
+                      locale="jp-ja"
+                      :day-format="(endDate) => new Date(endDate).getDate()"
+                    >
+                      <v-btn text color="primary" @click="endDateMenu = false">
+                        Cancel
+                      </v-btn>
+                      <v-btn
+                        text
+                        color="primary"
+                        @click="$refs.endDateMenu.save(endDate)"
+                      >
+                        OK
+                      </v-btn>
+                    </v-date-picker>
+                  </v-menu>
                 </v-row>
               </v-col>
             </v-row>
           </v-container>
+          <!-- data table -->
+          <!-- sort-by="createDate" ソートカラムの選択  -->
+          <!-- :sort-desc="true" 降順を適用  -->
           <v-data-table
             :search="search"
             :headers="headers"
@@ -57,11 +140,7 @@
                 large
                 @save="setItem(item.status)"
               >
-                <v-chip
-                  :color="getColor(item.status)"
-                  label
-                  outlined
-                >
+                <v-chip :color="getColor(item.status)" label outlined>
                   <!-- statusの真偽判定-->
                   {{ item.status ? "既読" : "未読" }}</v-chip
                 >
@@ -95,7 +174,7 @@ export default {
   components: {
   },
   data: () => ({
-    // We need some values for our select.
+    //  values for our select.
     statusList: [
       {text: '全て', value: null},
       {text: '既読', value: true},
@@ -105,9 +184,14 @@ export default {
       {text: '既読', value: true},
       {text: '未読', value: false}
     ],
+    // menu models
+    startDateMenu: false,
+    endDateMenu: false,
     // Filter models.
     search: '',
-    statusFilterValue: null
+    statusFilterValue: null,
+    startDate: null,
+    endDate: null
   }),
   computed: {
     /** v-tableのヘッダーを設定 */
@@ -137,7 +221,8 @@ export default {
         { text: '送信日時',
           value: 'createDate',
           align: 'center',
-          width: '20%' }
+          width: '20%',
+          filter: this.dateFilter }
       ]
     },
     /** Vuex storeで設定した値を取得 (オブジェクトで取得するので、配列を指名して)リターン */
@@ -147,20 +232,33 @@ export default {
       return this.$store.state.contactList.contactList
     }
   },
-  methods: {/**
+  methods: {
     /**
-       * Filter for calories column.
-       * @param value Value to be tested.
+       * Filter for status column.
+       * @param value Value is items
        * @returns {boolean}
        */
     statusFilter (value) {
-      // If this filter has no value we just skip the entire filter.
-      if (!this.statusFilterValue) {
+      // ステータスを選択していない・全ての場合はこの処理
+      if (this.statusFilterValue === null) {
         return true
       }
-      // Check if the current loop value (The calories value)
-      // equals to the selected value at the <v-select>.
+      // <v-select>にて選択されたステータスと一致するアイテムをリターン
       return value === this.statusFilterValue
+    }, /**
+       * Filter for startDate column.
+       * @param value Value is items
+       * @returns {boolean}
+       */
+    dateFilter (value) {
+      console.log(new Date(value), new Date(this.endDate + 'T23:59:59'))
+      console.log(new Date(value) <= new Date(this.endDate + 'T23:59:59'))
+      console.log(new Date(value).toLocaleDateString() >= new Date(this.startDate + 'T00:00:00Z').getTime())
+      // 日付が選択されていない（偽＝初期値）の場合全件表示
+      if (!this.startDate && !this.endDate) return value
+      // 2つの日付が指定されている場合
+      // 開始日時を0時に設定'T00:00:00'=00:00:00 / 終了時間を23次59分59秒に設定'T23:59:59'=23:59:59
+      else if (new Date(value) >= new Date(this.startDate + 'T00:00:00') && new Date(value) <= new Date(this.endDate + 'T23:59:59')) return value
     },
     /** ステータスカラーの変更 */
     getColor (status) {
