@@ -256,6 +256,12 @@ export default {
       // 2つの日付が指定されている場合
       // 開始日時を0時に設定'T00:00:00'=00:00:00 / 終了時間を23次59分59秒に設定'T23:59:59'=23:59:59
       else if (new Date(value) >= new Date(this.startDate + 'T00:00:00') && new Date(value) <= new Date(this.endDate + 'T23:59:59')) return value
+      // どちらか一方の日時が指定されている場合
+      else if (this.startDate || this.endDate) {
+        if (this.startDate) {
+          return new Date(value) >= new Date(this.startDate + 'T00:00:00') ? value : console.error('no mach data')
+        } else return new Date(value) <= new Date(this.endDate + 'T23:59:59') ? value : console.error('no mach data')
+      }
     },
     /** ステータスカラーの変更 */
     getColor (status) {
