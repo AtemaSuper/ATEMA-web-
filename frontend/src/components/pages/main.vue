@@ -69,7 +69,7 @@ export default {
   },
   data: () => ({
     newsList: ['【機能改善】自社員管理機能が新しくなりました。', '【年末年始について】年末年始営業情報についてこちらをはご参照ください。', '【障害】現在つながりにくい状態が続いております。'],
-    pageNameList: ['出退勤管理', '管理者通知', '現場編集', '協力会社管理', '自社員管理'],
+    pageNameList: ['出退勤管理', '管理者通知', '客先・現場編集', '協力会社管理', '自社員管理'],
     toPushList: ['/attendanceManage', '/contactBox', '/workField', '/subCompanyAll', '/ownWorkerAll']
   }),
   methods: {
