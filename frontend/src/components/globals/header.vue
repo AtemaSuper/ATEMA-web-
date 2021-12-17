@@ -1,12 +1,13 @@
 <template>
     <!-- ヘッダー部 -->
     <v-app-bar app color="pink darken-1" max-height="64px">
-      <v-img
-        :src="require('@/assets/images/logo.png')"
-        max-height="64px"
-        max-width="256px"
-        @click="trantision('/main')"
-      ></v-img>
+      <router-link to="/main">
+        <v-img
+          :src="require('@/assets/images/logo.png')"
+          max-height="64px"
+          max-width="256px"
+        ></v-img>
+      </router-link>
       <v-spacer></v-spacer>
       <v-toolbar-title class="header-user-info"
         >{{ userInfo.companyName }} ( {{ userInfo.companyId }} )

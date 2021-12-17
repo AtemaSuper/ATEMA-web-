@@ -6,7 +6,7 @@
         <v-row v-if="showTitleComponent" class="title">
           <v-col cols="2"></v-col>
           <v-col>
-            <v-card>タイトル</v-card>
+            <v-card>{{setTitle}}</v-card>
           </v-col>
           <v-col cols="1"></v-col>
         </v-row>
@@ -37,6 +37,7 @@ export default {
   components: {Header, SideMenu},
   data () {
     return {
+      title: ''
     }
   },
   computed: {
@@ -89,14 +90,43 @@ export default {
     // タイトル部表示切替
     showTitleComponent () {
       switch (this.$route.path) {
+        case '/attendanceManage':
+          return true
+        case '/contactBox':
+          return true
         case '/ownCompany':
+          return true
+        case '/ownWorkerAll':
           return true
         case '/clientField':
           return true
         case '/workField':
           return true
+        case '/subCompanyAll':
+          return true
         default:
           return false
+      }
+    },
+    // タイトル部表示切替
+    setTitle () {
+      switch (this.$route.path) {
+        case '/attendanceManage':
+          return '出退勤管理'
+        case '/contactBox':
+          return '通知BOX'
+        case '/ownWorkerAll':
+          return '自社員管理'
+        case '/ownCompany':
+          return '自社設定'
+        case '/clientField':
+          return '客先編集'
+        case '/workField':
+          return '現場編集'
+        case '/subCompanyAll':
+          return '協力会社一覧'
+        default:
+          return ''
       }
     }
   },
