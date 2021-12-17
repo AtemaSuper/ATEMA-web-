@@ -7,6 +7,7 @@ import Login from '@/components/pages/login'
 import ClientField from '@/components/pages/clientField'
 import WorkField from '@/components/pages/workField'
 import AttendanceManage from '@/components/pages/attendanceManage'
+import SubCompanyAll from '@/components/pages/subCompanyAll'
 import Main from '@/components/pages/main'
 
 import PasswordReset from '@/components/pages/passwordReset'
@@ -56,6 +57,11 @@ export default new Router({
       path: '/attendanceManage',
       name: 'attendanceManage',
       component: AttendanceManage
+    },
+    {/** subCompanyAll.vue */
+      path: '/subCompanyAll',
+      name: 'subCompanyAll',
+      component: SubCompanyAll
     }
   ]
 })
