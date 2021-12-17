@@ -16,6 +16,8 @@
                     v-model="search"
                     type="text"
                     label="検索"
+                    outlined
+                    dense
                   ></v-text-field>
                 </v-row>
               </v-col>
@@ -25,99 +27,115 @@
                   <v-select
                     :items="statusList"
                     v-model="statusFilterValue"
-                    label="ステータスを選択"
+                    label="状態を選択"
+                    outlined
+                    dense
                   ></v-select>
                 </v-row>
               </v-col>
-              <v-col cols="2">
-                <v-row class="pa-6">
-                  <!-- Filter for startDate -->
-                  <v-menu
-                    ref="startDateMenu"
-                    v-model="startDateMenu"
-                    :close-on-content-click="false"
-                    :return-value.sync="startDate"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
+              <v-col cols="4">
+              <v-card  max-width="344" outlined>
+                <v-card-subtitle class="pb-0"> 期間を選択 </v-card-subtitle>
+                <v-row class="pa-1">
+                  <v-col cols="5">
+                    <!-- Filter for startDate -->
+                    <v-menu
+                      ref="startDateMenu"
+                      v-model="startDateMenu"
+                      :close-on-content-click="false"
+                      :return-value.sync="startDate"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="startDate"
+                          label="開始"
+                          prepend-inner-icon="mdi-calendar"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                          outlined
+                          dense
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
                         v-model="startDate"
-                        label="日付を選択"
-                        prepend-inner-icon="mdi-calendar"
-                        readonly
-                        v-bind="attrs"
-                        v-on="on"
-                      ></v-text-field>
-                    </template>
-                    <v-date-picker
-                      v-model="startDate"
-                      no-title
-                      scrollable
-                      locale="jp-ja"
-                      :day-format="(startDate) => new Date(startDate).getDate()"
+                        no-title
+                        scrollable
+                        locale="jp-ja"
+                        :day-format="
+                          (startDate) => new Date(startDate).getDate()
+                        "
+                      >
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="startDateMenu = false"
+                        >
+                          Cancel
+                        </v-btn>
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="$refs.startDateMenu.save(startDate)"
+                        >
+                          OK
+                        </v-btn>
+                      </v-date-picker>
+                    </v-menu>
+                  </v-col>
+                  <v-col cols="2">～</v-col>
+                  <v-col cols="5">
+                    <!-- Filter for endDate-->
+                    <v-menu
+                      ref="endDateMenu"
+                      v-model="endDateMenu"
+                      :close-on-content-click="false"
+                      :return-value.sync="endDate"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
                     >
-                      <v-btn
-                        text
-                        color="primary"
-                        @click="startDateMenu = false"
-                      >
-                        Cancel
-                      </v-btn>
-                      <v-btn
-                        text
-                        color="primary"
-                        @click="$refs.startDateMenu.save(startDate)"
-                      >
-                        OK
-                      </v-btn>
-                    </v-date-picker>
-                  </v-menu>
-                </v-row>
-              </v-col>
-              <v-col cols="2">
-                <v-row class="pa-6">
-                  <!-- Filter for endDate-->
-                  <v-menu
-                    ref="endDateMenu"
-                    v-model="endDateMenu"
-                    :close-on-content-click="false"
-                    :return-value.sync="endDate"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="endDate"
+                          label="終了"
+                          prepend-inner-icon="mdi-calendar"
+                          readonly
+                          outlined
+                          dense
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
                         v-model="endDate"
-                        label="日付を選択"
-                        prepend-inner-icon="mdi-calendar"
-                        readonly
-                        v-bind="attrs"
-                        v-on="on"
-                      ></v-text-field>
-                    </template>
-                    <v-date-picker
-                      v-model="endDate"
-                      no-title
-                      scrollable
-                      locale="jp-ja"
-                      :day-format="(endDate) => new Date(endDate).getDate()"
-                    >
-                      <v-btn text color="primary" @click="endDateMenu = false">
-                        Cancel
-                      </v-btn>
-                      <v-btn
-                        text
-                        color="primary"
-                        @click="$refs.endDateMenu.save(endDate)"
+                        no-title
+                        scrollable
+                        locale="jp-ja"
+                        :day-format="(endDate) => new Date(endDate).getDate()"
                       >
-                        OK
-                      </v-btn>
-                    </v-date-picker>
-                  </v-menu>
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="endDateMenu = false"
+                        >
+                          Cancel
+                        </v-btn>
+                        <v-btn
+                          text
+                          color="primary"
+                          @click="$refs.endDateMenu.save(endDate)"
+                        >
+                          OK
+                        </v-btn>
+                      </v-date-picker>
+                    </v-menu>
+                  </v-col>
                 </v-row>
+              </v-card>
               </v-col>
             </v-row>
           </v-container>
