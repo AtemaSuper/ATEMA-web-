@@ -19,10 +19,6 @@
                     outlined
                     dense
                   ></v-text-field>
-                </v-row>
-              </v-col>
-              <v-col cols="4">
-                <v-row class="pa-6">
                   <!-- Filter for status -->
                   <v-select
                     :items="statusList"
@@ -32,6 +28,8 @@
                     dense
                   ></v-select>
                 </v-row>
+              </v-col>
+              <v-col cols="4">
               </v-col>
               <v-col cols="4">
               <v-card  max-width="344" outlined>
