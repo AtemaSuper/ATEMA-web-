@@ -53,6 +53,8 @@ export default {
           return 'Header'
         case '/workField':
           return 'Header'
+        case '/contactBox':
+          return 'Header'
         default:
           return ''
       }
