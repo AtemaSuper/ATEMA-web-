@@ -8,6 +8,7 @@ import ClientField from '@/components/pages/clientField'
 import WorkField from '@/components/pages/workField'
 import AttendanceManage from '@/components/pages/attendanceManage'
 import Main from '@/components/pages/main'
+import ContactBox from '@/components/pages/contactBox'
 
 import PasswordReset from '@/components/pages/passwordReset'
 import OwnCompany from '@/components/pages/ownCompany'
@@ -56,6 +57,11 @@ export default new Router({
       path: '/attendanceManage',
       name: 'attendanceManage',
       component: AttendanceManage
+    },
+    {/** contactBox.vue */
+      path: '/contactBox',
+      name: 'contactBox',
+      component: ContactBox
     }
   ]
 })
