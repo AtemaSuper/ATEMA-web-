@@ -1,7 +1,7 @@
 <template>
     <v-list dense>
       <v-list-item-group>
-        <v-list-item v-for="(item, i) in items" :key="i">
+        <v-list-item v-for="(item, i) in setSideMenu" :key="i">
           <v-list-item-icon>
             <v-icon v-text="item.icon"></v-icon>
           </v-list-item-icon>
@@ -20,37 +20,35 @@ export default {
       items: []
     }
   },
-  mounted () {
-    // サイドメニューを設定
-    this.setSideMenu()
-  },
-  methods: {
+  computed: {
     // 画面に応じてサイドメニューをセットします。
     setSideMenu () {
-      var pageName = this.$route.name
-      switch (pageName) {
-        case 'workField':
-          this.items = [
-            {icon: 'mdi-wrench', text: '工事編集', page: ''},
-            {icon: 'mdi-gavel', text: '客先・現場編集', page: ''}
-          ]
-          break
-        case 'clientField':
-          this.items = [
-            {icon: 'mdi-wrench', text: '工事編集', page: ''},
-            {icon: 'mdi-gavel', text: '客先・現場編集', page: ''}
-          ]
-          break
-        case 'ownCompany':
-          this.items = [
+      var items = []
+      switch (this.$route.path) {
+        case '/ownCompany':
+          items = [
             {icon: 'mdi-pencil', text: '基本情報', page: ''},
             {icon: 'mdi-account', text: '勤怠情報', page: ''}
           ]
-          break
+          return items
+        case '/clientField':
+          items = [
+            {icon: 'mdi-wrench', text: '工事編集', page: ''},
+            {icon: 'mdi-gavel', text: '客先・現場編集', page: ''}
+          ]
+          return items
+        case '/workField':
+          items = [
+            {icon: 'mdi-wrench', text: '工事編集', page: ''},
+            {icon: 'mdi-gavel', text: '客先・現場編集', page: ''}
+          ]
+          return items
         default:
-          break
+          return items
       }
     }
+  },
+  methods: {
   }
 }
 </script>
