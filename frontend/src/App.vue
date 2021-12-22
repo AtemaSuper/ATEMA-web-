@@ -17,7 +17,7 @@
             </v-card>
           </v-col>
           <v-col>
-            <v-card>
+            <v-card class="page-contents">
               <router-view />
             </v-card>
           </v-col>
@@ -53,6 +53,12 @@ export default {
         case '/clientField':
           return 'Header'
         case '/workField':
+          return 'Header'
+        case '/contactBox':
+          return 'Header'
+        case '/ownWorkerAll':
+          return 'Header'
+        case '/subCompanyAll':
           return 'Header'
         default:
           return ''
@@ -152,5 +158,8 @@ export default {
   padding-top: 25px;
   font-size: 3.8rem;
   background-color: #cccccc;
+}
+.page-contents{
+  padding:2%;
 }
 </style>
