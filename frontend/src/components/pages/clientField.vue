@@ -1,4 +1,76 @@
 <template>
+  <v-app id="inspire">
+    <v-row class="justify-start">
+      <v-col cols="1">基本情報</v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="2" class="item-label">会社名</v-col>
+      <v-col cols="3">
+        <v-text-field
+          outlined
+          :rules="[rules.required]"
+          name="input-10-2"
+        ></v-text-field>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="2" class="item-label">設立</v-col>
+      <v-col cols="1">
+        <v-text-field outlined label="年"></v-text-field>
+      </v-col>
+      <v-col cols="1">
+        <v-text-field outlined label="月"></v-text-field>
+      </v-col>
+      <v-col cols="1">
+        <v-text-field outlined label="日"></v-text-field>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="2" class="item-label">代表者</v-col>
+      <v-col cols="3">
+        <v-text-field outlined></v-text-field>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="2" class="item-label">郵便番号</v-col>
+      <v-col cols="1">
+        <v-text-field outlined></v-text-field>
+      </v-col>
+      <v-col cols="2">
+        <v-text-field outlined></v-text-field>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="2" class="item-label">住所</v-col>
+      <v-col cols="3">
+        <v-text-field outlined></v-text-field>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="2" class="item-label">電話番号</v-col>
+      <v-col cols="1">
+        <v-text-field outlined></v-text-field>
+      </v-col>
+      <v-col cols="1">
+        <v-text-field outlined></v-text-field>
+      </v-col>
+      <v-col cols="1">
+        <v-text-field outlined></v-text-field>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="2" class="item-label">工種</v-col>
+      <v-col cols="3">
+        <v-select :items="items" label="Solo field" solo></v-select>
+        <v-btn class="mx-2" fab dark color="indigo">
+          <v-icon dark> mdi-plus </v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
+  </v-app>
+</template>
+<!--
+<template>
   <v-row justify="center">
     <v-dialog v-model="dialog" persistent max-width="600px">
       <template v-slot:activator="{ on, attrs }">
@@ -134,6 +206,7 @@
     </v-dialog>
   </v-row>
 </template>
+-->
 
 <script>
 export default {
