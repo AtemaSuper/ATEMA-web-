@@ -1,19 +1,25 @@
 <template>
-    <v-list dense>
-      <v-list-item-group>
-        <v-list-item v-for="(item, i) in setSideMenu" :key="i">
-          <v-list-item-icon>
-            <v-icon v-text="item.icon"></v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.text"></v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list-item-group>
-    </v-list>
+  <v-list dense>
+    <v-list-item-group>
+      <v-list-item
+        v-for="(item, i) in setSideMenu"
+        :key="i"
+        @click="selectPage(item.action)"
+      >
+        <v-list-item-icon>
+          <v-icon v-text="item.icon"></v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title v-text="item.text"></v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list-item-group>
+  </v-list>
 </template>
 
 <script>
+import OwnCompany from '@/components/pages/ownCompany'
+
 export default {
   data () {
     return {
@@ -27,8 +33,8 @@ export default {
       switch (this.$route.path) {
         case '/ownCompany':
           items = [
-            {icon: 'mdi-pencil', text: '基本情報', page: ''},
-            {icon: 'mdi-account', text: '勤怠情報', page: ''}
+            {icon: 'mdi-pencil', text: '基本情報', action: '1'},
+            {icon: 'mdi-account', text: '勤怠情報', action: '2'}
           ]
           return items
         case '/clientField':
@@ -49,6 +55,9 @@ export default {
     }
   },
   methods: {
+    selectPage (action) {
+      OwnCompany.selectPage(action)
+    }
   }
 }
 </script>

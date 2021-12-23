@@ -6,7 +6,7 @@
         <v-row v-if="showTitleComponent" class="title">
           <v-col cols="2"></v-col>
           <v-col>
-            <v-card>{{setTitle}}</v-card>
+            <v-card class="page-title">{{setTitle}}</v-card>
           </v-col>
           <v-col cols="1"></v-col>
         </v-row>
@@ -159,7 +159,10 @@ export default {
   font-size: 3.8rem;
   background-color: #cccccc;
 }
-.page-contents{
+.page-contents {
   padding:2%;
+}
+.page-title {
+  font-weight: 700;
 }
 </style>
