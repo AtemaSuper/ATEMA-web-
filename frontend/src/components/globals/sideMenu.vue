@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import OwnCompany from '@/components/pages/ownCompany'
+// import OwnCompany from '@/components/pages/ownCompany'
 
 export default {
   data () {
@@ -56,7 +56,7 @@ export default {
   },
   methods: {
     selectPage (action) {
-      OwnCompany.selectPage(action)
+      this.ownCompanyContents = action
     }
   }
 }

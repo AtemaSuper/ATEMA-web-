@@ -137,7 +137,6 @@
 
 <script>
 export default {
-  selectPage,
   data () {
     return {
       radioGroup: 1,
@@ -152,26 +151,21 @@ export default {
       }
     }
   },
-  components: {
-  },
+  components: {},
   computed: {
     // 表示するページコンテンツを切り替えます。
-    pageContents () {
-      return this.showContents
-    },
-    count () {
-      return this.$store.state.count
+    pageContents: {
+      get: function () {
+        return this.showContents
+      },
+      set: function (val) {
+        this.showContents = val
+      }
     }
   },
-  methods: {
+  methods: {}
+}
 
-  }
-}
-// サイドメニューからの実行ファンクション
-function selectPage (action) {
-  this.showContents = action
-  alert(this.showContents)
-}
 </script>
 
 <style scoped>

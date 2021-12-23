@@ -34,6 +34,7 @@ import SideMenu from '@/components/globals/sideMenu.vue'
 
 export default {
   name: 'App',
+  ownCompanyContents: 1,
   components: {Header, SideMenu},
   data () {
     return {
@@ -134,8 +135,7 @@ export default {
       }
     }
   },
-  methods: {
-  }
+  methods: {}
 }
 </script>
 
