@@ -1,465 +1,250 @@
 <template>
   <v-app id="clientField">
+<!-- 客先一覧 -->
       <v-container>
-        <v-sheet color="white" rounded outlined>
+        <v-sheet color="white table-display" rounded outlined>
           <v-row align="center" >
-            <v-col cols="12" sm="4" md="2">
-            </v-col>
+            <v-col cols="12" sm="4" md="2"></v-col>
             <v-col cols="12" sm="4" md="4"> </v-col>
             <v-col cols="12" sm="4" md="4"> </v-col>
             <v-col cols="12" sm="4" md="2">
-              <!-- 協力会社を追加するボタン -->
+              <!-- 客先を追加するボタン -->
               <v-btn
               outlined
-              @click="addSubCompany()"
-              >協力会社を追加<v-icon >mdi-plus</v-icon></v-btn>
+              @click="showEditClient()"
+              >客先を追加<v-icon >mdi-plus</v-icon></v-btn>
             </v-col>
           </v-row>
-              <v-row align="center" >
+          <v-row align="center" >
+            <v-col cols="12" sm="4" md="2"></v-col>
+            <v-col cols="12" sm="4" md="4"> </v-col>
+            <v-col cols="12" sm="4" md="4"> </v-col>
+          </v-row>
+          <v-row align="center" >
             <!-- data teble-->
             <!--ToDo  keyの値にnameを設定すると同名で重複エラーが出現するので、基本的にはDB取得時の各レコードごとのユニークIDを設定する -->
             <v-data-table
-              :headers="subCompanyHeader"
-              :items="getSubCompany"
-              :search="search"
-              :custom-filter="filterOnlyCapsText"
+              :headers="clientHeader"
+              :items="getClient"
+              :search="searchClient"
+              :custom-filter="searchClient"
               :items-per-page="-1"
               item-key="name"
               class="elevation-1 table"
               rowsPerPage: All
               height= '300'
+              @click:row="showEditClient"
             >
               <template v-slot:top>
-            <v-row >
-                <v-col cols='4'>
-            <!-- 検索窓 -->
-              <v-text-field
-                v-model="search"
-                label="検索"
-                class="expanding-search mt-1"
-                prepend-inner-icon="mdi-magnify"
-                outlined
-                dense
-              ></v-text-field>
-                </v-col>
-            </v-row>
+                <v-row >
+                  <v-col cols='4'>
+                    <!-- 検索窓 -->
+                    <v-text-field
+                      v-model="search"
+                      label="検索"
+                      class="expanding-search mt-1"
+                      prepend-inner-icon="mdi-magnify"
+                      outlined
+                      dense
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="6"></v-col>
+                  <v-col cols="2">
+                    <!-- 協力会社を追加するボタン -->
+                    <v-checkbox label="未進行を含める">
+                    </v-checkbox>
+                  </v-col>
+                </v-row>
               </template>
               <template v-slot:[`body.append`]> </template>
-
-              <!-- companyName Row -->
-              <template v-slot:[`item.companyName`]="{ item }">
-                <v-edit-dialog
-                  :return-value.sync="item.companyName"
-                  large
-                  @save="setItem(item.companyName)"
-                >
-                  <v-chip :color="getColor(item.companyName)" dark>
-                    {{ item.companyName }}
-                  </v-chip>
-                  <template v-slot:input>
-                    <div class="mt-4 text-h6">ステータスを変更</div>
-                    <v-select
-                      v-model="item.companyName"
-                      :items="companyNameItems"
-                      label="Outlined style"
-                      outlined
-                      autofocus
-                    ></v-select>
-                  </template>
-                </v-edit-dialog>
-              </template>
-
-              <!-- type Row -->
-              <template v-slot:[`item.type`]="{ item }">
-                <v-btn outlined  @click="typeContents(item)">
-                      {{ item.type }}
-                    </v-btn>
-              </template>
-
-              <!-- contract Row -->
-              <template >
-              </template>
-
-              <!-- startTime Row -->
-              <template v-slot:[`item.start`]="{ item }">
-                <v-edit-dialog
-                  :return-value.sync="item.start"
-                  large
-                  @save="setItem(item.start)"
-                >
-                <v-chip
-                label
-                outlined
-                >{{ item.start }}
-                </v-chip>
-                  <template v-slot:input>
-                    <vue-timepicker
-                     format="HH:mm"
-                     manual-input
-                     hide-dropdown
-                     v-model="item.start">
-                     </vue-timepicker>
-                  </template>
-                </v-edit-dialog>
-              </template>
-
-            <!-- restStart Row -->
-              <template v-slot:[`item.restStart`]="{ item }">
-                <v-edit-dialog
-                  :return-value.sync="item.restStart"
-                  large
-                  @save="setItem(item.restStart)"
-                >
-                <v-chip
-                label
-                outlined
-                >{{ item.restStart }}
-                </v-chip>
-                  <template v-slot:input>
-                    <vue-timepicker
-                     format="HH:mm"
-                     manual-input
-                     hide-dropdown
-                     v-model="item.restStart">
-                     </vue-timepicker>
-                  </template>
-                </v-edit-dialog>
-              </template>
-
-              <!-- restEnd Row -->
-              <template v-slot:[`item.restEnd`]="{ item }">
-                <v-edit-dialog
-                  :return-value.sync="item.restEnd"
-                  large
-                  @save="setItem(item.restEnd)"
-                >
-                <v-chip
-                label
-                outlined
-                >{{ item.restEnd }}
-                </v-chip>
-                  <template v-slot:input>
-                   <vue-timepicker
-                     format="HH:mm"
-                     manual-input
-                     hide-dropdown
-                     v-model="item.restEnd">
-                     </vue-timepicker>
-                  </template>
-                </v-edit-dialog>
-              </template>
-
-              <!-- end Row -->
-              <template v-slot:[`item.end`]="{ item }">
-                <v-edit-dialog
-                  :return-value.sync="item.end"
-                  large
-                  @save="setItem(item.end)"
-                >
-                <v-chip
-                label
-                outlined
-                >{{ item.end }}
-                </v-chip>
-                  <template v-slot:input>
-                    <vue-timepicker
-                     format="HH:mm"
-                     manual-input
-                     hide-dropdown
-                     v-model="item.end">
-                     </vue-timepicker>
-                  </template>
-                </v-edit-dialog>
-              </template>
-              <!-- noteContents Row -->
-              <template v-slot:[`item.note`]="{ item }" >
-                <v-btn outlined @click="noteContents(item)">
-                      {{ item.note }}
-                    </v-btn>
+              <!-- 削除ボタン -->
+              <template v-slot:[`item.delete`]="{ item }">
+                <v-btn @click.stop="onClickDelete(item)">
+                  <v-icon color="green darken-2">mdi-delete</v-icon>
+                </v-btn>
               </template>
             </v-data-table>
-              </v-row>
+          </v-row>
         </v-sheet>
-        <!-- noteContentsDialog-->
-        <v-dialog v-model="noteContentsDialog" max-width="300">
-           <v-card>
-                    <v-card-title class="text-h5 grey lighten-2">
-                      備考欄
-                    </v-card-title>
-                    <v-card-text>
-                      <v-textarea
-                      v-model="ditaileEdit.noteContents"
-                      outlined
-                      name="input-7-4"
-                      value= ditaileEdit.noteContents
-                      ></v-textarea>
-                    </v-card-text>
-                    <v-divider></v-divider>
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                    </v-card-actions>
-                  </v-card>
-              </v-dialog>
-<!--fieldDialog-->
-              <v-dialog v-model="fieldDialog" max-width="300">
-                  <v-card>
-                    <v-card-title class="text-h5 grey lighten-2">
-                      現場詳細表示
-                    </v-card-title>
-
-                    <v-card-text>
-                      現場名以外内容はベタ書きです
-                      <v-row>
-                        <v-col cols="12" sm="4" md="4" align="right">
-                          <h4>jobNo:</h4>
-                        </v-col>
-                        <v-col cols="12" sm="8" md="8" align="left">
-                          <h4>21-1234</h4>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" sm="4" md="4" align="right">
-                          <h4>客先:</h4>
-                        </v-col>
-                        <v-col cols="12" sm="8" md="8" align="left">
-                          <h4>株式会社ABC運送</h4>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" sm="4" md="4" align="right">
-                          <h4>現場名:</h4>
-                        </v-col>
-                        <v-col cols="12" sm="8" md="8" align="left">
-                          <h4>{{ ditaileEdit.field }}</h4>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" sm="4" md="4" align="right">
-                          <h4>工事件名:</h4>
-                        </v-col>
-                        <v-col cols="12" sm="8" md="8" align="left">
-                          <h4>
-                            ダクト修繕・改築工事ダクト修繕・改築工事ダクト修繕・改築工事
-                          </h4>
-                        </v-col>
-                      </v-row>
-                    </v-card-text>
-
-                    <v-divider></v-divider>
-
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
       </v-container>
+<!-- 現場一覧 -->
       <v-row class="title">
-          <v-col cols="2"></v-col>
-          <v-col>
-            <v-card>協力会社員一覧</v-card>
-          </v-col>
-          <v-col cols="1"></v-col>
-        </v-row>
+        <v-col>
+          <v-card>現場一覧</v-card>
+        </v-col>
+      </v-row>
+      <v-card>
         <v-container>
-            <v-sheet color="white" rounded outlined>
-          <v-row align="center" >
-            <v-col cols="12" sm="4" md="2">
-            </v-col>
-            <v-col cols="12" sm="4" md="4"> </v-col>
-            <v-col cols="12" sm="4" md="4"> </v-col>
-            <v-col cols="12" sm="4" md="2">
-              <!-- 協力会社を追加するボタン -->
-              <v-btn
-              outlined
-              @click="addSubCompany()"
-              >社員を追加<v-icon >mdi-plus</v-icon></v-btn>
-            </v-col>
-          </v-row>
-              <v-row align="center" >
-            <!-- data teble-->
-            <!--ToDo  keyの値にnameを設定すると同名で重複エラーが出現するので、基本的にはDB取得時の各レコードごとのユニークIDを設定する -->
-            <v-data-table
-              :headers="subWorkerHeader"
-              :items="getAttendanceList"
-              :search="search"
-              :custom-filter="filterOnlyCapsText"
-              :items-per-page="-1"
-              item-key="name"
-              class="elevation-1 table"
-              rowsPerPage: All
-              height= '300'
-            >
-              <template v-slot:top>
-            <v-row >
-                <v-col cols='4'>
-            <!-- 検索窓 -->
-              <v-text-field
-                v-model="search"
-                label="検索"
-                class="expanding-search mt-1"
-                prepend-inner-icon="mdi-magnify"
+          <v-sheet color="white table-display" rounded outlined>
+            <v-row align="center" >
+              <v-col cols="12" sm="4" md="2"></v-col>
+              <v-col cols="12" sm="4" md="4"> </v-col>
+              <v-col cols="12" sm="4" md="4"> </v-col>
+              <v-col cols="12" sm="4" md="2">
+                <!-- 現場を追加するボタン -->
+                <v-btn
                 outlined
-                dense
-              ></v-text-field>
-                </v-col>
+                @click="showEditField()"
+                >現場を追加<v-icon >mdi-plus</v-icon></v-btn>
+              </v-col>
             </v-row>
-              </template>
-              <template v-slot:[`body.append`]> </template>
+            <v-row align="center" >
+              <v-col cols="12" sm="4" md="2"></v-col>
+              <v-col cols="12" sm="4" md="4"> </v-col>
+              <v-col cols="12" sm="4" md="4"> </v-col>
+            </v-row>
+            <v-row align="center" >
+              <!-- data teble-->
+              <!--ToDo  keyの値にnameを設定すると同名で重複エラーが出現するので、基本的にはDB取得時の各レコードごとのユニークIDを設定する -->
+              <v-data-table
+                :headers="fieldHeader"
+                :items="getField"
+                :search="searchField"
+                :custom-filter="searchField"
+                :items-per-page="-1"
+                item-key="name"
+                class="elevation-1 table"
+                rowsPerPage: All
+                height= '300'
+                @click:row="showEditField"
+              >
+                <template v-slot:top>
+                  <v-row >
+                    <v-col cols='4'>
+                      <!-- 検索窓 -->
+                      <v-text-field
+                        v-model="search"
+                        label="検索"
+                        class="expanding-search mt-1"
+                        prepend-inner-icon="mdi-magnify"
+                        outlined
+                        dense
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="6"></v-col>
+                    <v-col cols="2">
+                      <!-- 協力会社を追加するボタン -->
+                      <v-checkbox label="未進行を含める">
+                      </v-checkbox>
+                    </v-col>
+                  </v-row>
+                </template>
+                <template v-slot:[`body.append`]> </template>
+                <!-- 削除ボタン -->
+                <template v-slot:[`item.delete`]="{ item }">
+                  <v-btn @click.stop="onClickDelete(item)">
+                    <v-icon color="green darken-2">mdi-delete</v-icon>
+                  </v-btn>
+                </template>
+              </v-data-table>
+            </v-row>
+          </v-sheet>
+<!-- 客先編集ダイアログ -->
+          <v-dialog v-model="clientDialog" max-width="480">
+            <v-card>
+              <v-card-title class="text-h5 grey lighten-2">
+                客先編集
+              </v-card-title>
 
-              <!-- status Row -->
-              <template v-slot:[`item.status`]="{ item }">
-                <v-edit-dialog
-                  :return-value.sync="item.status"
-                  large
-                  @save="setItem(item.status)"
-                >
-                  <v-chip :color="getColor(item.status)" dark>
-                    {{ item.status }}
-                  </v-chip>
-                  <template v-slot:input>
-                    <div class="mt-4 text-h6">ステータスを変更</div>
-                    <v-select
-                      v-model="item.status"
-                      :items="statusItems"
-                      label="Outlined style"
-                      outlined
-                      autofocus
-                    ></v-select>
-                  </template>
-                </v-edit-dialog>
-              </template>
+              <v-card-text>
+                <v-row>
+                  <v-col cols="3">
+                    <div class="item-title">客先名</div>
+                  </v-col>
+                  <v-col cols="2">
+                    <div class="item-required">
+                      <v-chip color="red" dark>必須</v-chip></div>
+                  </v-col>
+                  <v-col>
+                    <v-text-field></v-text-field>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="3">
+                    <div class="item-title">ステータス</div>
+                  </v-col>
+                  <v-col cols="2">
+                    <div class="item-required">
+                      <v-chip color="red" dark>必須</v-chip></div>
+                  </v-col>
+                  <v-col>
+                    <v-radio-group v-model="clientProgress" row>
+                      <v-radio label="進行中" value="inProgress"></v-radio>
+                      <v-radio label="未進行" value="notProgress"></v-radio>
+                    </v-radio-group>
+                  </v-col>
+                </v-row>
+              </v-card-text>
 
-              <!-- field Row -->
-              <template v-slot:[`item.field`]="{ item }">
-                <v-btn outlined  @click="fieldContents(item)">
-                      {{ item.field }}
-                    </v-btn>
-              </template>
+              <v-divider></v-divider>
 
-              <!-- contract Row -->
-              <template v-slot:[`item.contract`]="{ item }">
-                <v-edit-dialog
-                  :return-value.sync="item.contract"
-                  large
-                  @save="setItem(item.contract)"
-                >
-                  <v-chip>
-                    {{ item.contract }}
-                  </v-chip>
-                  <template v-slot:input>
-                    <div class="mt-4 text-h6">請負形式を選択</div>
-                    <v-select
-                      v-model="item.contract"
-                      :items="contractItems"
-                      label="Outlined style"
-                      outlined
-                      autofocus
-                    ></v-select>
-                  </template>
-                </v-edit-dialog>
-              </template>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" @click="saveClientInfo(item)">確定</v-btn>
+                <v-btn @click="closeClientDialog">キャンセル</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+<!-- 現場編集ダイアログ -->
+          <v-dialog v-model="fieldDialog" max-width="480">
+            <v-card>
+              <v-card-title class="text-h5 grey lighten-2">
+                現場編集
+              </v-card-title>
 
-              <!-- startTime Row -->
-              <template v-slot:[`item.start`]="{ item }">
-                <v-edit-dialog
-                  :return-value.sync="item.start"
-                  large
-                  @save="setItem(item.start)"
-                >
-                <v-chip
-                label
-                outlined
-                >{{ item.start }}
-                </v-chip>
-                  <template v-slot:input>
-                    <vue-timepicker
-                     format="HH:mm"
-                     manual-input
-                     hide-dropdown
-                     v-model="item.start">
-                     </vue-timepicker>
-                  </template>
-                </v-edit-dialog>
-              </template>
+              <v-card-text>
+                <v-row>
+                  <v-col cols="3">
+                    <div class="item-title">客先名</div>
+                  </v-col>
+                  <v-col cols="2">
+                    <div class="item-required">
+                      <v-chip color="red" dark>必須</v-chip></div>
+                  </v-col>
+                  <v-col>
+                    <v-select></v-select>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="3">
+                    <div class="item-title">現場名</div>
+                  </v-col>
+                  <v-col cols="2">
+                    <div class="item-required">
+                      <v-chip color="red" dark>必須</v-chip></div>
+                  </v-col>
+                  <v-col>
+                    <v-text-field></v-text-field>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="3">
+                    <div class="item-title">ステータス</div>
+                  </v-col>
+                  <v-col cols="2">
+                    <div class="item-required">
+                      <v-chip color="red" dark>必須</v-chip></div>
+                  </v-col>
+                  <v-col>
+                    <v-radio-group v-model="fieldProgress" row>
+                      <v-radio label="進行中" value="inProgress"></v-radio>
+                      <v-radio label="未進行" value="notProgress"></v-radio>
+                    </v-radio-group>
+                  </v-col>
+                </v-row>
+              </v-card-text>
 
-            <!-- restStart Row -->
-              <template v-slot:[`item.restStart`]="{ item }">
-                <v-edit-dialog
-                  :return-value.sync="item.restStart"
-                  large
-                  @save="setItem(item.restStart)"
-                >
-                <v-chip
-                label
-                outlined
-                >{{ item.restStart }}
-                </v-chip>
-                  <template v-slot:input>
-                    <vue-timepicker
-                     format="HH:mm"
-                     manual-input
-                     hide-dropdown
-                     v-model="item.restStart">
-                     </vue-timepicker>
-                  </template>
-                </v-edit-dialog>
-              </template>
+              <v-divider></v-divider>
 
-              <!-- restEnd Row -->
-              <template v-slot:[`item.restEnd`]="{ item }">
-                <v-edit-dialog
-                  :return-value.sync="item.restEnd"
-                  large
-                  @save="setItem(item.restEnd)"
-                >
-                <v-chip
-                label
-                outlined
-                >{{ item.restEnd }}
-                </v-chip>
-                  <template v-slot:input>
-                   <vue-timepicker
-                     format="HH:mm"
-                     manual-input
-                     hide-dropdown
-                     v-model="item.restEnd">
-                     </vue-timepicker>
-                  </template>
-                </v-edit-dialog>
-              </template>
-
-              <!-- end Row -->
-              <template v-slot:[`item.end`]="{ item }">
-                <v-edit-dialog
-                  :return-value.sync="item.end"
-                  large
-                  @save="setItem(item.end)"
-                >
-                <v-chip
-                label
-                outlined
-                >{{ item.end }}
-                </v-chip>
-                  <template v-slot:input>
-                    <vue-timepicker
-                     format="HH:mm"
-                     manual-input
-                     hide-dropdown
-                     v-model="item.end">
-                     </vue-timepicker>
-                  </template>
-                </v-edit-dialog>
-              </template>
-              <!-- noteContents Row -->
-              <template v-slot:[`item.note`]="{ item }" >
-                <v-btn outlined @click="noteContents(item)">
-                      {{ item.note }}
-                    </v-btn>
-              </template>
-            </v-data-table>
-              </v-row>
-        </v-sheet>
-      </v-container>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" @click="saveFieldInfo(item)">確定</v-btn>
+                <v-btn @click="closeFieldDialog">キャンセル</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-container>
+      </v-card>
   </v-app>
 </template>
 
@@ -474,79 +259,78 @@ export default {
     VueTimepicker
   },
   data: () => ({
-    search: '',
-    status: '',
-    menu: false,
-    date: '',
-    statusItems: ['出勤中', '休憩中', '退勤中', '早出', '深夜'],
-    contractItems: ['請負', '常用'],
-    ditaileEdit: {},
-    noteContentsDialog: false,
+    searchClient: '',
+    searchField: '',
+    clientProgress: 'inProgress',
+    fieldProgress: 'inProgress',
+    editItem: {},
+    clientDialog: false,
     fieldDialog: false
   }),
   computed: {
     /** v-tableのヘッダーを設定 */
-    subCompanyHeader () {
+    clientHeader () {
       return [
         {
-          text: '会社名',
+          text: '客先',
           align: 'center',
           sortable: false,
-          value: 'companyName',
-          width: '20%'
+          value: 'clientName',
+          width: '70%'
         },
         {
-          text: '工種',
-          value: 'type',
+          text: 'ステータス',
+          value: 'status',
           align: 'center',
-          filter: value => {
-            if (!this.status) return true
-
-            return value < parseInt(this.status)
-          },
-          width: '30%'
+          width: '20%'
         },
         { text: '削除',
           sortable: false,
-          align: 'right',
-          width: '50%'}
+          value: 'delete',
+          align: 'center',
+          width: '10%'}
       ]
     },
     /** v-tableのヘッダーを設定 */
-    subWorkerHeader () {
+    fieldHeader () {
       return [
         {
-          text: '職員名',
+          text: '客先',
           align: 'center',
           sortable: false,
-          value: 'name',
+          value: 'clientName',
           width: '20%'
         },
         {
-          text: '所属会社',
+          text: '現場名',
+          value: 'fieldName',
+          align: 'center',
+          width: '50%'
+        },
+        {
+          text: 'ステータス',
           value: 'status',
           align: 'center',
-          filter: value => {
-            if (!this.status) return true
-
-            return value < parseInt(this.status)
-          },
-          width: '30%'
+          width: '20%'
         },
-        { text: '削除', value: 'note', sortable: false, align: 'right', width: '50%' }
+        { text: '削除',
+          value: 'delete',
+          sortable: false,
+          align: 'center',
+          width: '10%'}
       ]
     },
     /** Vuex storeで設定した値を取得 (オブジェクトで取得するので、配列を指名して)リターン */
-    getSubCompany () {
+    getClient () {
       /** ToDo */
-      /** Vuex subCompanyで定義したActionメソッドをここで呼び出し */
-      return this.$store.state.subCompany.subCompany
+      /** Vuex clientで定義したActionメソッドをここで呼び出し */
+      return this.$store.state.clientFieldList.clientList
     },
     /** Vuex storeで設定した値を取得 (オブジェクトで取得するので、配列を指名して)リターン */
-    getAttendanceList () {
+    getField () {
       /** ToDo */
-      /** Vuex attendanceListで定義したActionメソッドをここで呼び出し */
-      return this.$store.state.attendanceList.attendanceList
+      /** Vuex fieldListで定義したActionメソッドをここで呼び出し */
+      return this.$store.state.clientFieldList.fieldList
     }
   },
   methods: {
@@ -555,17 +339,18 @@ export default {
       console.log(format)
     },
     // 検索
-    filterOnlyCapsText (value, search, item) {
+    searchClient (value, search, item) {
       return value != null &&
           search != null &&
           typeof value === 'string' &&
           value.toString().toLocaleUpperCase().indexOf(search) !== -1
     },
-    /** ステータスカラーの変更 */
-    getColor (status) {
-      if (status === '出勤中') return 'green'
-      else if (status === '休憩中') return 'orange'
-      else return 'red'
+    // 検索
+    searchField (value, search, item) {
+      return value != null &&
+          search != null &&
+          typeof value === 'string' &&
+          value.toString().toLocaleUpperCase().indexOf(search) !== -1
     },
     /** データ変更処理 */
     setItem (item) {
@@ -574,16 +359,39 @@ export default {
       /** 1-NCMBのデータ更新処理呼び出し express側定義 axioメソッド */
       console.log(item)
     },
-    noteContents (item) {
-      this.ditaileEdit = item
-      this.noteContentsDialog = true
+    // 客先編集 ダイアログ表示処理
+    showEditClient (item) {
+      this.editItem = item
+      this.clientDialog = true
     },
-    fieldContents (item) {
-      this.ditaileEdit = item
+    // 客先編集 ダイアログ閉じる処理
+    closeClientDialog () {
+      this.editItem = []
+      this.clientDialog = false
+    },
+    // 客先編集 保存処理
+    saveClientInfo (item) {
+      // TODO 保存処理
+      this.clientDialog = false
+    },
+    // 現場編集 ダイアログ表示処理
+    showEditField (item) {
+      this.editItem = item
       this.fieldDialog = true
     },
-    addSubCompany () {
-      console.log('true')
+    // 現場編集 ダイアログ閉じる処理
+    closeFieldDialog () {
+      this.editItem = []
+      this.fieldDialog = false
+    },
+    // 現場編集 保存処理
+    saveFieldInfo (item) {
+      // TODO 保存処理
+      this.fieldDialog = false
+    },
+    // 削除ボタン押下処理
+    onClickDelete (item) {
+      alert('削除')
     }
 
   }
@@ -593,12 +401,21 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .title {
-  height: 75px;
-  padding-top: 25px;
   font-size: 3.8rem;
+  height: 75px;
+  padding-top: 5px;
   background-color: #cccccc;
+}
+.item-title {
+  padding-top: 20px;
+}
+.item-required {
+  padding-top: 15px;
 }
 .table {
   width: 100%;
+}
+.table-display {
+  margin-bottom: 10px;
 }
 </style>
