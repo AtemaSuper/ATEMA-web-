@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import counter from './modules/counter/index'
 import attendanceList from './modules/attendanceList/index'
 import contactList from './modules/contactList/index'
+import ownWorker from './modules/ownWorker/index'
 
 Vue.use(Vuex)
 export default new Vuex.Store({
@@ -10,7 +11,8 @@ export default new Vuex.Store({
   modules: {
     counter,
     attendanceList,
-    contactList
+    contactList,
+    ownWorker
   },
   state: {
   },
