@@ -9,6 +9,7 @@ import WorkField from '@/components/pages/workField'
 import AttendanceManage from '@/components/pages/attendanceManage'
 import Main from '@/components/pages/main'
 import ContactBox from '@/components/pages/contactBox'
+import OwnWorkerAll from '@/components/pages/ownWorkerAll'
 
 import PasswordReset from '@/components/pages/passwordReset'
 import OwnCompany from '@/components/pages/ownCompany'
@@ -62,6 +63,11 @@ export default new Router({
       path: '/contactBox',
       name: 'contactBox',
       component: ContactBox
+    },
+    {/** ownWorkerAll.vue */
+      path: '/ownWorkerAll',
+      name: 'ownWorkerAll',
+      component: OwnWorkerAll
     }
   ]
 })
