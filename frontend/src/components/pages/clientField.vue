@@ -1,6 +1,7 @@
 <template>
   <v-app id="clientField">
 <!-- 客先一覧 -->
+    <v-card>
       <v-container>
         <v-sheet color="white table-display" rounded outlined>
           <v-row align="center" >
@@ -67,6 +68,7 @@
           </v-row>
         </v-sheet>
       </v-container>
+        </v-card>
 <!-- 現場一覧 -->
       <v-row class="title">
         <v-col>
