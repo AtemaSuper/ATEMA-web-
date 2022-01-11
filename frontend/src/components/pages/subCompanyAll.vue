@@ -9,10 +9,113 @@
             <v-col cols="12" sm="4" md="4"> </v-col>
             <v-col cols="12" sm="4" md="2">
               <!-- 協力会社を追加するボタン -->
-              <v-btn
-              outlined
-              @click="addSubCompany()"
-              >協力会社を追加<v-icon >mdi-plus</v-icon></v-btn>
+              <template>
+                <v-row justify="center">
+                  <v-dialog v-model="adialog" max-width="600px">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn outlined v-bind="attrs" v-on="on" @click="addSubCompany()">
+                          協力会社を追加<v-icon >mdi-plus</v-icon>
+                        </v-btn>
+                      </template>
+                      <v-card>
+                        <v-card-title>
+                          <v-row>
+                            <v-col cols="12" lg="12" sm="12">
+                              <span class="text-h4">協力会社を追加</span>
+                            </v-col>
+                            <v-col cols="12" lg="6" sm="6">
+                              基本情報
+                            </v-col>
+                            <v-col cols="12" lg="6" sm="6">
+                            </v-col>
+                          </v-row>
+                        </v-card-title>
+                        <v-card-text>
+                          <v-row align="center">
+                            <v-col cols="12" sm="6" md="6">
+                            <p class="text-h5">会社名</p>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                              <v-text-field outlined label="会社名を入力してください"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                            <p class="text-h5">設立</p>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                              <v-text-field outlined label="設立日を入力してください"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                            <p class="text-h5">代表者</p>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                              <v-text-field outlined label="代表者名を入力してください"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                            <p class="text-h5">郵便番号</p>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                              <v-text-field outlined label="郵便番号を入力してください"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                            <p class="text-h5">住所</p>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                              <v-text-field outlined label="住所を入力してください"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                            <p class="text-h5">電話番号</p>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                              <v-text-field outlined label="電話番号を入力してください"></v-text-field>
+                            </v-col>
+                            <v-col>
+                              <p class="text-h5">工種</p>
+                            </v-col>
+                            <v-col>
+                              <v-select
+                                :items="['建築塗装業', '足場', '配管']"
+                                outlined
+                                label="工種を選択してください"
+                                required
+                              ></v-select>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col></v-col>
+                            <v-col>
+                              <v-btn color="primary" fab small>
+                                <v-icon>mdi-plus</v-icon>
+                              </v-btn>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col cols="12" sm="6" md="6">
+                            <p class="text-h5">備考</p>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                              <v-textarea outlined></v-textarea>
+                            </v-col>
+                          </v-row>
+                        </v-card-text>
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn
+                            color="primary"
+                            @click="adialog = false"
+                          >
+                            確定
+                          </v-btn>
+                          <v-btn
+                            color="white"
+                            @click="adialog = false"
+                          >
+                            キャンセル
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                   </v-dialog>
+                </v-row>
+              </template>
             </v-col>
           </v-row>
               <v-row align="center" >
@@ -50,8 +153,10 @@
               <template v-slot:[`item.delete`]="{ item }">
           <v-btn
             color="error"
-            rounded
             depressed
+            small
+            outlined
+            fab
             @click="deleteItem(item)"
           >
            <v-icon dark>
@@ -77,7 +182,7 @@
             <v-col cols="12" sm="4" md="4"> </v-col>
             <v-col cols="12" sm="4" md="4"> </v-col>
             <v-col cols="12" sm="4" md="2">
-              <!-- 協力会社を追加するボタン -->
+              <!-- 社員を追加するボタン -->
               <v-btn
               outlined
               @click="addSubCompany()"
@@ -120,7 +225,9 @@
           <v-btn
             color="error"
             depressed
-            rounded
+            small
+            outlined
+            fab
             @click="deleteItem(item)"
           >
            <v-icon dark>
@@ -139,7 +246,7 @@
 export default {
   name: 'attendanceManage',
   data: () => ({
-    search: '',
+    adialog: false,
     status: '',
     menu: false,
     date: '',
@@ -225,12 +332,6 @@ export default {
           search != null &&
           typeof value === 'string' &&
           value.toString().toLocaleUpperCase().indexOf(search) !== -1
-    },
-    /** ステータスカラーの変更 */
-    getColor (status) {
-      if (status === '出勤中') return 'green'
-      else if (status === '休憩中') return 'orange'
-      else return 'red'
     },
     /** データ変更処理 */
     setItem (item) {
