@@ -145,7 +145,6 @@ export default {
       tardyTime: '1-minutes',
       roundingTime: '15-minutes',
       roundTime: 'half-up',
-      // showContents: 1,
       rules: {
         required: value => !!value || '入力必須です。',
         min: v => v.length >= 8 || 'Min 8 characters',

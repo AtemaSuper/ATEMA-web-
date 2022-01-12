@@ -72,9 +72,9 @@ export default {
         case '/ownCompany':
           return 'SideMenu'
         case '/clientField':
-          return true
+          return 'SideMenu'
         case '/workField':
-          return true
+          return 'SideMenu'
         default:
           return ''
       }

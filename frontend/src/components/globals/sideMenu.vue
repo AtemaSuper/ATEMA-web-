@@ -36,16 +36,16 @@ export default {
             {icon: 'mdi-account', text: '勤怠情報', contentsId: '2'}
           ]
           return items
-        case '/clientField':
-          items = [
-            {icon: 'mdi-wrench', text: '工事編集', page: ''},
-            {icon: 'mdi-gavel', text: '客先・現場編集', page: ''}
-          ]
-          return items
         case '/workField':
           items = [
-            {icon: 'mdi-wrench', text: '工事編集', page: ''},
-            {icon: 'mdi-gavel', text: '客先・現場編集', page: ''}
+            {icon: 'mdi-wrench', text: '工事編集', contentsId: '3'},
+            {icon: 'mdi-gavel', text: '客先・現場編集', contentsId: '4'}
+          ]
+          return items
+        case '/clientField':
+          items = [
+            {icon: 'mdi-wrench', text: '工事編集', contentsId: '3'},
+            {icon: 'mdi-gavel', text: '客先・現場編集', contentsId: '4'}
           ]
           return items
         default:
@@ -55,7 +55,13 @@ export default {
   },
   methods: {
     selectPage (contentsId) {
-      this.$emit('parentMethod', contentsId)
+      if (contentsId === '1' || contentsId === '2') {
+        this.$emit('parentMethod', contentsId)
+      } else if (contentsId === '3') {
+        this.$router.push('/workField')
+      } else if (contentsId === '4') {
+        this.$router.push('/clientField')
+      }
     }
   }
 }
