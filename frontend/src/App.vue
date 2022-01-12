@@ -13,12 +13,12 @@
         <v-row class="main-contents">
           <v-col cols="2" v-if="showSideComponent">
             <v-card class="mx-auto side-menu-contents" max-width="350">
-              <component :is="sideComponent"></component>
+              <component @parentMethod="updateContentsId" :is="sideComponent"></component>
             </v-card>
           </v-col>
           <v-col>
             <v-card class="page-contents">
-              <router-view />
+              <router-view  v-bind:showContents="contentsId"  />
             </v-card>
           </v-col>
           <v-col cols="1" v-if="showSideComponent"></v-col>
@@ -38,7 +38,8 @@ export default {
   components: {Header, SideMenu},
   data () {
     return {
-      title: ''
+      title: '',
+      contentsId: 1
     }
   },
   computed: {
@@ -135,7 +136,11 @@ export default {
       }
     }
   },
-  methods: {}
+  methods: {
+    updateContentsId (contentsId) {
+      this.contentsId = contentsId
+    }
+  }
 }
 </script>
 
