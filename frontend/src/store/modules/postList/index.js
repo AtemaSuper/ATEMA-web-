@@ -1,40 +1,37 @@
 const state = {
   postList: [
     {
-      post_name: '現場A',
-      attendance_permission: '請負',
-      own_worker_permission: '09:00',
-      sub_worker_permission: '12:00',
-      own_company_permission: '13:00',
-      plan_pay_permission: '18:00'
+      postId: 1,
+      postName: '管理者',
+      attendancePermission: 1,
+      ownWorkerPermission: 1,
+      subWorkerPermission: 1,
+      ownCompanyPermission: 1,
+      planPayPermission: 1
     }, {
-      post_name: '現場A',
-      attendance_permission: '請負',
-      own_worker_permission: '09:00',
-      sub_worker_permission: '12:00',
-      own_company_permission: '13:00',
-      plan_pay_permission: '18:00'
+      postId: 2,
+      postName: '一般',
+      attendancePermission: -1,
+      ownWorkerPermission: -1,
+      subWorkerPermission: 0,
+      ownCompanyPermission: -1,
+      planPayPermission: -1
     }, {
-      post_name: '現場A',
-      attendance_permission: '請負',
-      own_worker_permission: '09:00',
-      sub_worker_permission: '12:00',
-      own_company_permission: '13:00',
-      plan_pay_permission: '18:00'
+      postId: 3,
+      postName: '事務',
+      attendancePermission: 1,
+      ownWorkerPermission: 1,
+      subWorkerPermission: 1,
+      ownCompanyPermission: 1,
+      planPayPermission: 1
     }, {
-      post_name: '現場A',
-      attendance_permission: '請負',
-      own_worker_permission: '09:00',
-      sub_worker_permission: '12:00',
-      own_company_permission: '13:00',
-      plan_pay_permission: '18:00'
-    }, {
-      post_name: '現場A',
-      attendance_permission: '請負',
-      own_worker_permission: '09:00',
-      sub_worker_permission: '12:00',
-      own_company_permission: '13:00',
-      plan_pay_permission: '18:00'
+      postId: 4,
+      postName: 'アルバイト',
+      attendancePermission: -1,
+      ownWorkerPermission: -1,
+      subWorkerPermission: -1,
+      ownCompanyPermission: -1,
+      planPayPermission: -1
     }
   ]
 }
