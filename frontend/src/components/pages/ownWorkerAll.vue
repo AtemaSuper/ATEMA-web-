@@ -81,7 +81,7 @@
                 </v-card>
               </v-dialog>
               <!-- 従業員詳細表示ダイアログ -->
-              <v-dialog v-model="dialogWorkerShow" max-width="600px">
+              <v-dialog v-model="dialogWorkerShow" persistent max-width="600px">
                 <v-card>
                   <v-card-title>
                     <v-row>
@@ -222,8 +222,9 @@
                 </v-card>
               </v-dialog>
               <!-- 従業員詳細編集ダイアログ -->
-              <v-dialog v-model="dialogWorkerEdit" max-width="600px">
+              <v-dialog v-model="dialogWorkerEdit" persistent max-width="600px">
                 <v-card>
+                  <v-icon></v-icon>
                   <v-card-title>
                     <v-row>
                       <v-col cols="12" lg="12" sm="12">
@@ -550,7 +551,7 @@
                   </v-card-text>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" @click="saveWorker()"> 編集 </v-btn>
+                    <v-btn color="primary" @click="saveWorker()"> 保存 </v-btn>
                     <v-btn color="white" @click="closeWorkerEdit()">
                       キャンセル
                     </v-btn>
@@ -724,9 +725,7 @@
           </template>
           <!-- postName Row -->
           <template v-slot:[`item.postName`]="{ item }">
-            <v-btn outlined @click="editPostItem(item)">
               {{ item.postName }}
-            </v-btn>
           </template>
           <!-- attendancePermission Row -->
           <template v-slot:[`item.attendancePermission`]="{ item }">
