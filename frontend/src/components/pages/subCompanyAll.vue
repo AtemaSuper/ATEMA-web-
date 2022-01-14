@@ -42,31 +42,31 @@
                             <p class="text-h5">設立</p>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
-                              <v-text-field outlined label="設立日を入力してください"></v-text-field>
+                              <v-text-field outlined></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                             <p class="text-h5">代表者</p>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
-                              <v-text-field outlined label="代表者名を入力してください"></v-text-field>
+                              <v-text-field outlined></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                             <p class="text-h5">郵便番号</p>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
-                              <v-text-field outlined label="郵便番号を入力してください"></v-text-field>
+                              <v-text-field outlined></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                             <p class="text-h5">住所</p>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
-                              <v-text-field outlined label="住所を入力してください"></v-text-field>
+                              <v-text-field outlined></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                             <p class="text-h5">電話番号</p>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
-                              <v-text-field outlined label="電話番号を入力してください"></v-text-field>
+                              <v-text-field outlined></v-text-field>
                             </v-col>
                             <v-col>
                               <p class="text-h5">工種</p>
@@ -118,7 +118,7 @@
               </template>
             </v-col>
           </v-row>
-              <v-row align="center" >
+          <v-row align="center" >
             <!-- data teble-->
             <!--ToDo  keyの値にnameを設定すると同名で重複エラーが出現するので、基本的にはDB取得時の各レコードごとのユニークIDを設定する -->
             <v-data-table
@@ -151,18 +151,18 @@
 
               <!-- companyName Row -->
               <template v-slot:[`item.delete`]="{ item }">
-          <v-btn
-            color="error"
-            depressed
-            small
-            outlined
-            fab
-            @click="deleteItem(item)"
-          >
-           <v-icon dark>
-            mdi-delete
-           </v-icon>
-          </v-btn>
+                <v-btn
+                  color="error"
+                  depressed
+                  small
+                  outlined
+                  fab
+                  @click="deleteItem(item)"
+                >
+                <v-icon dark>
+                  mdi-delete
+                </v-icon>
+                </v-btn>
               </template>
             </v-data-table>
               </v-row>
@@ -215,6 +215,26 @@
                 outlined
                 dense
               ></v-text-field>
+                </v-col>
+                <!-- 従業員一覧ダウンロードメニュー -->
+                <v-col align="right">
+                  <v-menu offset-y>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn justify="center" outlined v-bind="attrs" v-on="on">
+                        社員一覧ダウンロード<v-icon color="orange darken-2">mdi-arrow-up-bold-box-outline</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item @click="download('CSV')">
+                        <v-list-item-title>自社員一覧（CSV）</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="download('Excel')">
+                        <v-list-item-title
+                          >自社員一覧（Excel）</v-list-item-title
+                        >
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
                 </v-col>
             </v-row>
               </template>
