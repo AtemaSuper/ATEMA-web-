@@ -1,20 +1,77 @@
 <template>
-  <v-row justify="center">
-    <v-dialog
-      v-model="dialog"
+  <v-app id="workField">
+<!-- 工事一覧 -->
+  <v-card>
+    <v-container>
+      <v-sheet color="white table-display" rounded outlined>
+        <v-row align="center" >
+          <v-col cols="12" sm="4" md="2"></v-col>
+          <v-col cols="12" sm="4" md="4"> </v-col>
+          <v-col cols="12" sm="4" md="4"> </v-col>
+          <v-col cols="12" sm="4" md="2">
+            <!-- 工事を追加するボタン -->
+            <v-btn
+            outlined
+            @click="showEditWorkField()"
+            >工事を追加<v-icon >mdi-plus</v-icon></v-btn>
+          </v-col>
+        </v-row>
+        <v-row align="center" >
+          <v-col cols="12" sm="4" md="2"></v-col>
+          <v-col cols="12" sm="4" md="4"> </v-col>
+          <v-col cols="12" sm="4" md="4"> </v-col>
+        </v-row>
+        <v-row align="center" >
+          <!-- data teble-->
+          <!--ToDo  keyの値にnameを設定すると同名で重複エラーが出現するので、基本的にはDB取得時の各レコードごとのユニークIDを設定する -->
+          <v-data-table
+            :headers="workFieldHeader"
+            :items="getWorkField"
+            :search="searchWorkField"
+            :custom-filter="searchWorkField"
+            :items-per-page="-1"
+            item-key="name"
+            class="elevation-1 table"
+            rowsPerPage: All
+            height= '300'
+            @click:row="showEditWorkField"
+          >
+            <template v-slot:top>
+              <v-row >
+                <v-col cols='4'>
+                  <!-- 検索窓 -->
+                  <v-text-field
+                    v-model="search"
+                    label="検索"
+                    class="expanding-search mt-1"
+                    prepend-inner-icon="mdi-magnify"
+                    outlined
+                    dense
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="6"></v-col>
+                <v-col cols="2">
+                  <!-- 協力会社を追加するボタン -->
+                  <v-checkbox label="未進行を含める">
+                  </v-checkbox>
+                </v-col>
+              </v-row>
+            </template>
+            <template v-slot:[`body.append`]> </template>
+            <!-- 削除ボタン -->
+            <template v-slot:[`item.delete`]="{ item }">
+              <v-btn @click.stop="onClickDelete(item)">
+                <v-icon color="green darken-2">mdi-delete</v-icon>
+              </v-btn>
+            </template>
+          </v-data-table>
+        </v-row>
+      </v-sheet>
+      <v-dialog
+      v-model="workFieldDialog"
       persistent
       max-width="600px"
     >
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          color="primary"
-          dark
-          v-bind="attrs"
-          v-on="on"
-        >
-          工事編集ボタン
-        </v-btn>
-      </template>
       <v-card>
         <v-card-title>
           <v-row>
@@ -103,30 +160,30 @@
           <v-spacer></v-spacer>
           <v-btn
             color="primary"
-            @click="dialog = false"
+            @click="saveWorkFieldInfo()"
           >
             確定
           </v-btn>
           <v-btn
             color="white"
-            @click="dialog = false"
+            @click="closeWorkFieldDialog()"
           >
             キャンセル
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-row>
+    </v-container>
+  </v-card>
+  </v-app>
 </template>
 
 <script>
 export default {
   components: {
   },
-  conputed: {
-  },
   data: () => ({
-    dialog: false,
+    workFieldDialog: false,
     JobName: '',
     JobRules: [
       v => !!v || 'JobNo.が未入力です。'
@@ -136,9 +193,97 @@ export default {
       v => !!v || '工事件名が未入力です。'
     ]
   }),
+  computed: {
+    /** v-tableのヘッダーを設定 */
+    workFieldHeader () {
+      return [
+        {
+          text: 'JobNo',
+          align: 'center',
+          value: 'jobNo',
+          width: '18%'
+        },
+        {
+          text: '客先',
+          value: 'conmpanyName',
+          align: 'center',
+          width: '18%'
+        },
+        {
+          text: '現場名',
+          value: 'workFieldName',
+          align: 'center',
+          width: '18%'
+        },
+        {
+          text: '工事件名',
+          value: 'workName',
+          align: 'center',
+          width: '18%'
+        },
+        {
+          text: 'ステータス',
+          value: 'status',
+          align: 'center',
+          width: '18%'
+        },
+        { text: '削除',
+          sortable: false,
+          value: 'delete',
+          align: 'center',
+          width: '10%'
+        }
+      ]
+    },
+    /** Vuex storeで設定した値を取得 (オブジェクトで取得するので、配列を指名して)リターン */
+    getWorkField () {
+      /** ToDo */
+      /** Vuex workFieldListで定義したActionメソッドをここで呼び出し */
+      return this.$store.state.workFieldList.workFieldList
+    }
+  },
   methods: {
+    // 現場編集 ダイアログ表示処理
+    showEditWorkField (item) {
+      this.editItem = item
+      this.workFieldDialog = true
+    },
+    // 現場編集 ダイアログ閉じる処理
+    closeWorkFieldDialog () {
+      this.editItem = []
+      this.workFieldDialog = false
+    },
+    // 現場編集 保存処理
+    saveWorkFieldInfo (item) {
+      // TODO 保存処理
+      this.workFieldDialog = false
+    },
+    // 削除ボタン押下処理
+    onClickDelete (item) {
+      alert('削除')
+    }
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+.title {
+  font-size: 3.8rem;
+  height: 75px;
+  padding-top: 5px;
+  background-color: #cccccc;
+}
+.item-title {
+  padding-top: 20px;
+}
+.item-required {
+  padding-top: 15px;
+}
+.table {
+  width: 100%;
+}
+.table-display {
+  margin-bottom: 10px;
+}
+</style>
