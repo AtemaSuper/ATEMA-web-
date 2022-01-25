@@ -64,8 +64,6 @@ export default {
           return 'Header'
         case '/ownWorkerAll':
           return 'Header'
-        case '/subCompanyAll':
-          return 'Header'
         default:
           return ''
       }
