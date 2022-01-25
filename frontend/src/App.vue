@@ -45,7 +45,7 @@ export default {
     }
   },
   computed: {
-    // ヘッダー表示切替
+    // ヘッダー表示切替(true 表示)
     headerComponent () {
       switch (this.$route.path) {
         case '/ownCompany':
@@ -53,6 +53,8 @@ export default {
         case '/main':
           return 'Header'
         case '/attendanceManage':
+          return 'Header'
+        case '/subCompanyAll':
           return 'Header'
         case '/clientField':
           return 'Header'
