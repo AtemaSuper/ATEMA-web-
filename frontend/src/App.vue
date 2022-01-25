@@ -4,24 +4,26 @@
       <div>
         <component :is="headerComponent"></component>
         <v-row v-if="showTitleComponent" class="title">
-          <v-col cols="2"></v-col>
+          <v-col cols="1">
+            <div v-if="showSideComponent" class="side-menu-contents">
+              <component @parentMethod="updateContentsId" :is="sideComponent"></component>
+            </div>
+          </v-col>
           <v-col>
             <v-card class="page-title">{{setTitle}}</v-card>
           </v-col>
           <v-col cols="1"></v-col>
         </v-row>
         <v-row class="main-contents">
-          <v-col cols="2" v-if="showSideComponent">
-            <v-card class="mx-auto side-menu-contents" max-width="350">
-              <component @parentMethod="updateContentsId" :is="sideComponent"></component>
-            </v-card>
+          <v-col cols="1">
+
           </v-col>
           <v-col>
             <v-card class="page-contents">
               <router-view  v-bind:showContents="contentsId"  />
             </v-card>
           </v-col>
-          <v-col cols="1" v-if="showSideComponent"></v-col>
+          <v-col cols="1"></v-col>
         </v-row>
       </div>
     </template>
@@ -122,7 +124,7 @@ export default {
         case '/contactBox':
           return '通知BOX'
         case '/ownWorkerAll':
-          return '自社員管理'
+          return '自社員管理/役職管理'
         case '/ownCompany':
           return '自社設定'
         case '/clientField':
@@ -158,6 +160,9 @@ export default {
 .main-contents {
   background-color: #cccccc;
 }
+/* .side-menu-contents {
+  margin-top: 20px;
+} */
 .title {
   height: 75px;
   padding-top: 25px;

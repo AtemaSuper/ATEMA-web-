@@ -1,4 +1,8 @@
 <template>
+  <!-- <v-btn @click="openMenu()">
+    <v-icon>mdi-menu
+    </v-icon>
+  </v-btn> -->
   <v-list dense>
     <v-list-item-group>
       <v-list-item
@@ -10,7 +14,7 @@
           <v-icon v-text="item.icon"></v-icon>
         </v-list-item-icon>
         <v-list-item-content>
-          <v-list-item-title v-text="item.text"></v-list-item-title>
+          <v-list-item-title class="btn-label" v-text="item.text"></v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-list-item-group>
@@ -68,7 +72,7 @@ export default {
 </script>
 
 <style scoped>
-.side-menu-contents {
-  margin-top: 20px;
+.btn-label {
+  font-size: 0.5rem;
 }
 </style>

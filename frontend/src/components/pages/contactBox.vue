@@ -2,10 +2,6 @@
   <v-app id="contactBox">
     <v-main>
       <v-container>
-        <p class="text-left">
-          <a @click="$router.back()"><v-icon left>mdi-home</v-icon>戻る</a>
-        </p>
-        <h1>管理者通知</h1>
         <v-sheet color="white" rounded outlined>
           <v-container fluid>
             <v-row>

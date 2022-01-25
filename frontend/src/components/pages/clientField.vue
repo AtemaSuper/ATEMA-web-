@@ -2,6 +2,7 @@
   <v-app id="clientField">
 <!-- 客先一覧 -->
     <v-card>
+      <h2>客先一覧</h2>
       <v-container>
         <v-sheet color="white table-display" rounded outlined>
           <v-row align="center" >
@@ -68,14 +69,13 @@
           </v-row>
         </v-sheet>
       </v-container>
-        </v-card>
+    </v-card>
 <!-- 現場一覧 -->
-      <v-row class="title">
-        <v-col>
-          <v-card>現場一覧</v-card>
-        </v-col>
-      </v-row>
+    <div class="page-border-area">
+      <div class="page-border"></div>
+    </div>
       <v-card>
+        <h2>現場一覧</h2>
         <v-container>
           <v-sheet color="white table-display" rounded outlined>
             <v-row align="center" >
@@ -419,5 +419,13 @@ export default {
 }
 .table-display {
   margin-bottom: 10px;
+}
+.page-border-area {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+.page-border {
+  border-bottom: 1px solid;
+  border-color: #cccccc;
 }
 </style>

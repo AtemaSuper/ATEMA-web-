@@ -2,6 +2,8 @@
   <v-app id="ownWorkerAll">
     <v-container>
       <v-sheet color="white" rounded outlined>
+        <v-card>
+          <h2>自社員管理</h2>
         <v-row align="center">
           <v-col cols="12" sm="4" md="2"> </v-col>
           <v-col cols="12" sm="4" md="4"> </v-col>
@@ -578,190 +580,197 @@
             </template>
           </v-data-table>
         </v-row>
+        </v-card>
       </v-sheet>
     </v-container>
-    <v-row class="title">
+    <!-- <v-row class="title">
       <v-col cols="2"></v-col>
       <v-col>
         <v-card>役職管理 </v-card>
       </v-col>
       <v-col cols="1"></v-col>
-    </v-row>
+    </v-row> -->
+    <div class="page-border-area">
+      <div class="page-border"></div>
+    </div>
     <v-container>
       <v-sheet color="white" rounded outlined>
-        <v-row align="center">
-          <v-col cols="12" sm="4" md="2"> </v-col>
-          <v-col cols="12" sm="4" md="4"> </v-col>
-          <v-col cols="12" sm="4" md="4"> </v-col>
-          <v-col cols="12" sm="4" md="2">
-            <!-- 役職を追加するボタン -->
-            <v-btn outlined @click="editPostItem()"
-              >役職を追加<v-icon>mdi-plus</v-icon></v-btn
-            >
-          </v-col>
-        </v-row>
-        <!-- data teble-->
-        <!--ToDo  keyの値にnameを設定すると同名で重複エラーが出現するので、基本的にはDB取得時の各レコードごとのユニークIDを設定する -->
-        <v-data-table
-          :headers="postListHeader"
-          :items="getPostList"
-          :items-per-page="-1"
-          item-key="postId"
-          class="elevation-1 table"
-          height="300"
-          @click:row="editPostItem"
-        >
-          <template v-slot:top>
-            <!-- 役職削除ダイアログ -->
-            <v-dialog v-model="dialogPostDelete" max-width="500px">
-              <v-card>
-                <v-card-title align="center"
-                  >この役職を削除しますか?</v-card-title
-                >
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="primary" @click="deletePostItemConfirm">
-                    削除
-                  </v-btn>
-                  <v-btn color="white" @click="closePostDelete"> 戻る </v-btn>
-                  <v-spacer></v-spacer>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-            <!-- 役職編集・追加ダイアログ -->
-            <v-dialog v-model="dialogPostEdit" max-width="1200px">
-              <v-card>
-                <v-card-title>
-                  <v-row>
-                    <v-col cols="12" lg="12" sm="12">
-                      <span class="text-h4">{{ postFormTitle }}</span>
-                    </v-col>
-                  </v-row>
-                </v-card-title>
-                <v-card-text>
-                  <v-container>
+        <v-card>
+          <h2>役職管理</h2>
+          <v-row align="center">
+            <v-col cols="12" sm="4" md="2"> </v-col>
+            <v-col cols="12" sm="4" md="4"> </v-col>
+            <v-col cols="12" sm="4" md="4"> </v-col>
+            <v-col cols="12" sm="4" md="2">
+              <!-- 役職を追加するボタン -->
+              <v-btn outlined @click="editPostItem()"
+                >役職を追加<v-icon>mdi-plus</v-icon></v-btn
+              >
+            </v-col>
+          </v-row>
+          <!-- data teble-->
+          <!--ToDo  keyの値にnameを設定すると同名で重複エラーが出現するので、基本的にはDB取得時の各レコードごとのユニークIDを設定する -->
+          <v-data-table
+            :headers="postListHeader"
+            :items="getPostList"
+            :items-per-page="-1"
+            item-key="postId"
+            class="elevation-1 table"
+            height="300"
+            @click:row="editPostItem"
+          >
+            <template v-slot:top>
+              <!-- 役職削除ダイアログ -->
+              <v-dialog v-model="dialogPostDelete" max-width="500px">
+                <v-card>
+                  <v-card-title align="center"
+                    >この役職を削除しますか?</v-card-title
+                  >
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="primary" @click="deletePostItemConfirm">
+                      削除
+                    </v-btn>
+                    <v-btn color="white" @click="closePostDelete"> 戻る </v-btn>
+                    <v-spacer></v-spacer>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+              <!-- 役職編集・追加ダイアログ -->
+              <v-dialog v-model="dialogPostEdit" max-width="1200px">
+                <v-card>
+                  <v-card-title>
                     <v-row>
-                      <v-col cols="2">
-                        <p>役職名</p>
-                      </v-col>
-                      <v-col cols="6">
-                        <v-text-field
-                          outlined
-                          dense
-                          v-model="editedPostItem.postName"
-                        ></v-text-field>
+                      <v-col cols="12" lg="12" sm="12">
+                        <span class="text-h4">{{ postFormTitle }}</span>
                       </v-col>
                     </v-row>
-                    <v-divider></v-divider>
-                    <v-row>
-                      <v-col cols="2">出退勤管理 </v-col>
-                      <v-col cols="2"> 自社員管理</v-col>
-                      <v-col cols="2"> 協力会社管理</v-col>
-                      <v-col cols="2"> 自社設定</v-col>
-                      <v-col cols="2"> プラン・支払い</v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col cols="2"
-                        ><v-select
-                          :items="postPermissionList"
-                          v-model="editedPostItem.attendancePermission"
-                          item-text="label"
-                          item-value="value"
-                          label="権限を選択"
-                          solo
-                        ></v-select>
-                      </v-col>
-                      <v-col cols="2"
-                        ><v-select
-                          :items="postPermissionList"
-                          v-model="editedPostItem.ownWorkerPermission"
-                          item-text="label"
-                          item-value="value"
-                          label="権限を選択"
-                          solo
-                        ></v-select>
-                      </v-col>
-                      <v-col cols="2"
-                        ><v-select
-                          :items="postPermissionList"
-                          v-model="editedPostItem.subWorkerPermission"
-                          item-text="label"
-                          item-value="value"
-                          label="権限を選択"
-                          solo
-                        ></v-select>
-                      </v-col>
-                      <v-col cols="2"
-                        ><v-select
-                          :items="postPermissionList"
-                          v-model="editedPostItem.ownCompanyPermission"
-                          item-text="label"
-                          item-value="value"
-                          label="権限を選択"
-                          solo
-                        ></v-select> </v-col
-                      ><v-col cols="2"
-                        ><v-select
-                          :items="postPermissionList"
-                          v-model="editedPostItem.planPayPermission"
-                          item-text="label"
-                          item-value="value"
-                          label="権限を選択"
-                          solo
-                        ></v-select>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="primary" @click="savePost()"> 保存 </v-btn>
-                  <v-btn color="white" @click="closePostEdit()">
-                    キャンセル
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </template>
-          <!-- postName Row -->
-          <template v-slot:[`item.postName`]="{ item }">
+                  </v-card-title>
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="2">
+                          <p>役職名</p>
+                        </v-col>
+                        <v-col cols="6">
+                          <v-text-field
+                            outlined
+                            dense
+                            v-model="editedPostItem.postName"
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                      <v-divider></v-divider>
+                      <v-row>
+                        <v-col cols="2">出退勤管理 </v-col>
+                        <v-col cols="2"> 自社員管理</v-col>
+                        <v-col cols="2"> 協力会社管理</v-col>
+                        <v-col cols="2"> 自社設定</v-col>
+                        <v-col cols="2"> プラン・支払い</v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="2"
+                          ><v-select
+                            :items="postPermissionList"
+                            v-model="editedPostItem.attendancePermission"
+                            item-text="label"
+                            item-value="value"
+                            label="権限を選択"
+                            solo
+                          ></v-select>
+                        </v-col>
+                        <v-col cols="2"
+                          ><v-select
+                            :items="postPermissionList"
+                            v-model="editedPostItem.ownWorkerPermission"
+                            item-text="label"
+                            item-value="value"
+                            label="権限を選択"
+                            solo
+                          ></v-select>
+                        </v-col>
+                        <v-col cols="2"
+                          ><v-select
+                            :items="postPermissionList"
+                            v-model="editedPostItem.subWorkerPermission"
+                            item-text="label"
+                            item-value="value"
+                            label="権限を選択"
+                            solo
+                          ></v-select>
+                        </v-col>
+                        <v-col cols="2"
+                          ><v-select
+                            :items="postPermissionList"
+                            v-model="editedPostItem.ownCompanyPermission"
+                            item-text="label"
+                            item-value="value"
+                            label="権限を選択"
+                            solo
+                          ></v-select> </v-col
+                        ><v-col cols="2"
+                          ><v-select
+                            :items="postPermissionList"
+                            v-model="editedPostItem.planPayPermission"
+                            item-text="label"
+                            item-value="value"
+                            label="権限を選択"
+                            solo
+                          ></v-select>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="primary" @click="savePost()"> 保存 </v-btn>
+                    <v-btn color="white" @click="closePostEdit()">
+                      キャンセル
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </template>
+            <!-- postName Row -->
+            <template v-slot:[`item.postName`]="{ item }">
               {{ item.postName }}
-          </template>
-          <!-- attendancePermission Row -->
-          <template v-slot:[`item.attendancePermission`]="{ item }">
-            <div v-if="item.attendancePermission === -1">✕</div>
-            <div v-else-if="item.attendancePermission === 0">閲覧のみ</div>
-            <div v-else>全て</div>
-          </template>
-          <!-- ownWorkerPermission Row -->
-          <template v-slot:[`item.ownWorkerPermission`]="{ item }">
-            <div v-if="item.ownWorkerPermission === -1">✕</div>
-            <div v-else-if="item.ownWorkerPermission === 0">閲覧のみ</div>
-            <div v-else>全て</div>
-          </template>
-          <!-- subWorkerPermission Row -->
-          <template v-slot:[`item.subWorkerPermission`]="{ item }">
-            <div v-if="item.subWorkerPermission === -1">✕</div>
-            <div v-else-if="item.subWorkerPermission === 0">閲覧のみ</div>
-            <div v-else>全て</div>
-          </template>
-          <!-- ownCompanyPermission Row -->
-          <template v-slot:[`item.ownCompanyPermission`]="{ item }">
-            <div v-if="item.ownCompanyPermission === -1">✕</div>
-            <div v-else-if="item.ownCompanyPermission === 0">閲覧のみ</div>
-            <div v-else>全て</div>
-          </template>
-          <!-- planPayPermission Row -->
-          <template v-slot:[`item.planPayPermission`]="{ item }">
-            <div v-if="item.planPayPermission === -1">✕</div>
-            <div v-else-if="item.planPayPermission === 0">閲覧のみ</div>
-            <div v-else>全て</div>
-          </template>
-          <!-- delete Row -->
-          <template v-slot:[`item.delete`]="{ item }">
-            <v-icon @click.stop="deletePostItem(item)"> mdi-delete </v-icon>
-          </template>
-        </v-data-table>
+            </template>
+            <!-- attendancePermission Row -->
+            <template v-slot:[`item.attendancePermission`]="{ item }">
+              <div v-if="item.attendancePermission === -1">✕</div>
+              <div v-else-if="item.attendancePermission === 0">閲覧のみ</div>
+              <div v-else>全て</div>
+            </template>
+            <!-- ownWorkerPermission Row -->
+            <template v-slot:[`item.ownWorkerPermission`]="{ item }">
+              <div v-if="item.ownWorkerPermission === -1">✕</div>
+              <div v-else-if="item.ownWorkerPermission === 0">閲覧のみ</div>
+              <div v-else>全て</div>
+            </template>
+            <!-- subWorkerPermission Row -->
+            <template v-slot:[`item.subWorkerPermission`]="{ item }">
+              <div v-if="item.subWorkerPermission === -1">✕</div>
+              <div v-else-if="item.subWorkerPermission === 0">閲覧のみ</div>
+              <div v-else>全て</div>
+            </template>
+            <!-- ownCompanyPermission Row -->
+            <template v-slot:[`item.ownCompanyPermission`]="{ item }">
+              <div v-if="item.ownCompanyPermission === -1">✕</div>
+              <div v-else-if="item.ownCompanyPermission === 0">閲覧のみ</div>
+              <div v-else>全て</div>
+            </template>
+            <!-- planPayPermission Row -->
+            <template v-slot:[`item.planPayPermission`]="{ item }">
+              <div v-if="item.planPayPermission === -1">✕</div>
+              <div v-else-if="item.planPayPermission === 0">閲覧のみ</div>
+              <div v-else>全て</div>
+            </template>
+            <!-- delete Row -->
+            <template v-slot:[`item.delete`]="{ item }">
+              <v-icon @click.stop="deletePostItem(item)"> mdi-delete </v-icon>
+            </template>
+          </v-data-table>
+        </v-card>
       </v-sheet>
     </v-container>
   </v-app>
@@ -1096,5 +1105,13 @@ export default {
 }
 .table {
   width: 100%;
+}
+.page-border-area {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+.page-border {
+  border-bottom: 1px solid;
+  border-color: #cccccc;
 }
 </style>

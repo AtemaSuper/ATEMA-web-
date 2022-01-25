@@ -2,10 +2,6 @@
   <v-app id="attendanceManage">
     <v-main>
       <v-container>
-        <p class="text-left">
-          <a @click="$router.back()"><v-icon left>mdi-home</v-icon>戻る</a>
-        </p>
-        <h1>出退勤管理</h1>
         <v-sheet color="white" rounded outlined>
           <v-row align="center">
             <!-- 日付選択（※フィルター動作未実装） -->
