@@ -7,6 +7,7 @@ import clientFieldList from './modules/clientFieldList/index'
 import workFieldList from './modules/workFieldList/index'
 import ownWorker from './modules/ownWorker/index'
 import postList from './modules/postList/index'
+import subCompany from './modules/subCompany/index'
 
 Vue.use(Vuex)
 export default new Vuex.Store({
@@ -18,7 +19,8 @@ export default new Vuex.Store({
     clientFieldList,
     workFieldList,
     ownWorker,
-    postList
+    postList,
+    subCompany
   },
   state: {
   },

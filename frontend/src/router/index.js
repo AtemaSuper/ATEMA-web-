@@ -7,6 +7,7 @@ import Login from '@/components/pages/login'
 import ClientField from '@/components/pages/clientField'
 import WorkField from '@/components/pages/workField'
 import AttendanceManage from '@/components/pages/attendanceManage'
+import SubCompanyAll from '@/components/pages/subCompanyAll'
 import Main from '@/components/pages/main'
 import ContactBox from '@/components/pages/contactBox'
 import OwnWorkerAll from '@/components/pages/ownWorkerAll'
@@ -68,6 +69,11 @@ export default new Router({
       path: '/ownWorkerAll',
       name: 'ownWorkerAll',
       component: OwnWorkerAll
+    },
+    {/** subCompanyAll.vue */
+      path: '/subCompanyAll',
+      name: 'subCompanyAll',
+      component: SubCompanyAll
     }
   ]
 })
