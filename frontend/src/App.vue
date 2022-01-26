@@ -1,26 +1,41 @@
 <template>
   <v-app id="app">
     <template>
-      <div>
+      <!-- ログイン画面、パスワードリセット画面 -->
+      <div
+        v-if="
+          this.$route.path == '/login' || this.$route.path == '/passwordReset'
+        "
+      >
+        <router-view />
+      </div>
+      <!-- ログイン画面、パスワードリセット画面以外 -->
+      <div
+        class="page-main"
+        v-if="
+          this.$route.path != '/login' || this.$route.path != '/passwordReset'
+        "
+      >
         <component :is="headerComponent"></component>
         <v-row v-if="showTitleComponent" class="title">
           <v-col cols="1">
             <div v-if="showSideComponent" class="side-menu-contents">
-              <component @parentMethod="updateContentsId" :is="sideComponent"></component>
+              <component
+                @parentMethod="updateContentsId"
+                :is="sideComponent"
+              ></component>
             </div>
           </v-col>
           <v-col>
-            <v-card class="page-title">{{setTitle}}</v-card>
+            <v-card class="page-title">{{ setTitle }}</v-card>
           </v-col>
           <v-col cols="1"></v-col>
         </v-row>
         <v-row class="main-contents">
-          <v-col cols="1">
-
-          </v-col>
+          <v-col cols="1"> </v-col>
           <v-col>
             <v-card class="page-contents">
-              <router-view  v-bind:showContents="contentsId"  />
+              <router-view v-bind:showContents="contentsId" />
             </v-card>
           </v-col>
           <v-col cols="1"></v-col>
@@ -132,7 +147,7 @@ export default {
         case '/workField':
           return '現場編集'
         case '/subCompanyAll':
-          return '協力会社一覧'
+          return '協力会社管理'
         default:
           return ''
       }
@@ -155,7 +170,9 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+.page-main {
+  margin-top: 64px;
 }
 .main-contents {
   background-color: #cccccc;
@@ -170,9 +187,10 @@ export default {
   background-color: #cccccc;
 }
 .page-contents {
-  padding:2%;
+  padding: 2%;
 }
 .page-title {
+  font-size: 1.6rem;
   font-weight: 700;
 }
 </style>

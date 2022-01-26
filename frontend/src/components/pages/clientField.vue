@@ -1,20 +1,20 @@
 <template>
   <v-app id="clientField">
 <!-- 客先一覧 -->
-    <v-card>
+  <v-card>
+    <v-container>
       <h2>客先一覧</h2>
-      <v-container>
-        <v-sheet color="white table-display" rounded outlined>
+        <v-sheet color="white" rounded outlined>
           <v-row align="center" >
             <v-col cols="12" sm="4" md="2"></v-col>
             <v-col cols="12" sm="4" md="4"> </v-col>
             <v-col cols="12" sm="4" md="4"> </v-col>
             <v-col cols="12" sm="4" md="2">
               <!-- 客先を追加するボタン -->
-              <v-btn
-              outlined
-              @click="showEditClient()"
-              >客先を追加<v-icon >mdi-plus</v-icon></v-btn>
+              <v-btn @click="showEditClient()" outlined elevation="3">
+                客先を追加
+                <v-icon color="#ff6669">mdi-plus</v-icon>
+              </v-btn>
             </v-col>
           </v-row>
           <v-row align="center" >
@@ -61,14 +61,14 @@
               <template v-slot:[`body.append`]> </template>
               <!-- 削除ボタン -->
               <template v-slot:[`item.delete`]="{ item }">
-                <v-btn @click.stop="onClickDelete(item)">
-                  <v-icon color="green darken-2">mdi-delete</v-icon>
+                <v-btn @click.stop="onClickDelete(item)" color="#00ffd0" elevation="3" outlined fab height="2.5rem" width="2.5rem">
+                  <v-icon large>mdi-delete-empty</v-icon>
                 </v-btn>
               </template>
             </v-data-table>
           </v-row>
         </v-sheet>
-      </v-container>
+  </v-container>
     </v-card>
 <!-- 現場一覧 -->
     <div class="page-border-area">
@@ -77,17 +77,17 @@
       <v-card>
         <h2>現場一覧</h2>
         <v-container>
-          <v-sheet color="white table-display" rounded outlined>
+          <v-sheet color="white" rounded outlined>
             <v-row align="center" >
               <v-col cols="12" sm="4" md="2"></v-col>
               <v-col cols="12" sm="4" md="4"> </v-col>
               <v-col cols="12" sm="4" md="4"> </v-col>
               <v-col cols="12" sm="4" md="2">
                 <!-- 現場を追加するボタン -->
-                <v-btn
-                outlined
-                @click="showEditField()"
-                >現場を追加<v-icon >mdi-plus</v-icon></v-btn>
+                <v-btn @click="showEditField()" outlined elevation="3">
+                  現場を追加
+                  <v-icon color="#ff6669">mdi-plus</v-icon>
+                </v-btn>
               </v-col>
             </v-row>
             <v-row align="center" >
@@ -126,7 +126,7 @@
                     <v-col cols="6"></v-col>
                     <v-col cols="2">
                       <!-- 協力会社を追加するボタン -->
-                      <v-checkbox label="未進行を含める">
+                      <v-checkbox label="未進行を含める" color="#ff6669">
                       </v-checkbox>
                     </v-col>
                   </v-row>
@@ -134,8 +134,8 @@
                 <template v-slot:[`body.append`]> </template>
                 <!-- 削除ボタン -->
                 <template v-slot:[`item.delete`]="{ item }">
-                  <v-btn @click.stop="onClickDelete(item)">
-                    <v-icon color="green darken-2">mdi-delete</v-icon>
+                  <v-btn @click.stop="onClickDelete(item)" color="#00ffd0" elevation="3" outlined fab height="2.5rem" width="2.5rem">
+                    <v-icon large>mdi-delete-empty</v-icon>
                   </v-btn>
                 </template>
               </v-data-table>
@@ -144,7 +144,7 @@
 <!-- 客先編集ダイアログ -->
           <v-dialog v-model="clientDialog" max-width="480">
             <v-card>
-              <v-card-title class="text-h5 grey lighten-2">
+              <v-card-title class="text-h6 grey lighten-2">
                 客先編集
               </v-card-title>
 
@@ -171,8 +171,8 @@
                   </v-col>
                   <v-col>
                     <v-radio-group v-model="clientProgress" row>
-                      <v-radio label="進行中" value="inProgress"></v-radio>
-                      <v-radio label="未進行" value="notProgress"></v-radio>
+                      <v-radio label="進行中" value="inProgress" color="#ff6669"></v-radio>
+                      <v-radio label="未進行" value="notProgress" color="#ff6669"></v-radio>
                     </v-radio-group>
                   </v-col>
                 </v-row>
@@ -182,8 +182,12 @@
 
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" @click="saveClientInfo(item)">確定</v-btn>
-                <v-btn @click="closeClientDialog">キャンセル</v-btn>
+                <v-btn color="#ff6669" class="white--text" rounded @click="saveClientInfo(item)">
+                  OK
+                </v-btn>
+                <v-btn @click="closeClientDialog()" class="#f5f5f5" rounded>
+                  キャンセル
+                </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -229,8 +233,8 @@
                   </v-col>
                   <v-col>
                     <v-radio-group v-model="fieldProgress" row>
-                      <v-radio label="進行中" value="inProgress"></v-radio>
-                      <v-radio label="未進行" value="notProgress"></v-radio>
+                      <v-radio label="進行中" value="inProgress" color="#ff6669"></v-radio>
+                      <v-radio label="未進行" value="notProgress" color="#ff6669"></v-radio>
                     </v-radio-group>
                   </v-col>
                 </v-row>
@@ -240,8 +244,12 @@
 
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" @click="saveFieldInfo(item)">確定</v-btn>
-                <v-btn @click="closeFieldDialog">キャンセル</v-btn>
+                <v-btn color="#ff6669" class="white--text" rounded @click="saveFieldInfo(item)">
+                  OK
+                </v-btn>
+                <v-btn @click="closeFieldDialog()" class="#f5f5f5" rounded>
+                  キャンセル
+                </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>

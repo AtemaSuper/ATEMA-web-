@@ -32,12 +32,12 @@
                   locale="jp-ja"
                   :day-format="(date) => new Date(date).getDate()"
                 >
-                  <v-btn text color="primary" @click="menu = false">
-                    Cancel
-                  </v-btn>
-                  <v-btn text color="primary" @click="$refs.menu.save(date)">
-                    OK
-                  </v-btn>
+                <v-btn color="#ff6669" class="white--text" rounded @click="$refs.menu.save(date)">
+                  OK
+                </v-btn>
+                <v-btn class="#f5f5f5" rounded @click="menu = false">
+                    キャンセル
+                </v-btn>
                 </v-date-picker>
               </v-menu>
               <!-- 検索窓 -->
@@ -57,9 +57,7 @@
               <!-- ダウンロード形式選択 -->
               <v-menu offset-y>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn justify="center" outlined v-bind="attrs" v-on="on">
-                    ダウンロード
-                  </v-btn>
+                  <v-btn v-bind="attrs" v-on="on" outlined elevation="3">ダウンロード<v-icon color="#00ffd0">mdi-download</v-icon></v-btn>
                 </template>
                 <v-list>
                   <v-list-item @click="download('myCompanyAll')">

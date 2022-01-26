@@ -62,19 +62,11 @@
                             (startDate) => new Date(startDate).getDate()
                           "
                         >
-                          <v-btn
-                            text
-                            color="primary"
-                            @click="startDateMenu = false"
-                          >
-                            Cancel
-                          </v-btn>
-                          <v-btn
-                            text
-                            color="primary"
-                            @click="$refs.startDateMenu.save(startDate)"
-                          >
+                          <v-btn color="#ff6669" class="white--text" rounded @click="$refs.startDateMenu.save(startDate)">
                             OK
+                          </v-btn>
+                          <v-btn class="#f5f5f5" rounded @click="startDateMenu = false">
+                              キャンセル
                           </v-btn>
                         </v-date-picker>
                       </v-menu>
@@ -110,19 +102,11 @@
                           locale="jp-ja"
                           :day-format="(endDate) => new Date(endDate).getDate()"
                         >
-                          <v-btn
-                            text
-                            color="primary"
-                            @click="endDateMenu = false"
-                          >
-                            Cancel
-                          </v-btn>
-                          <v-btn
-                            text
-                            color="primary"
-                            @click="$refs.endDateMenu.save(endDate)"
-                          >
+                          <v-btn color="#ff6669" class="white--text" rounded @click="$refs.endDateMenu.save(endDate)">
                             OK
+                          </v-btn>
+                          <v-btn class="#f5f5f5" rounded @click="endDateMenu = false">
+                              キャンセル
                           </v-btn>
                         </v-date-picker>
                       </v-menu>

@@ -1,8 +1,7 @@
 <template>
   <v-app id="login">
-    <v-row  align="center" style="height: 100%">
-      <v-col sm="5" md="6" class="bg">
-      </v-col>
+    <v-row align="center">
+      <v-col sm="5" md="6" class="bg"> </v-col>
       <v-col sm="5" offset-sm="2" md="6" offset-md="0"
         ><v-img
           max-height="150"
@@ -109,11 +108,10 @@ export default {
 }
 </script>
 <style scoped>
-
 .bg {
   background-image: url("../../assets/bg1.jpg");
-   background-size: cover;
-   background-position: center center;
-   height: 100%;
+  background-size: cover;
+  background-position: center center;
+  height: 100%;
 }
 </style>
