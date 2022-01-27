@@ -18,7 +18,8 @@ app.post('/', (req, res) => {
         mailAddress: user.mailAddress,
         sessionToken: user.sessionToken
       }
-      var token= jwt.sign(userHash, 　, {
+      //　ToDo　secret_atema_keyはユーザーごとに作成する必要がある
+      var token= jwt.sign(userHash, "secret_atema_key", {
         expiresIn: '24h'
       });
       res.cookie('token', token);
