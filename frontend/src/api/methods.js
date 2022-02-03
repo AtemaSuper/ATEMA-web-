@@ -1,9 +1,21 @@
 import Api from './index'
 
 export default {
-  testPosting () {
+  testGet () {
+    return Api().get('/user')
+  },
+  // ログインテスト処理
+  testLoginPosting () {
     const item = { id: 'AtemAdmin', password: '1234' }
-    return Api().post('/login', item)
+    return Api().post('/user/login', item)
+  },
+  // ログイン確認処理（JSON）
+  testProtectedPosting () {
+    return Api().post('/user/protected')
+  },
+  // ログアウトテスト処理
+  testlogoutPosting () {
+    return Api().post('/user/logout')
   }
   // 他の処理も追加可能
 }

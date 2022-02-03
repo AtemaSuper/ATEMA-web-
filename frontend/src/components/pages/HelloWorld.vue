@@ -6,7 +6,10 @@
           <router-link to="/clientField">clientField</router-link>
           <router-link to="/workField">workField</router-link>
           <h1>{{ msg }}</h1>
-          <button @click="post">click me</button>
+          <v-btn @click="get">click me</v-btn>
+          <v-btn @click="testLoginPosting">login</v-btn>
+          <v-btn @click="testProtectedPosting">check</v-btn>
+          <v-btn @click="testLogoutPosting">logout</v-btn>
           <div>
             <Counter />
           </div>
@@ -37,8 +40,23 @@ export default {
   }),
   methods: {
     // サーバーから返ってくる値をログに出力したいのでasyncとawaitを行う
-    async post () {
-      let response = await Methods.testPosting()
+    async get () {
+      let response = await Methods.testGet()
+      console.log(response)
+    },
+    // user_API_login
+    async testLoginPosting () {
+      let response = await Methods.testLoginPosting()
+      console.log(response)
+    },
+    // user_API_protected
+    async testProtectedPosting () {
+      let response = await Methods.testProtectedPosting()
+      console.log(response)
+    },
+    // user_API_logout
+    async testLogoutPosting () {
+      let response = await Methods.testlogoutPosting()
       console.log(response)
     }
   }
