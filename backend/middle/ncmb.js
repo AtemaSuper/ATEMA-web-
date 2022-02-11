@@ -9,15 +9,18 @@ const express = require('express')
 const app = express()
 
 app.post('/', function (req, res) {
-    var TestClass = ncmb.DataStore('alertTable');
-    var item = TestClass
-    .fetchById("objectId")
-    .then(item => {
-        console.log('データあり');
-    })
-    .catch(e => {
-        console.log('データなし');
-    });
+
+  var Item = ncmb.DataStore('alertTable');
+  Item.fetchAll()
+        .then(function(items){
+          item = items[Math.floor(Math.random() * items.length)]
+          res.status(200)
+              .json(item);
+        })
+        .catch(function(err){
+          res.status(500)
+              .json({error: 500});
+        });
 })
 
 module.exports = app;
