@@ -10,6 +10,7 @@
           <v-btn @click="testLoginPosting">login</v-btn>
           <v-btn @click="testProtectedPosting">check</v-btn>
           <v-btn @click="testLogoutPosting">logout</v-btn>
+          <v-btn @click="testNcmb">ncmb</v-btn>
           <div>
             <Counter />
           </div>
@@ -57,6 +58,10 @@ export default {
     // user_API_logout
     async testLogoutPosting () {
       let response = await Methods.testlogoutPosting()
+      console.log(response)
+    },
+    async testNcmb () {
+      let response = await Methods.testNcmb()
       console.log(response)
     }
   }

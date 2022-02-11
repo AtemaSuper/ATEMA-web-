@@ -16,6 +16,9 @@ export default {
   // ログアウトテスト処理
   testlogoutPosting () {
     return Api().post('/user/logout')
-  }
+  },
   // 他の処理も追加可能
+  testNcmb () {
+    return Api().post('/ncmb')
+  }
 }
