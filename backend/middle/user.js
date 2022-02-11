@@ -25,12 +25,14 @@ const authorization = (req, res, next) => {
 
 app.get("/", (req, res) => {
   // cookieに登録する処理
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
   res.cookie('access-token', 'SSSSSSSSSSSSS', {
     maxAge: 1209600000,
     secure:false, // secure属性は開発環境はfalseにしておきましょう
     httpOnly: true,
     sameSite: 'strict',
   })
+  console.log(res)
   return res.json({ message: "Hello World 🇵🇹 🤘" });
 });
 
