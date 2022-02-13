@@ -25,12 +25,9 @@ const authorization = (req, res, next) => {
 
 app.get("/", (req, res) => {
   // cookieに登録する処理
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
   res.cookie('access-token', 'SSSSSSSSSSSSS', {
     maxAge: 1209600000,
-    secure:false, // secure属性は開発環境はfalseにしておきましょう
-    httpOnly: true,
-    sameSite: 'strict',
+    secure:false, // secure属性は開発環境はfalseにしておきましょう　TODO #リリース時はHTTPS化するのでTRUE
   })
   console.log(res)
   return res.json({ message: "Hello World 🇵🇹 🤘" });
@@ -56,11 +53,7 @@ app.post("/login", (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
     })
-    var text1 = user.userName;
     res
-    .cookie("msg", text1, {
-      maxAge: 30000  //有効期限30000ミリ秒
-    })
     .status(200)
     .json({ message: "Logged in successfully 😊 👌" })
   })

@@ -8,7 +8,8 @@ const ncmb = require('./middle/ncmb')
 
 const app = express()
 app.use(bodyParser.json())
-app.use(cors())
+//異なるサーバ間でのやり取り許可（オリジン間）
+app.use(cors({ origin: true, credentials: true }));
 app.use('/test',test)
 app.use('/user',user)
 app.use('/ncmb',ncmb)
