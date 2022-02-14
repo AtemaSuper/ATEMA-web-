@@ -15,8 +15,7 @@ const authorization = (req, res, next) => {
   }
   try {
     const data = jwt.verify(token, "secret_atema_key");
-    req.userId = data.userName;
-    req.userRole = data.objectId;
+    req.userName = data.userName;
     return next();
   } catch {
     return res.sendStatus(403);
