@@ -6,11 +6,12 @@
           <router-link to="/clientField">clientField</router-link>
           <router-link to="/workField">workField</router-link>
           <h1>{{ msg }}</h1>
-          <v-btn @click="get">click me</v-btn>
+          <v-btn @click="post">click me</v-btn>
           <v-btn @click="testLoginPosting">login</v-btn>
           <v-btn @click="testProtectedPosting">check</v-btn>
           <v-btn @click="testLogoutPosting">logout</v-btn>
           <v-btn @click="testNcmb">ncmb</v-btn>
+          <v-btn @click="serviceTestGet">serviceTestGet</v-btn>
           <div>
             <Counter />
           </div>
@@ -41,8 +42,13 @@ export default {
   }),
   methods: {
     // サーバーから返ってくる値をログに出力したいのでasyncとawaitを行う
-    async get () {
-      let response = await Methods.testGet()
+    async post () {
+      let response = await Methods.testPost()
+      console.log(response)
+    },
+    // サーバーから返ってくる値をログに出力したいのでasyncとawaitを行う
+    async serviceTestGet () {
+      let response = await Methods.serviceTestGet()
       console.log(response)
     },
     // user_API_login

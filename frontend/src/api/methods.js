@@ -1,8 +1,12 @@
 import Api from './index'
 
 export default {
-  testGet () {
-    return Api().get('/user')
+  testPost () {
+    const item = { text: 'Success!' }
+    return Api().post('/test', item)
+  },
+  serviceTestGet () {
+    return Api().get('/serviceTest')
   },
   // ログインテスト処理
   testLoginPosting () {
