@@ -12,6 +12,7 @@
           <v-btn @click="testLogoutPosting">logout</v-btn>
           <v-btn @click="testNcmb">ncmb</v-btn>
           <v-btn @click="serviceTestGet">serviceTestGet</v-btn>
+          <v-btn @click="ownWorkerAll">ownWorkerAll</v-btn>
           <div>
             <Counter />
           </div>
@@ -49,6 +50,10 @@ export default {
     // サーバーから返ってくる値をログに出力したいのでasyncとawaitを行う
     async serviceTestGet () {
       let response = await Methods.serviceTestGet()
+      console.log(response)
+    },
+    async ownWorkerAll () {
+      let response = await Methods.ownWorkerAllService()
       console.log(response)
     },
     // user_API_login

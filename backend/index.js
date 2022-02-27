@@ -6,12 +6,14 @@ const test = require('./middle/test')
 const user = require('./middle/user')
 const ncmb = require('./middle/ncmb')
 const serviceTest = require("./controller/loginController")
+const ownWorkerAllService = require('./controller/ownWorkerAllController') 
 
 const app = express()
 app.use(bodyParser.json())
 //異なるサーバ間でのやり取り許可（オリジン間）
 app.use(cors({ origin: true, credentials: true }));
 app.use('/serviceTest',serviceTest)
+app.use('/ownWorkerAll',ownWorkerAllService)
 app.use('/test',test)
 app.use('/user',user)
 app.use('/ncmb',ncmb)

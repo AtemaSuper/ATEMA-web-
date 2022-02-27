@@ -8,6 +8,9 @@ export default {
   serviceTestGet () {
     return Api().get('/serviceTest')
   },
+  ownWorkerAllService () {
+    return Api().get('/ownWorkerAll')
+  },
   // ログインテスト処理
   testLoginPosting () {
     const item = { id: 'AtemAdmin', password: '1234' }
