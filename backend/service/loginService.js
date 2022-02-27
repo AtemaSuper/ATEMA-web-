@@ -1,6 +1,9 @@
 const express = require('express')
 const app = express()
 
+/**
+ * ログイン画面のService
+ */
 const User = {
     userName: 'AtemAdmin',
     password: '1234',
