@@ -222,6 +222,9 @@
 </template>
 
 <script>
+/** 外部コンポーネントの呼び出し */
+import Methods from '@/api/methods'
+
 export default {
   name: 'OwnCompany',
   props: ['showContents'],
@@ -322,7 +325,13 @@ export default {
       }
     }
   },
-  methods: {}
+  methods: {
+    // 初期表示時のデータを取得します。
+    async getOwnComapanyInfo () {
+      let response = await Methods.testNcmb()
+      console.log(response)
+    }
+  }
 }
 
 </script>

@@ -27,5 +27,12 @@ export default {
   // 他の処理も追加可能
   testNcmb () {
     return Api().post('/ncmb')
+  },
+  //
+  // 自社設定画面
+  //
+  // 初期表示処理
+  getOwnComapanyInfo () {
+    return Api().post('/ownCompay')
   }
 }
