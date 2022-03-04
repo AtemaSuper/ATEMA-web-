@@ -10,8 +10,13 @@
         <v-col cols="3">
           <v-text-field
             outlined
+            label="(例)株式会社ATEMA"
             :rules="companyRules"
             name="companyName"
+            maxlength="100"
+            clearable
+            clear-icon="mdi-close-circle"
+            required
           ></v-text-field>
         </v-col>
       </v-row>
@@ -23,6 +28,7 @@
             :rules="companyYearRules"
             label="年"
             name="companyYear"
+            maxlength="4"
           ></v-text-field>
         </v-col>
         <v-col cols="1">
@@ -31,6 +37,7 @@
             :rules="companyMonthRules"
             label="月"
             name="companyMonth"
+            maxlength="2"
           ></v-text-field>
         </v-col>
         <v-col cols="1">
@@ -39,6 +46,7 @@
             :rules="companyDayRules"
             label="日"
             name="companyDay"
+            maxlength="2"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -49,6 +57,8 @@
             outlined
             :rules="presidentRules"
             name="president"
+            label="(例)宛間太郎"
+            maxlength="50"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -59,6 +69,8 @@
             outlined
             :rules="postNumberFirstRules"
             name="postNumberFirst"
+            label="123"
+            maxlength="3"
           ></v-text-field>
         </v-col>
         <div class="to-label">-</div>
@@ -67,6 +79,8 @@
             outlined
             :rules="postNumberLastRules"
             name="postNumberLast"
+            label="4567"
+            maxlength="4"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -77,6 +91,8 @@
             outlined
             :rules="addressRules"
             name="address"
+            label="(例)千葉県宛間市宛間123-4"
+            maxlength="100"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -87,6 +103,8 @@
             outlined
             :rules="telNumberOneRules"
             name="telNumberOne"
+            label="090"
+            maxlength="3"
           ></v-text-field>
         </v-col>
         <div class="to-label">-</div>
@@ -95,6 +113,8 @@
             outlined
             :rules="telNumberTwoRules"
             name="telNumberTwo"
+            label="1234"
+            maxlength="4"
           ></v-text-field>
         </v-col>
         <div class="to-label">-</div>
@@ -103,6 +123,8 @@
             outlined
             :rules="telNumberThreeRules"
             name="telNumberThree"
+            label="5678"
+            maxlength="4"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -133,6 +155,8 @@
             outlined
             :rules="normalWorkHoursRules"
             name="normalWorkHours"
+            label="時"
+            maxlength="2"
           ></v-text-field>
         </v-col>
         <div class="to-label">～</div>
@@ -141,6 +165,8 @@
             outlined
             :rules="normalWorkMinutesRules"
             name="normalWorkMinutes"
+            label="分"
+            maxlength="2"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -151,6 +177,8 @@
             outlined
             :rules="exceptionWorkHoursRules"
             name="exceptionWorkHours"
+            label="時"
+            maxlength="2"
           ></v-text-field>
         </v-col>
         <div class="to-label">～</div>
@@ -159,6 +187,8 @@
             outlined
             :rules="exceptionWorkMinutesRules"
             name="exceptionWorkMinutes"
+            label="分"
+            maxlength="2"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -232,81 +262,81 @@ export default {
       roundingTime: '15-minutes',
       roundTime: 'half-up',
       companyRules: [
-        v => !!v || '会社名は必須項目です。',
-        v => (v && v.length <= 100) || '会社名は100文字以内で入力してください。'
+        v => !!v || '会社名が未入力です',
+        v => (v && v.length <= 100) || '文字数制限は100文字以内です'
       ],
       companyYearRules: [
-        v => !!v || '設立(年)は必須項目です。',
-        v => (v && v.length <= 4) || '設立(年)は4文字以内で入力してください。',
-        v => /[0-9]/.test(v) || '設立(年)は半角数字のみ入力してください。'
+        v => !!v || '設立(年)が未入力です',
+        v => (v && v.length <= 4) || '文字数制限は4文字以内です',
+        v => /[0-9]/.test(v) || '設立(年)の入力は半角数字のみです'
       ],
       companyMonthRules: [
-        v => !!v || '設立(月)は必須項目です。',
-        v => (v && v.length <= 4) || '設立(月)は4文字以内で入力してください。',
-        v => /[0-9]/.test(v) || '設立(月)は半角数字のみ入力してください。'
+        v => !!v || '設立(月)が未入力です',
+        v => (v && v.length <= 4) || '文字数制限は4文字以内です',
+        v => /[0-9]/.test(v) || '設立(月)の入力は半角数字のみです'
       ],
       companyDayRules: [
-        v => !!v || '設立(日)は必須項目です。',
-        v => (v && v.length <= 4) || '設立(日)は4文字以内で入力してください。',
-        v => /[0-9]/.test(v) || '設立(月)は半角数字のみ入力してください。'
+        v => !!v || '設立(日)が未入力です',
+        v => (v && v.length <= 4) || '文字数制限は4文字以内です',
+        v => /[0-9]/.test(v) || '設立(月)の入力は半角数字のみです'
       ],
       presidentRules: [
-        v => !!v || '代表者は必須項目です。',
-        v => (v && v.length <= 100) || '代表者は100文字以内で入力してください。'
+        v => !!v || '代表者が未入力です',
+        v => (v && v.length <= 100) || '文字数制限は100文字以内です'
       ],
       postNumberFirstRules: [
-        v => !!v || '郵便番号1は必須項目です。',
-        v => (v && v.length <= 3) || '郵便番号1は3文字以内で入力してください。',
-        v => /[0-9]/.test(v) || '郵便番号1は半角数字のみ入力してください。'
+        v => !!v || '郵便番号1が未入力です',
+        v => (v && v.length <= 3) || '文字数制限は3文字以内です',
+        v => /[0-9]/.test(v) || '郵便番号1の入力は半角数字のみです'
       ],
       postNumberLastRules: [
-        v => !!v || '郵便番号2は必須項目です。',
-        v => (v && v.length <= 4) || '郵便番号2は4文字以内で入力してください。',
-        v => /[0-9]/.test(v) || '郵便番号2は半角数字のみ入力してください。'
+        v => !!v || '郵便番号2が未入力です',
+        v => (v && v.length <= 4) || '文字数制限は4文字以内です',
+        v => /[0-9]/.test(v) || '郵便番号2の入力は半角数字のみです'
       ],
       addressRules: [
-        v => !!v || '住所は必須項目です。',
-        v => (v && v.length <= 100) || '住所は100文字以内で入力してください。'
+        v => !!v || '住所が未入力です',
+        v => (v && v.length <= 100) || '文字数制限は100文字以内です'
       ],
       telNumberOneRules: [
-        v => !!v || '電話番号1は必須項目です。',
-        v => (v && v.length <= 4) || '電話番号1は4文字以内で入力してください。',
-        v => /[0-9]/.test(v) || '電話番号1は半角数字のみ入力してください。'
+        v => !!v || '電話番号1が未入力です',
+        v => (v && v.length <= 4) || '文字数制限は4文字以内です',
+        v => /[0-9]/.test(v) || '電話番号1の入力は半角数字のみです'
       ],
       telNumberTwoRules: [
-        v => !!v || '電話番号2は必須項目です。',
-        v => (v && v.length <= 4) || '電話番号2は4文字以内で入力してください。',
-        v => /[0-9]/.test(v) || '電話番号2は半角数字のみ入力してください。'
+        v => !!v || '電話番号2が未入力です',
+        v => (v && v.length <= 4) || '文字数制限は4文字以内です',
+        v => /[0-9]/.test(v) || '電話番号2の入力は半角数字のみです'
       ],
       telNumberThreeRules: [
-        v => !!v || '電話番号3は必須項目です。',
-        v => (v && v.length <= 4) || '電話番号3は4文字以内で入力してください。',
-        v => /[0-9]/.test(v) || '電話番号3は半角数字のみ入力してください。'
+        v => !!v || '電話番号3が未入力です',
+        v => (v && v.length <= 4) || '文字数制限は4文字以内です',
+        v => /[0-9]/.test(v) || '電話番号3の入力は半角数字のみです'
       ],
       normalWorkHoursRules: [
-        v => !!v || '通常業務時間(時)は必須項目です。',
-        v => (v && v.length <= 2) || '通常業務時間(時)は2文字以内で入力してください。',
-        v => /[0-9]/.test(v) || '通常業務時間(時)は半角数字のみ入力してください。'
+        v => !!v || '通常業務時間(時)が未入力です',
+        v => (v && v.length <= 2) || '文字数制限は2文字以内です',
+        v => /[0-9]/.test(v) || '通常業務時間(時)の入力は半角数字のみです'
       ],
       normalWorkMinutesRules: [
-        v => !!v || '通常業務時間(分)は必須項目です。',
-        v => (v && v.length <= 2) || '通常業務時間(分)は2文字以内で入力してください。',
-        v => /[0-9]/.test(v) || '通常業務時間(分)は半角数字のみ入力してください。'
+        v => !!v || '通常業務時間(分)が未入力です',
+        v => (v && v.length <= 2) || '文字数制限は2文字以内です',
+        v => /[0-9]/.test(v) || '通常業務時間(分)の入力は半角数字のみです'
       ],
       exceptionWorkHoursRules: [
-        v => !!v || '時間外業務時間(時)は必須項目です。',
-        v => (v && v.length <= 2) || '時間外業務時間(時)は2文字以内で入力してください。',
-        v => /[0-9]/.test(v) || '時間外業務時間(時)は半角数字のみ入力してください。'
+        v => !!v || '時間外業務時間(時)が未入力です',
+        v => (v && v.length <= 2) || '文字数制限は2文字以内です',
+        v => /[0-9]/.test(v) || '時間外業務時間(時)の入力は半角数字のみです'
       ],
       exceptionWorkMinutesRules: [
-        v => !!v || '時間外業務時間(分)は必須項目です。',
-        v => (v && v.length <= 2) || '時間外業務時間(分)は2文字以内で入力してください。',
-        v => /[0-9]/.test(v) || '時間外業務時間(分)は半角数字のみ入力してください。'
+        v => !!v || '時間外業務時間(分)が未入力です',
+        v => (v && v.length <= 2) || '文字数制限は2文字以内です',
+        v => /[0-9]/.test(v) || '時間外業務時間(分)の入力は半角数字のみです'
       ],
       roundingTimeRules: [
-        v => !!v || '丸めで指定選択時、指定時間(分)は必須項目です。',
-        v => (v && v.length <= 2) || '丸めで指定選択時、指定時間(分)は2文字以内で入力してください。',
-        v => /[0-9]/.test(v) || '丸めで指定選択時、指定時間(分)は半角数字のみ入力してください。'
+        v => !!v || '丸めで指定選択時、指定時間(分)が未入力です',
+        v => (v && v.length <= 2) || '文字数制限は2文字以内です',
+        v => /[0-9]/.test(v) || '丸めで指定選択時、指定時間(分)の入力は半角数字のみです'
       ]
     }
   },

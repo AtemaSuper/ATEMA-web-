@@ -11,7 +11,7 @@
             <v-col cols="12" sm="4" md="2">
               <!-- 協力会社を追加するダイアログ表示ボタン -->
               <v-row justify="center">
-                <v-dialog v-model="subCompanyDialog" max-width="600px">
+                <v-dialog v-model="subCompanyDialog" persistent max-width="600px">
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
                       v-bind="attrs"
@@ -39,7 +39,7 @@
                           </div>
                         </v-col>
                         <v-col>
-                          <v-text-field outlined></v-text-field>
+                          <v-text-field v-model="companyName" :rules="companyRules" label="(例)株式会社ABC" maxlength='50' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                         </v-col>
                       </v-row>
                       <v-row>
@@ -52,7 +52,7 @@
                           </div>
                         </v-col>
                         <v-col>
-                          <v-text-field outlined></v-text-field>
+                          <v-text-field v-model="foundationName" :rules="foundationRules" label="(例)2080年12月32日" maxlength='11' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                         </v-col>
                       </v-row>
                       <v-row>
@@ -65,7 +65,7 @@
                           </div>
                         </v-col>
                         <v-col>
-                          <v-text-field outlined></v-text-field>
+                          <v-text-field v-model="leaderName" :rules="leaderRules" label="(例)宛間太郎" maxlength='8' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                         </v-col>
                       </v-row>
                       <v-row>
@@ -80,16 +80,20 @@
                         <v-col cols="2">
                           <v-text-field
                             outlined
+                            v-model = "postNumberFirstName"
                             :rules="postNumberFirstRules"
-                            name="postNumberFirst"
+                            label="123"
+                            maxlength='3'
                           ></v-text-field>
                         </v-col>
                         <div class="to-label">-</div>
                         <v-col cols="2">
                           <v-text-field
                             outlined
+                            v-model = "postNumberLastName"
                             :rules="postNumberLastRules"
-                            name="postNumberLast"
+                            label="4567"
+                            maxlength='4'
                           ></v-text-field>
                         </v-col>
                       </v-row>
@@ -103,7 +107,7 @@
                           </div>
                         </v-col>
                         <v-col>
-                          <v-text-field outlined></v-text-field>
+                          <v-text-field v-model="addressName" :rules="addressRules" label="(例)千葉県宛間市宛間123-4" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                         </v-col>
                       </v-row>
                       <v-row>
@@ -118,24 +122,30 @@
                         <v-col cols="2">
                           <v-text-field
                             outlined
+                            v-model="telNumberOneName"
                             :rules="telNumberOneRules"
-                            name="telNumberOne"
+                            label="090"
+                            maxlength="3"
                           ></v-text-field>
                         </v-col>
                         <div class="to-label">-</div>
                         <v-col cols="2">
                           <v-text-field
                             outlined
+                            v-model="telNumberTwoName"
                             :rules="telNumberTwoRules"
-                            name="telNumberTwo"
+                            label="1234"
+                            maxlength="4"
                           ></v-text-field>
                         </v-col>
                         <div class="to-label">-</div>
                         <v-col cols="2">
                           <v-text-field
                             outlined
+                            v-model="telNumberThreeName"
                             :rules="telNumberThreeRules"
-                            name="telNumberThree"
+                            label="5678"
+                            maxlength="4"
                           ></v-text-field>
                         </v-col>
                       </v-row>
@@ -171,11 +181,11 @@
                         </v-col>
                         <v-col cols="2">
                           <div class="item-required">
-                            <v-chip color="red" dark>必須</v-chip>
+                            <v-chip color="white" dark>必須</v-chip>
                           </div>
                         </v-col>
                         <v-col>
-                          <v-textarea outlined></v-textarea>
+                          <v-textarea v-model="noteName" :rules="noteRules" maxlength="501" clearable clear-icon="mdi-close-circle" outlined required></v-textarea>
                         </v-col>
                       </v-row>
                     </v-card-text>
@@ -266,7 +276,7 @@
             <v-col cols="12" sm="4" md="4"> </v-col>
             <v-col cols="12" sm="4" md="2">
               <!-- 社員追加ボタン・ダイアログ表示 -->
-              <v-dialog v-model="subWorkerDialog" max-width="600px">
+              <v-dialog v-model="subWorkerDialog" persistent max-width="600px">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
                     v-bind="attrs"
@@ -294,7 +304,10 @@
                           <v-chip color="red" dark>必須</v-chip></div>
                       </v-col>
                       <v-col>
-                        <v-text-field outlined></v-text-field>
+                        <v-text-field v-model="employeeFirstname" :rules="employeeFirstnameRules" label="(例)宛間" maxlength="50" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                      </v-col>
+                      <v-col>
+                        <v-text-field v-model="employeeLastname" :rules="employeeLastnameRules" label="(例)太郎" maxlength="50" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -306,7 +319,7 @@
                           <v-chip color="red" dark>必須</v-chip></div>
                       </v-col>
                       <v-col>
-                        <v-text-field outlined></v-text-field>
+                        <v-text-field v-model="staffCodeName" :rules="staffCodeRules" label="(例)001" maxlength="8" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -318,29 +331,55 @@
                           <v-chip color="red" dark>必須</v-chip>
                         </div>
                       </v-col>
-                      <v-col cols="2">
-                        <v-text-field
-                          outlined
-                          :rules="telNumberOneRules"
-                          name="telNumberOne"
-                        ></v-text-field>
-                      </v-col>
-                      <div class="to-label">/</div>
-                      <v-col cols="2">
-                        <v-text-field
-                          outlined
-                          :rules="telNumberTwoRules"
-                          name="telNumberTwo"
-                        ></v-text-field>
-                      </v-col>
-                      <div class="to-label">/</div>
-                      <v-col cols="2">
-                        <v-text-field
-                          outlined
-                          :rules="telNumberThreeRules"
-                          name="telNumberThree"
-                        ></v-text-field>
-                      </v-col>
+                      <v-col cols="12" sm="6" md="6"
+                            ><v-menu
+                              ref="birthdayMenu"
+                              v-model="birthdayMenu"
+                              :close-on-content-click="false"
+                              :return-value.sync="birthdayMenu"
+                              transition="scale-transition"
+                              offset-y
+                              min-width="auto"
+                            >
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-text-field
+                                  v-model="birthday"
+                                  :rules="birthdayRules"
+                                  placeholder="まず20XX年X月をクリック"
+                                  label="日付を選択"
+                                  prepend-inner-icon="mdi-calendar"
+                                  readonly
+                                  outlined
+                                  dense
+                                  v-bind="attrs"
+                                  v-on="on"
+                                ></v-text-field>
+                              </template>
+                              <v-date-picker
+                                v-model="birthday"
+                                no-title
+                                scrollable
+                                locale="jp-ja"
+                                :day-format="(date) => new Date(date).getDate()"
+                              >
+                                <v-btn
+                                    color="#ff6669" class="white--text" rounded
+                                    @click="
+                                    $refs.birthdayMenu.save(
+                                      birthday
+                                    )"
+                                >
+                                  OK
+                                </v-btn>
+                                <v-btn
+                                   class="#f5f5f5" rounded
+                                  @click="birthdayMenu = false"
+                                >
+                                  キャンセル
+                                </v-btn>
+                              </v-date-picker>
+                            </v-menu>
+                          </v-col>
                     </v-row>
                     <v-row>
                       <v-col cols="3">
@@ -351,7 +390,7 @@
                           <v-chip color="red" dark>必須</v-chip></div>
                       </v-col>
                       <v-col>
-                        <v-text-field outlined></v-text-field>
+                        <v-text-field  v-model="addressName" :rules="addressRules" label="(例)千葉県宛間市宛間123-4" maxlength="100" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -363,7 +402,7 @@
                           <v-chip color="red" dark>必須</v-chip></div>
                       </v-col>
                       <v-col>
-                        <v-text-field outlined></v-text-field>
+                        <v-text-field  v-model="mailAddressName" :rules="mailAddressRules" label="(例)abc@example.com" maxlength="100" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -380,6 +419,8 @@
                           outlined
                           :rules="telNumberOneRules"
                           name="telNumberOne"
+                          label="090"
+                          maxlength="3"
                         ></v-text-field>
                       </v-col>
                       <div class="to-label">-</div>
@@ -388,6 +429,8 @@
                           outlined
                           :rules="telNumberTwoRules"
                           name="telNumberTwo"
+                          label="1234"
+                          maxlength="4"
                         ></v-text-field>
                       </v-col>
                       <div class="to-label">-</div>
@@ -396,6 +439,8 @@
                           outlined
                           :rules="telNumberThreeRules"
                           name="telNumberThree"
+                          label="5678"
+                          maxlength="4"
                         ></v-text-field>
                       </v-col>
                     </v-row>
@@ -408,7 +453,7 @@
                           <v-chip color="red" dark>必須</v-chip></div>
                       </v-col>
                       <v-col>
-                        <v-text-field outlined></v-text-field>
+                        <v-text-field v-model="employeeIdName" :rules="employeeIdRules" label="(例)abc001" maxlength="8" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -420,19 +465,7 @@
                           <v-chip color="red" dark>必須</v-chip></div>
                       </v-col>
                       <v-col>
-                        <v-text-field outlined></v-text-field>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col cols="3">
-                        <div class="item-title">雇用形態</div>
-                      </v-col>
-                      <v-col cols="2">
-                        <div class="item-required">
-                          <v-chip color="red" dark>必須</v-chip></div>
-                      </v-col>
-                      <v-col>
-                        <v-text-field outlined></v-text-field>
+                        <v-text-field v-model="passwordName" :rules="passwordRules" label="※半角英数字" maxlength="50" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -441,12 +474,15 @@
                       </v-col>
                       <v-col cols="2">
                         <div class="item-required">
-                          <v-chip color="red" dark>必須</v-chip></div>
+                          <v-chip color="white" dark>必須</v-chip></div>
                       </v-col>
                       <v-col>
-                        <v-text-field outlined></v-text-field>
+                        <v-text-field v-model="licenseName" :rules="lecenseRules" label="(例)普通自動車免許" maxlength="50" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                       </v-col>
                     </v-row>
+                    <v-btn color="#ff6669" class="white--text" fab small><v-icon>
+                                mdi-plus-thick
+                              </v-icon></v-btn>
                   </v-card-text>
 
                   <v-divider></v-divider>
@@ -566,7 +602,96 @@ export default {
     ditaileEdit: {},
     subCompanyDialog: false,
     noteContentsDialog: false,
-    fieldDialog: false
+    fieldDialog: false,
+    birthdayMenu: false,
+    companyName: '',
+    companyRules: [
+      v => !!v || '会社名が未入力です',
+      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+    ],
+    foundationName: '',
+    foundationRules: [
+      v => !!v || '設立日が未入力です',
+      v => (!!v && v.length <= 10) || `文字数は10文字以内です`
+    ],
+    leaderName: '',
+    leaderRules: [
+      v => !!v || '代表者名が未入力です',
+      v => (!!v && v.length <= 20) || `文字数は20文字以内です`
+    ],
+    postNumberFirstname: '',
+    postNumberFirstRules: [
+      v => !!v || '郵便番号が未入力です',
+      v => (!!v && v.length <= 3) || `文字数は3文字以内です`
+    ],
+    postNumberLastName: '',
+    postNumberLastRules: [
+      v => !!v || '郵便番号が未入力です',
+      v => (!!v && v.length <= 4) || `文字数は4文字以内です`
+    ],
+    addressName: '',
+    addressRules: [
+      v => !!v || '住所が未入力です',
+      v => (!!v && v.length <= 100) || `文字数は100文字以内です`
+    ],
+    telNumberOneName: '',
+    telNumberOneRules: [
+      v => !!v || '電話番号が未入力です',
+      v => (!!v && v.length <= 3) || `文字数は3文字以内です`
+    ],
+    telNumberTwoName: '',
+    telNumberTwoRules: [
+      v => !!v || '電話番号が未入力です',
+      v => (!!v && v.length <= 4) || `文字数は4文字以内です`
+    ],
+    telNumberThreeName: '',
+    telNumberThreeRules: [
+      v => !!v || '電話番号が未入力です',
+      v => (!!v && v.length <= 4) || `文字数は4文字以内です`
+    ],
+    noteName: '',
+    noteRules: [
+      v => v.length <= 500 || `文字数は500文字以内です`
+    ],
+    employeeFirstname: '',
+    employeeFirstnameRules: [
+      v => !!v || '姓が未入力です',
+      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+    ],
+    employeeLastname: '',
+    employeeLastnameRules: [
+      v => !!v || '名が未入力です',
+      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+    ],
+    staffCodeName: '',
+    staffCodeRules: [
+      v => !!v || '職員コードが未入力です',
+      v => (!!v && v.length <= 8) || `文字数は8文字以内です`
+    ],
+    birthday: '',
+    birthdayRules: [
+      v => !!v || '生年月日が未入力です'
+    ],
+    mailAddressName: '',
+    mailAddressRules: [
+      v => !!v || 'メールアドレスが未入力です',
+      v => /.+@.+\..+/.test(v) || '',
+      v => (!!v && v.length <= 100) || `文字数は100文字以内です`
+    ],
+    employeeIdName: '',
+    employeeIdRules: [
+      v => !!v || 'ログインIDが未入力です',
+      v => (!!v && v.length <= 8) || `文字数は8文字以内です`
+    ],
+    passwordName: '',
+    passwordRules: [
+      v => !!v || 'パスワードが未入力です',
+      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+    ],
+    licenseName: '',
+    licenseRules: [
+      v => v.length <= 50 || `文字数は50文字以内です`
+    ]
   }),
   computed: {
     /** v-tableのヘッダーを設定 */
