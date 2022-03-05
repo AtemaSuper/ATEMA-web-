@@ -1,6 +1,12 @@
 import Api from './index'
 
 export default {
+  /*
+    exsample画面
+  */
+
+  // exsample処理
+
   testPost () {
     const item = { text: 'Success!' }
     return Api().post('/test', item)
@@ -28,9 +34,11 @@ export default {
   testNcmb () {
     return Api().post('/ncmb')
   },
-  //
-  // 自社設定画面
-  //
+
+  /*
+    自社設定画面
+  */
+
   // 初期表示処理
   getOwnComapanyInfo () {
     return Api().post('/ownCompay')
