@@ -142,7 +142,7 @@
             </v-row>
           </v-sheet>
 <!-- 客先編集ダイアログ -->
-          <v-dialog v-model="clientDialog" max-width="480">
+          <v-dialog v-model="clientDialog" persistent max-width="480">
             <v-card>
               <v-card-title class="text-h6 grey lighten-2">
                 客先編集
@@ -158,7 +158,7 @@
                       <v-chip color="red" dark>必須</v-chip></div>
                   </v-col>
                   <v-col>
-                    <v-text-field></v-text-field>
+                    <v-text-field v-model="clientName" :rules="clientRules"  label="(例)株式会社ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -192,7 +192,7 @@
             </v-card>
           </v-dialog>
 <!-- 現場編集ダイアログ -->
-          <v-dialog v-model="fieldDialog" max-width="480">
+          <v-dialog v-model="fieldDialog" persistent max-width="480">
             <v-card>
               <v-card-title class="text-h5 grey lighten-2">
                 現場編集
@@ -208,7 +208,7 @@
                       <v-chip color="red" dark>必須</v-chip></div>
                   </v-col>
                   <v-col>
-                    <v-select></v-select>
+                    <v-select outlined></v-select>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -220,7 +220,7 @@
                       <v-chip color="red" dark>必須</v-chip></div>
                   </v-col>
                   <v-col>
-                    <v-text-field></v-text-field>
+                    <v-text-field v-model="workFieldName" :rules="workFieldRules"  label="(例)現場名ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -275,7 +275,17 @@ export default {
     fieldProgress: 'inProgress',
     editItem: {},
     clientDialog: false,
-    fieldDialog: false
+    fieldDialog: false,
+    workFieldName: '',
+    workFieldRules: [
+      v => !!v || '客先名が未入力です',
+      v => (!!v && v.length <= 100) || `文字数は100文字以内です`
+    ],
+    clientFieldName: '',
+    clientRules: [
+      v => !!v || '現場名が未入力です',
+      v => (!!v && v.length <= 100) || `文字数は100文字以内です`
+    ]
   }),
   computed: {
     /** v-tableのヘッダーを設定 */

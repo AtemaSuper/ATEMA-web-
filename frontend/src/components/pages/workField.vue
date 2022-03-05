@@ -2,6 +2,7 @@
   <v-app id="workField">
 <!-- 工事一覧 -->
     <v-container>
+      <h2>工事一覧</h2>
       <v-sheet color="white" rounded outlined>
         <v-row align="center" >
           <v-col cols="12" sm="4" md="2"></v-col>
@@ -87,7 +88,7 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-text-field v-model="JobName" :rules="JobRules" label="(例)21-0001" outlined required></v-text-field>
+                <v-text-field v-model="JobName" :rules="JobRules"  label="(例)21-0001" maxlength='7' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -99,7 +100,7 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-select outlined label="(例)株式会社ABC" :items="['株式会社A', '株式会社B', '株式会社C', '株式会社D']" required></v-select>
+                <v-select label="(例)株式会社ABC" :items="['株式会社A', '株式会社B', '株式会社C', '株式会社D']" outlined required></v-select>
               </v-col>
             </v-row>
             <v-row>
@@ -111,7 +112,7 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-select outlined label="(例)現場名A" :items="['現場名A', '現場名B', '現場名C', '現場名D']" required></v-select>
+                <v-select label="(例)現場名A" :items="['現場名A', '現場名B', '現場名C', '現場名D']" outlined required></v-select>
               </v-col>
             </v-row>
             <v-row>
@@ -123,7 +124,7 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-text-field v-model="constructionName" :rules="constructionRules" label="(例)工事件名１－ABC" outlined required></v-text-field>
+                <v-text-field v-model="constructionName" :rules="constructionRules" label="(例)工事件名１－ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -183,11 +184,13 @@ export default {
     workFieldDialog: false,
     JobName: '',
     JobRules: [
-      v => !!v || 'JobNoが未入力です。'
+      v => !!v || 'JobNoが未入力です',
+      v => (!!v && v.length <= 7) || `7文字以内で入力してください`
     ],
     constructionName: '',
     constructionRules: [
-      v => !!v || '工事件名が未入力です。'
+      v => !!v || '工事件名が未入力です',
+      v => (!!v && v.length <= 100) || `100文字以内で入力してください`
     ]
   }),
   computed: {
@@ -196,8 +199,8 @@ export default {
       return [
         {
           text: 'JobNo',
-          align: 'center',
           value: 'jobNo',
+          align: 'center',
           width: '18%'
         },
         {

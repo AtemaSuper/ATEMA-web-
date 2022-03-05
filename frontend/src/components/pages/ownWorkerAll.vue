@@ -84,10 +84,10 @@
                     <v-card-actions>
                       <v-spacer></v-spacer>
                       <v-btn color="primary" @click="deleteWorkerItemConfirm">
-                        削除
+                        OK
                       </v-btn>
                       <v-btn color="white" @click="closeWorkerDelete">
-                        戻る
+                        キャンセル
                       </v-btn>
                       <v-spacer></v-spacer>
                     </v-card-actions>
@@ -110,7 +110,7 @@
                             <p>名前</p>
                           </v-col>
                           <v-col cols="12" sm="6" md="6">
-                            {{ editedWorkerItem.name }}
+                            {{ editedWorkerItem.firstname }}
                           </v-col>
                         </v-row>
                         <v-row>
@@ -240,7 +240,8 @@
                 <!-- 従業員詳細編集ダイアログ -->
                 <v-dialog
                   v-model="dialogWorkerEdit"
-                  max-width="600px"
+                  max-width="700px"
+                  persistent
                 >
                   <v-card>
                     <v-card-title class="text-h5 grey lighten-2">
@@ -249,22 +250,46 @@
                     <v-card-text>
                       <v-container>
                         <v-row>
-                          <v-col cols="12" lg="4" sm="4">
+                          <v-col cols="12" lg="3" sm="3">
                             <p>名前</p>
                           </v-col>
-                          <v-col cols="12" sm="6" md="6">
+                          <v-col cols="12" md="2" sm="2">
+                              <v-chip color="red" dark>必須</v-chip>
+                          </v-col>
+                          <v-col cols="12" sm="3" md="3">
                             <v-text-field
                               outlined
                               dense
-                              v-model="editedWorkerItem.name"
+                              v-model="editedWorkerItem.firstname"
+                              :rules="editedWorkerItem.firstnameRules"
+                              label="(例)宛間"
+                              maxlength='50'
+                              clearable
+                              clear-icon="mdi-close-circle"
+                              required
                             ></v-text-field>
                           </v-col>
+                          <v-col cols="12" sm="3" md="3">
+                            <v-text-field
+                              outlined
+                              dense
+                              v-model="editedWorkerItem.Lastname"
+                              :rules="editedWorkerItem.LastnameRules"
+                              label="(例)太郎"
+                              maxlength='50'
+                              clearable
+                              clear-icon="mdi-close-circle"
+                              required
+                            ></v-text-field>
+                          </v-col>
+                          <v-col cols="12" sm="1" md="1"></v-col>
                         </v-row>
                         <v-row>
-                          <v-col cols="12" lg="4" sm="4">
+                          <v-col cols="12" lg="3" sm="3">
                             <p>役職</p>
                           </v-col>
-                          <v-col cols="12" sm="6" md="6">
+                          <v-col cols="12" md="2" sm="2"></v-col>
+                          <v-col cols="12" sm="7" md="7">
                             <v-select
                               :items="getPostList"
                               item-text="postName"
@@ -275,22 +300,30 @@
                           </v-col>
                         </v-row>
                         <v-row>
-                          <v-col cols="12" lg="4" sm="4">
+                          <v-col cols="12" lg="3" sm="3">
                             <p>職員コード</p>
                           </v-col>
-                          <v-col cols="12" sm="6" md="6">
+                          <v-col cols="12" md="2" sm="2"></v-col>
+                          <v-col cols="12" sm="7" md="7">
                             <v-text-field
                               outlined
                               dense
                               v-model="editedWorkerItem.code"
+                              :rules="editedWorkerItem.codeRules"
+                              label="(例)001"
+                              maxlength='8'
+                              clearable
+                              clear-icon="mdi-close-circle"
+                              required
                             ></v-text-field>
                           </v-col>
                         </v-row>
                         <v-row>
-                          <v-col cols="12" lg="4" sm="4">
+                          <v-col cols="12" lg="3" sm="3">
                             <p>生年月日</p>
                           </v-col>
-                          <v-col cols="12" sm="6" md="6"
+                          <v-col cols="12" md="2" sm="2"></v-col>
+                          <v-col cols="12" sm="7" md="7"
                             ><v-menu
                               ref="birthdayMenu"
                               v-model="birthdayMenu"
@@ -303,7 +336,9 @@
                               <template v-slot:activator="{ on, attrs }">
                                 <v-text-field
                                   v-model="editedWorkerItem.birthday"
+                                  :rules="birthdayRules"
                                   label="日付を選択"
+                                  placeholder="まず20XX年X月をクリック"
                                   prepend-inner-icon="mdi-calendar"
                                   readonly
                                   outlined
@@ -320,15 +355,7 @@
                                 :day-format="(date) => new Date(date).getDate()"
                               >
                                 <v-btn
-                                  text
-                                  color="primary"
-                                  @click="birthdayMenu = false"
-                                >
-                                  Cancel
-                                </v-btn>
-                                <v-btn
-                                  text
-                                  color="primary"
+                                  color="#ff6669" class="white--text" rounded
                                   @click="
                                     $refs.birthdayMenu.save(
                                       editedWorkerItem.birthday
@@ -337,75 +364,144 @@
                                 >
                                   OK
                                 </v-btn>
+                                <v-btn
+                                   class="#f5f5f5" rounded
+                                  @click="birthdayMenu = false"
+                                >
+                                  キャンセル
+                                </v-btn>
                               </v-date-picker>
                             </v-menu>
                           </v-col>
                         </v-row>
                         <v-row>
-                          <v-col cols="12" lg="4" sm="4">
+                          <v-col cols="12" lg="3" sm="3">
                             <p>住所</p>
                           </v-col>
-                          <v-col cols="12" sm="6" md="6">
+                          <v-col cols="12" md="2" sm="2"></v-col>
+                          <v-col cols="12" sm="7" md="7">
                             <v-text-field
                               outlined
                               dense
                               v-model="editedWorkerItem.address"
+                              :rules="editedWorkerItem.addressRules"
+                              label="(例)千葉県宛間市宛間123-4"
+                              maxlength="100"
+                              clearable
+                              clear-icon="mdi-close-circle"
+                              required
                             ></v-text-field>
                           </v-col>
                         </v-row>
                         <v-row>
-                          <v-col cols="12" lg="4" sm="4">
+                          <v-col cols="12" lg="3" sm="3">
                             <p>Mail</p>
                           </v-col>
-                          <v-col cols="12" sm="6" md="6">
+                          <v-col cols="12" md="2" sm="2"></v-col>
+                          <v-col cols="12" sm="7" md="7">
                             <v-text-field
                               outlined
                               dense
                               v-model="editedWorkerItem.mail"
+                              :rules="editedWorkerItem.mailRules"
+                              label="(例)abc@example.com"
+                              maxlength="100"
+                              clearable
+                              clear-icon="mdi-close-circle"
+                              required
                             ></v-text-field>
                           </v-col>
                         </v-row>
                         <v-row>
-                          <v-col cols="12" lg="4" sm="4">
+                          <v-col cols="12" lg="3" md="3">
                             <p>電話番号</p>
                           </v-col>
-                          <v-col cols="12" sm="6" md="6">
-                            <v-text-field
-                              outlined
-                              dense
-                              v-model="editedWorkerItem.phoneNumber"
-                            ></v-text-field>
+                          <v-col cols="12" md="2" sm="2"></v-col>
+                          <v-col cols="12" md="7" sm="7">
+                            <v-row>
+                              <v-col cols="12" sm="3" md="3">
+                              <v-text-field
+                                outlined
+                                dense
+                                v-model="editedWorkerItem.telNumberOne"
+                                :rules="editedWorkerItem.telNumberOneRules"
+                                maxlength="3"
+                                required
+                              ></v-text-field>
+                              </v-col>
+                              <div class="to-label">-</div>
+                              <v-col cols="12" sm="3" md="3">
+                                <v-text-field
+                                  outlined
+                                  dense
+                                  v-model="editedWorkerItem.telNumberTwo"
+                                  :rules="editedWorkerItem.telNumberTwoRules"
+                                  maxlength="4"
+                                  required
+                                ></v-text-field>
+                              </v-col>
+                              <div class="to-label">-</div>
+                              <v-col cols="12" sm="3" md="3">
+                                <v-text-field
+                                  outlined
+                                  dense
+                                  v-model="editedWorkerItem.telNumberThree"
+                                  :rules="editedWorkerItem.telNumberThreeRules"
+                                  maxlength="4"
+                                  required
+                                ></v-text-field>
+                              </v-col>
+                            </v-row>
                           </v-col>
                         </v-row>
                         <v-row>
-                          <v-col cols="12" lg="4" sm="4">
+                          <v-col cols="12" lg="3" sm="3">
                             <p>ログインID</p>
                           </v-col>
-                          <v-col cols="12" sm="6" md="6">
+                          <v-col cols="12" md="2" sm="2">
+                              <v-chip color="red" dark>必須</v-chip>
+                          </v-col>
+                          <v-col cols="12" sm="7" md="7">
                             <v-text-field
                               outlined
                               dense
                               v-model="editedWorkerItem.loginId"
+                              :rules="editedWorkerItem.loginIdRules"
+                              label="(例)abc001"
+                              maxlength="50"
+                              clearable
+                              clear-icon="mdi-close-circle"
+                              required
                             ></v-text-field>
                           </v-col>
                         </v-row>
                         <v-row>
-                          <v-col cols="12" lg="4" sm="4">
+                          <v-col cols="12" lg="3" sm="3">
                             <p>パスワード</p>
                           </v-col>
-                          <v-col cols="12" sm="6" md="6">
+                          <v-col cols="12" md="2" sm="2">
+                              <v-chip color="red" dark>必須</v-chip>
+                          </v-col>
+                          <v-col cols="12" sm="7" md="7">
                             <v-text-field
                               outlined
                               dense
                               v-model="editedWorkerItem.password"
+                              :rules="editedWorkerItem.passwordRules"
+                              label="半角英数字"
+                              maxlength="50"
+                              clearable
+                              clear-icon="mdi-close-circle"
+                              required
                             ></v-text-field>
                           </v-col>
                         </v-row>
                         <v-row>
-                          <v-col cols="12" lg="4" sm="4">
+                          <v-col cols="12" lg="3" sm="3">
                             <p>所属期間</p>
                           </v-col>
-                          <v-col cols="12" sm="6" md="6"
+                          <v-col cols="12" md="2" sm="2"></v-col>
+                          <v-col cols="12" sm="7" md="7"
                             ><v-menu
                               ref="openDateMenu"
                               v-model="openDateMenu"
@@ -419,6 +515,7 @@
                                 <v-text-field
                                   v-model="editedWorkerItem.openDate"
                                   label="日付を選択"
+                                  placeholder="まず20XX年X月をクリック"
                                   prepend-inner-icon="mdi-calendar"
                                   readonly
                                   outlined
@@ -435,15 +532,8 @@
                                 :day-format="(date) => new Date(date).getDate()"
                               >
                                 <v-btn
-                                  text
-                                  color="primary"
-                                  @click="openDateMenu = false"
-                                >
-                                  Cancel
-                                </v-btn>
-                                <v-btn
-                                  text
-                                  color="primary"
+                                  color="#ff6669" class="white--text"
+                                  rounded
                                   @click="
                                     $refs.openDateMenu.save(
                                       editedWorkerItem.openDate
@@ -451,6 +541,13 @@
                                   "
                                 >
                                   OK
+                                </v-btn>
+                                <v-btn
+                                  class="#f5f5f5"
+                                  rounded
+                                  @click="openDateMenu = false"
+                                >
+                                  キャンセル
                                 </v-btn>
                               </v-date-picker> </v-menu
                             >～<v-menu
@@ -466,6 +563,7 @@
                                 <v-text-field
                                   v-model="editedWorkerItem.cloceDate"
                                   label="日付を選択"
+                                  placeholder="まず20XX年X月をクリック"
                                   prepend-inner-icon="mdi-calendar"
                                   readonly
                                   outlined
@@ -482,15 +580,8 @@
                                 :day-format="(date) => new Date(date).getDate()"
                               >
                                 <v-btn
-                                  text
-                                  color="primary"
-                                  @click="closeDateMenu = false"
-                                >
-                                  Cancel
-                                </v-btn>
-                                <v-btn
-                                  text
-                                  color="primary"
+                                  color="#ff6669" class="white--text"
+                                  rounded
                                   @click="
                                     $refs.closeDateMenu.save(
                                       editedWorkerItem.cloceDate
@@ -499,32 +590,41 @@
                                 >
                                   OK
                                 </v-btn>
+                                <v-btn
+                                  @click="closeDateMenu = false"
+                                  class="#f5f5f5"
+                                  rounded
+                                >
+                                  キャンセル
+                                </v-btn>
                               </v-date-picker>
                             </v-menu>
                           </v-col>
                         </v-row>
                         <v-row>
-                          <v-col cols="12" lg="4" sm="4">
+                          <v-col cols="12" lg="3" sm="3">
                             <p>雇用形態</p>
                           </v-col>
-                          <v-col cols="12" sm="6" md="6">
+                          <v-col cols="12" md="2" sm="2"></v-col>
+                          <v-col cols="12" sm="7" md="7">
                             <v-radio-group
                               v-model="editedWorkerItem.employmentId"
                               row
                               mandatory
                             >
                               <v-radio label="正規" value="1" color="#ff6669"></v-radio>
-                              <v-radio label="非正規" value="2" color="#ff6669"></v-radio>
+                              <v-radio label="非正規" value="2"  color="#ff6669"></v-radio>
                               <v-radio label="委託" value="3" color="#ff6669"></v-radio>
                               <v-radio label="派遣" value="4" color="#ff6669"></v-radio>
                             </v-radio-group>
                           </v-col>
                         </v-row>
                         <v-row>
-                          <v-col cols="12" lg="4" sm="4">
+                          <v-col cols="12" lg="3" sm="3">
                             <p>保有資格</p>
                           </v-col>
-                          <v-col cols="12" sm="6" md="6">
+                          <v-col cols="12" md="2" sm="2"></v-col>
+                          <v-col cols="12" sm="7" md="7">
                             <table>
                               <thead>
                                 <tr>
@@ -650,15 +750,15 @@
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="primary" @click="deletePostItemConfirm">
-                      削除
+                      OK
                     </v-btn>
-                    <v-btn color="white" @click="closePostDelete"> 戻る </v-btn>
+                    <v-btn color="white" @click="closePostDelete"> キャンセル </v-btn>
                     <v-spacer></v-spacer>
                   </v-card-actions>
                 </v-card>
               </v-dialog>
               <!-- 役職編集・追加ダイアログ -->
-              <v-dialog v-model="dialogPostEdit" max-width="1200px">
+              <v-dialog v-model="dialogPostEdit" persistent max-width="1200px">
                 <v-card>
                   <v-card-title class="text-h5 grey lighten-2">
                     {{ postFormTitle }}
@@ -827,17 +927,54 @@ export default {
     dialogPostEdit: false,
     editedPostIndex: -1,
     editedWorkerItem: {
-      name: '',
+      firstname: '',
+      firstnameRules: [
+        v => !!v || '姓が未入力です',
+        v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+      ],
+      Lastname: '',
+      LastnameRules: [
+        v => !!v || '名が未入力です',
+        v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+      ],
       companyName: '',
       post: 0,
       postLabel: '',
       code: '',
+      codeRules: [
+        v => v.length <= 8 || `文字数は8文字以内です`
+      ],
       birthday: '',
       address: '',
+      addressRules: [
+        v => v.length <= 100 || `文字数は100文字以内です`
+      ],
       mail: '',
-      phoneNumber: '',
+      mailRules: [
+        v => v.length <= 100 || `文字数は100文字以内です`
+      ],
+      tellNumberOne: '',
+      tellNumberOneRules: [
+        v => v.length <= 3 || `文字数は3文字以内です`
+      ],
+      tellNumberTwo: '',
+      tellNumberTwoRules: [
+        v => v.length <= 4 || `文字数は4文字以内です`
+      ],
+      tellNumberThree: '',
+      tellNumberThreeRules: [
+        v => v.length <= 4 || `文字数は4文字以内です`
+      ],
       loginId: '',
+      loginIdRules: [
+        v => !!v || 'ログインIDが未入力です',
+        v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+      ],
       password: '',
+      passwordRules: [
+        v => !!v || 'パスワードが未入力です',
+        v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+      ],
       openDate: '',
       cloceDate: '',
       employmentId: 0,
@@ -880,7 +1017,6 @@ export default {
     },
     employmentList: ['none', '正規', '非正規', '委託', '派遣'],
     postPermissionList: [{value: -1, label: '✕'}, {value: 0, label: '閲覧のみ'}, {value: 1, label: '全て'}]
-
   }),
   computed: {
     // 従業員追加・編集ダイアログによるタイトル判別
@@ -1145,5 +1281,8 @@ export default {
 .page-border {
   border-bottom: 1px solid;
   border-color: #cccccc;
+}
+.to-label {
+  line-height: 70px;
 }
 </style>
