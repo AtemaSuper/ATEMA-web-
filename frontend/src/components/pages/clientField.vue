@@ -262,14 +262,11 @@
 <script>
 /** 外部コンポーネントの呼び出し */
 import Methods from '@/api/methods'
-/** VueTimepicker（時刻選択用ライブラリ） */
-import VueTimepicker from 'vue2-timepicker'
-import 'vue2-timepicker/dist/VueTimepicker.css'
+
 
 export default {
   name: 'attendanceManage',
   components: {
-    VueTimepicker
   },
   data: () => ({
     clientFieldList: [],
