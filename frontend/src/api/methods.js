@@ -32,7 +32,12 @@ export default {
   // 自社設定画面
   //
   // 初期表示処理
-  getOwnComapanyInfo () {
-    return Api().post('/ownCompay')
+  getOwnComapanyInfo (contactId) {
+    const item = {contactId: contactId}
+    return Api().post('/ownCompany', item)
+  },
+  // 入力内容保存処理
+  saveOwnCompanyInfo (param) {
+    return Api().post('/ownCompany/save', param)
   }
 }

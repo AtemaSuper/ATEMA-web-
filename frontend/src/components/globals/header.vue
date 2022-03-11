@@ -104,10 +104,10 @@ export default {
       // TODO ログイン情報を破棄する
       this.transition('/login')
     }
-  },
-  mounted: {
-    // TODO ユーザ情報を受けとる
   }
+  // mounted: {
+  //   // TODO ユーザ情報を受けとる
+  // }
 }
 </script>
 

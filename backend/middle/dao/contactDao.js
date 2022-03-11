@@ -12,21 +12,21 @@ class ContactDao {
   /**
    * 契約IDをもとに自社情報を取得します。
    * 
-   * @param {string} loginId 
+   * @param {string} contactId 契約IDです。 
    * 
    * @returns
    */
-  selectContactBycontactId(req, res) {
-      var Item = ncmb.DataStore('contactTable');
-      Item.fetchAll()
+  async selectContactBycontactId(contactId) {
+    var Item = ncmb.DataStore('contactTable');
+    const responce = await Item.fetchById(contactId)
             .then(function(items){
-              res.status(200)
-                  .json(items);
+              return items
             })
             .catch(function(err){
               res.status(500)
                   .json(err);
       });
+    return responce;
   }
 };
 
