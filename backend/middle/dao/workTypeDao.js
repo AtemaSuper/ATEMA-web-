@@ -10,23 +10,22 @@ var ncmb = new NCMB(NCMB_KEY.application_key,NCMB_KEY.client_key);
  */
 class WorkTypeDao {
   /**
-   * ログインIDをもとに従業員を取得します。
+   * 工種情報一覧を取得します。
    * 
-   * @param {string} loginId 
    * 
    * @returns
    */
-  selectEmployeeByloginId(req, res) {
-      var Item = ncmb.DataStore('employeeTable');
-      Item.fetchAll()
+  async selectWorkTypeAll() {
+      var Item = ncmb.DataStore('workTypeTable');
+      const responce = await Item.fetchAll()
             .then(function(items){
-              res.status(200)
-                  .json(items);
+              return items
             })
             .catch(function(err){
               res.status(500)
                   .json(err);
       });
+      return responce;
   }
 };
 
