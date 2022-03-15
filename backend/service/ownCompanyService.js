@@ -1,5 +1,8 @@
 const express = require('express')
 const app = express()
+//自社設定Logic
+// const OwnCompanyLogic = require('../middle/dao/ownCompanyLogic')
+// var ownCompanyLogic = new OwnCompanyLogic()
 //契約テーブル
 const ContactDao = require('../middle/dao/contactDao')
 var contactDao = new ContactDao()
@@ -24,9 +27,9 @@ app.post('/', async function (req, res) {
             var workTypeResponse = items;
             //契約者の工種をレスポンス用に変換します。
             var selectWorkTypeList = [];
-            for (var i = 0; i < contactResponse.workTypeIdList.length; i++) {
+            for (var i = 0; i < contactResponse.selectWorkTypeList.length; i++) {
                 var selectWorkType = {};
-                var selectWorkTypeId = contactResponse.workTypeIdList[i];
+                var selectWorkTypeId = contactResponse.selectWorkTypeList[i];
                 selectWorkType.workTypeId = selectWorkTypeId;
                 selectWorkType.workTypeName = getWorkTypeName(selectWorkTypeId, workTypeResponse);
                 selectWorkTypeList.push(selectWorkType);
@@ -41,6 +44,7 @@ app.post('/', async function (req, res) {
             }
             //返却用のdata
             var data = {
+                objectId: contactResponse.objectId,
                 address: contactResponse.address,
                 contactCompanyName: contactResponse.contactCompanyName,
                 exceptionWorkFinishTime: contactResponse.exceptionWorkFinishTime,
@@ -74,14 +78,28 @@ app.post('/', async function (req, res) {
 })
 //自社設定の入力情報を保存します。
 app.post('/save', async function (req, res) {
-    //エラーチェックを格納します。
-    var errorList = ['IDが未設定です。']
-    //返却用のdata
-    var data = {
-        errorList: errorList
+    //TODO 入力チェック
+
+    //基本情報の場合、工種をテーブル保存用に変換します。
+    if(req.body.pageContents == 1){
+        var selectWorkTypeList = [];
+        for (var i = 0; i < req.body.selectWorkTypeList.length; i++) {
+            selectWorkTypeList.push(req.body.selectWorkTypeList[i].workTypeId)
+        }
+        req.body.selectWorkTypeList = selectWorkTypeList
     }
-    //dataをレスポンスで返却します。
-    res.status(200).json(data);
+
+    //契約テーブルから自社情報を取得します。
+    await contactDao.updateContact(req.body)
+        .then(function (data) {
+            console.log(data)
+            //dataをレスポンスで返却します。
+            res.status(200).json(data);
+        })
+        .catch(function (err) {
+            res.status(500).json(err);
+        }
+    );
 })
 //
 // privateメソッドです。

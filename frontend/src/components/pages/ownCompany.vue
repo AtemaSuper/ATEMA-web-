@@ -2,9 +2,6 @@
   <v-app id="inspire">
     <!-- 基本情報 -->
     <div v-if="pageContents == 1">
-      <v-alert v-if="errorList.length" type="error">
-        {{errorList}}
-      </v-alert>
       <v-row class="justify-start">
         <v-col cols="1" class="page-contents-title">基本情報</v-col>
         <v-col cols="10"></v-col>
@@ -215,7 +212,7 @@
         <v-col cols="1" class="page-contents-title">勤怠情報</v-col>
         <v-col cols="10"></v-col>
         <v-col cols="1">
-          <v-btn color="#ff6669" class="white--text" rounded>
+          <v-btn color="#ff6669" class="white--text" rounded  @click="onTouchSave()">
             OK
           </v-btn>
         </v-col>
@@ -445,6 +442,8 @@ export default {
       // 基本情報の保存ボタン押下の場合
       if (this.pageContents === 1) {
         const param = {
+          pageContents: this.pageContents,
+          objectId: this.ownCompanyData.objectId,
           address: this.ownCompanyData.address,
           contactCompanyName: this.ownCompanyData.contactCompanyName,
           postNumber1: this.ownCompanyData.postNumber1,
@@ -455,13 +454,16 @@ export default {
           foundationDay: this.ownCompanyData.foundationDay,
           foundationMonth: this.ownCompanyData.foundationMonth,
           foundationYear: this.ownCompanyData.foundationYear,
-          leaderName: this.ownCompanyData.leaderName
+          leaderName: this.ownCompanyData.leaderName,
+          selectWorkTypeList: this.ownCompanyData.selectWorkTypeList
         }
         let response = await Methods.saveOwnCompanyInfo(param)
         this.saveResponse(response)
       // 勤怠情報の保存ボタン押下の場合
       } else {
         const param = {
+          pageContents: this.pageContents,
+          objectId: this.ownCompanyData.objectId,
           exceptionWorkFinishTime: this.ownCompanyData.exceptionWorkFinishTime,
           exceptionWorkStartTime: this.ownCompanyData.exceptionWorkStartTime,
           normalWorkFinishTime: this.ownCompanyData.normalWorkFinishTime,
