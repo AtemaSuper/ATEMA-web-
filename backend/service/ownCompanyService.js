@@ -42,15 +42,25 @@ app.post('/', async function (req, res) {
                 workType.workTypeName = workTypeResponse[j].workTypeName;
                 workTypeList.push(workType);
             }
+            //通常業務時間と時間外業務時間を時と分に分けます。
+            var normalWorkStartTime = contactResponse.normalWorkStartTime.split("：");
+            var normalWorkFinishTime = contactResponse.normalWorkFinishTime.split("：");
+            var exceptionWorkStartTime = contactResponse.exceptionWorkStartTime.split("：");
+            var exceptionWorkFinishTime = contactResponse.exceptionWorkFinishTime.split("：");
+            
             //返却用のdata
             var data = {
                 objectId: contactResponse.objectId,
                 address: contactResponse.address,
                 contactCompanyName: contactResponse.contactCompanyName,
-                exceptionWorkFinishTime: contactResponse.exceptionWorkFinishTime,
-                exceptionWorkStartTime: contactResponse.exceptionWorkStartTime,
-                normalWorkFinishTime: contactResponse.normalWorkFinishTime,
-                normalWorkStartTime: contactResponse.normalWorkStartTime,
+                exceptionWorkStartHours: exceptionWorkStartTime[0],
+                exceptionWorkStartMinutes: exceptionWorkStartTime[1],
+                exceptionWorkFinishHours: exceptionWorkFinishTime[0],
+                exceptionWorkFinishMinutes: exceptionWorkFinishTime[1],
+                normalWorkStartHours: normalWorkStartTime[0],
+                normalWorkStartMinutes: normalWorkStartTime[1],
+                normalWorkFinishHours: normalWorkFinishTime[0],
+                normalWorkFinishMinutes: normalWorkFinishTime[1],
                 postNumber1: contactResponse.postNumber1,
                 postNumber2: contactResponse.postNumber2,
                 roundingTime: contactResponse.roundingTime,

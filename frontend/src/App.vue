@@ -159,12 +159,10 @@ export default {
       }
     },
     alertComponent () {
-      alert('aaa')
       return Alert
     },
     // アラート部表示切替
     showAlertComponent () {
-      alert('bbb')
       return false
     }
   },

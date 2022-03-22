@@ -213,7 +213,8 @@
             class="white--text"
             fab
             @click="onTouchPlusBtn()"
-          ><v-icon large>mdi-plus-thick</v-icon></v-btn>
+            ><v-icon large>mdi-plus-thick</v-icon></v-btn
+          >
         </v-col>
         <v-col cols="1">
           <v-btn
@@ -223,7 +224,7 @@
             outlined
             fab
             @click="onTouchDeleteBtn()"
-          ><v-icon large>mdi-delete-empty</v-icon>
+            ><v-icon large>mdi-delete-empty</v-icon>
           </v-btn>
         </v-col>
       </v-row>
@@ -234,7 +235,12 @@
         <v-col cols="1" class="page-contents-title">勤怠情報</v-col>
         <v-col cols="10"></v-col>
         <v-col cols="1">
-          <v-btn color="#ff6669" class="white--text" rounded  @click="onTouchSave()">
+          <v-btn
+            color="#ff6669"
+            class="white--text"
+            rounded
+            @click="onTouchSave()"
+          >
             OK
           </v-btn>
         </v-col>
@@ -242,65 +248,101 @@
       <v-row>
         <v-col cols="2" class="item-label">通常業務時間</v-col>
         <v-col cols="1">
-          <v-text-field
-            v-model="ownCompanyData.normalWorkStartTime"
+          <v-select
+            v-model="ownCompanyData.normalWorkStartHours"
             outlined
-            :rules="normalWorkHoursRules"
-            name="normalWorkHours"
+            :rules="normalWorkStartHoursRules"
+            :items="hoursList"
+            name="normalWorkStartHours"
             label="時"
-            maxlength="2"
-          ></v-text-field>
+          ></v-select>
+        </v-col>
+        <div class="to-label">：</div>
+        <v-col cols="1">
+          <v-select
+            v-model="ownCompanyData.normalWorkStartMinutes"
+            outlined
+            :rules="normalWorkStartMinutesRules"
+            :items="minutesList"
+            name="normalWorkStartMinutes"
+            label="分"
+          ></v-select>
         </v-col>
         <div class="to-label">～</div>
         <v-col cols="1">
-          <v-text-field
-            v-model="ownCompanyData.normalWorkFinishTime"
+          <v-select
+            v-model="ownCompanyData.normalWorkFinishHours"
             outlined
-            :rules="normalWorkMinutesRules"
-            name="normalWorkMinutes"
+            :rules="normalWorkFinishHoursRules"
+            :items="hoursList"
+            name="normalWorkFinishHours"
+            label="時"
+          ></v-select>
+        </v-col>
+        <div class="to-label">：</div>
+        <v-col cols="1">
+          <v-select
+            v-model="ownCompanyData.normalWorkFinishMinutes"
+            outlined
+            :rules="normalWorkFinishMinutesRules"
+            :items="minutesList"
+            name="normalWorkFinishMinutes"
             label="分"
-            maxlength="2"
-          ></v-text-field>
+          ></v-select>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="2" class="item-label">時間外業務時間</v-col>
         <v-col cols="1">
-          <v-text-field
-            v-model="ownCompanyData.exceptionWorkStartTime"
+          <v-select
+            v-model="ownCompanyData.exceptionWorkStartHours"
             outlined
-            :rules="exceptionWorkHoursRules"
-            name="exceptionWorkHours"
+            :rules="exceptionWorkStartHoursRules"
+            :items="hoursList"
+            name="exceptionWorkStartHours"
             label="時"
-            maxlength="2"
-          ></v-text-field>
+          ></v-select>
+        </v-col>
+        <div class="to-label">：</div>
+        <v-col cols="1">
+          <v-select
+            v-model="ownCompanyData.exceptionWorkStartMinutes"
+            outlined
+            :rules="exceptionWorkStartMinutesRules"
+            :items="minutesList"
+            name="exceptionWorkStartMinutes"
+            label="分"
+          ></v-select>
         </v-col>
         <div class="to-label">～</div>
         <v-col cols="1">
-          <v-text-field
-            v-model="ownCompanyData.exceptionWorkFinishTime"
+          <v-select
+            v-model="ownCompanyData.exceptionWorkFinishHours"
             outlined
-            :rules="exceptionWorkMinutesRules"
-            name="exceptionWorkMinutes"
+            :rules="exceptionWorkFinishHoursRules"
+            :items="hoursList"
+            name="exceptionWorkFinishHours"
+            label="時"
+          ></v-select>
+        </v-col>
+        <div class="to-label">：</div>
+        <v-col cols="1">
+          <v-select
+            v-model="ownCompanyData.exceptionWorkFinishMinutes"
+            outlined
+            :rules="exceptionWorkFinishMinutesRules"
+            :items="minutesList"
+            name="exceptionWorkFinishMinutes"
             label="分"
-            maxlength="2"
-          ></v-text-field>
+          ></v-select>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="2" class="item-label">遅刻の発生</v-col>
         <v-col cols="3">
           <v-radio-group v-model="ownCompanyData.tardyTime" row>
-            <v-radio
-              label="1分から"
-              value="0"
-              color="#ff6669"
-            ></v-radio>
-            <v-radio
-              label="0分から"
-              value="1"
-              color="#ff6669"
-            ></v-radio>
+            <v-radio label="1分から" value="0" color="#ff6669"></v-radio>
+            <v-radio label="0分から" value="1" color="#ff6669"></v-radio>
           </v-radio-group>
         </v-col>
       </v-row>
@@ -311,8 +353,7 @@
           <v-radio-group v-model="ownCompanyData.roundingTime" row>
             <v-radio label="15分" value="0" color="#ff6669"></v-radio>
             <v-radio label="30分" value="1" color="#ff6669"></v-radio>
-            <v-radio label="指定" value="2" color="#ff6669">
-            </v-radio>
+            <v-radio label="指定" value="2" color="#ff6669"> </v-radio>
           </v-radio-group>
         </v-col>
         <v-col
@@ -334,11 +375,7 @@
         <v-col cols="3">
           <v-radio-group v-model="ownCompanyData.updownSelect" row>
             <v-radio label="切り上げ" value="0" color="#ff6669"></v-radio>
-            <v-radio
-              label="切り捨て"
-              value="1"
-              color="#ff6669"
-            ></v-radio>
+            <v-radio label="切り捨て" value="1" color="#ff6669"></v-radio>
           </v-radio-group>
         </v-col>
       </v-row>
@@ -358,6 +395,8 @@ export default {
     return {
       radioGroup: 1,
       ownCompanyData: {},
+      hoursList: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'],
+      minutesList: ['00', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59'],
       errorList: [],
       companyRules: [
         v => !!v || '会社名が未入力です',
@@ -498,10 +537,10 @@ export default {
         const param = {
           pageContents: this.pageContents,
           objectId: this.ownCompanyData.objectId,
-          exceptionWorkFinishTime: this.ownCompanyData.exceptionWorkFinishTime,
-          exceptionWorkStartTime: this.ownCompanyData.exceptionWorkStartTime,
-          normalWorkFinishTime: this.ownCompanyData.normalWorkFinishTime,
-          normalWorkStartTime: this.ownCompanyData.normalWorkStartTime,
+          exceptionWorkStartTime: this.ownCompanyData.exceptionWorkStartHours + '：' + this.ownCompanyData.exceptionWorkStartMinutes,
+          exceptionWorkFinishTime: this.ownCompanyData.exceptionWorkFinishHours + '：' + this.ownCompanyData.exceptionWorkFinishMinutes,
+          normalWorkStartTime: this.ownCompanyData.normalWorkStartHours + '：' + this.ownCompanyData.normalWorkStartMinutes,
+          normalWorkFinishTime: this.ownCompanyData.normalWorkFinishHours + '：' + this.ownCompanyData.normalWorkFinishMinutes,
           roundingTime: this.ownCompanyData.roundingTime,
           selectRoundingTime: this.ownCompanyData.selectRoundingTime,
           tardyTime: this.ownCompanyData.tardyTime,
