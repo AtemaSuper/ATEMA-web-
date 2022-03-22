@@ -1,8 +1,9 @@
 "use strict"
-//共通で使う処理を記述します。
 
-var Util = {
-
+/**
+ * Logicクラスの共通パーツです。
+ */
+class CommonLogic {
     /**
      * 
      * 値が未設定か確認します。
@@ -11,7 +12,7 @@ var Util = {
      * 
      * @returns {boolean} 判定結果です。
      */
-    isEmpty: function (val) {
+    isEmpty(val) {
         if (!val) {
             if (val !== 0 && val !== false) {
                 return true;
@@ -24,7 +25,7 @@ var Util = {
             }
         }
         return false;
-    },
+    }
 
     /**
      * 
@@ -33,7 +34,7 @@ var Util = {
      * @param {object} val 判定する値です。
      * @returns 
      */
-    isEmptyorZero: function (val) {
+    isEmptyorZero(val) {
         if (this.isEmpty(val)) {
             return true;
         }
@@ -43,23 +44,23 @@ var Util = {
         }
 
         return num == 0;
-    },
+    }
     /**
      * 指定されたJSファイルを読み込みます。
      * 
      * @param {url} pageLocation 読み込むJSファイルのurです。
      */
-    appendScript: function(scripts, scriptClassName) {
-        scriptClassName = 
+    appendScript(scripts, scriptClassName) {
+        scriptClassName =
             scriptClassName == undefined ? 'pagescript' : scriptClassName;
-        
+
         //TODO おそらく画面固有のJSファイルを消す処理
         // $('script.' + scriptClassName).remove();
 
         add(0);
 
         function add(index) {
-            if(scripts.length > index) {
+            if (scripts.length > index) {
                 var script = document.createElement('script');
                 script.setAttribute('class', scriptClassName);
                 script.setAttribute('src', scripts[index]);
@@ -70,4 +71,39 @@ var Util = {
             }
         }
     }
-};
+
+    /**
+   * 文字列をフォーマットします。
+   * ※Util.stringFormat('This is {0}.','javascript')
+   * 　Util.stringFormat("{id} is id. ",{id:123});
+   *
+   * @param {string} str フォーマットする文字列です。
+   * @param {object} arg 置換する値です。
+   *
+   * @public
+   */
+    stringFormat(str, arg) {
+        // 置換ファンク
+        var rep_fn = undefined
+
+        // オブジェクトの場合
+        if (typeof arg == 'object') {
+            rep_fn = function (m, k) {
+                return arg[k]
+            }
+        }
+        // 複数引数だった場合
+        else {
+            var args = []
+            for (var i = 1; i < arguments.length; i++) {
+                args[i - 1] = arguments[i]
+            }
+            rep_fn = function (m, k) {
+                return args[parseInt(k)]
+            }
+        }
+
+        return str.replace(/\{(\w+)\}/g, rep_fn)
+    }
+}
+module.exports = CommonLogic;

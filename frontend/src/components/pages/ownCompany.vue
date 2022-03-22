@@ -6,7 +6,7 @@
         <v-col cols="1" class="page-contents-title">基本情報</v-col>
         <v-col cols="10"></v-col>
         <v-col cols="1">
-          <v-btn color="#ff6669" class="white--text" rounded @click="onTouchSave()">
+          <v-btn color="#ff6669" class="white--text" rounded @click="testf()">
             OK
           </v-btn>
         </v-col>
@@ -511,9 +511,14 @@ export default {
         this.saveResponse(response)
       }
     },
+    testf () {
+      var responseData = {}
+      this.$emit('alertMethod', responseData)
+    },
     // 保存処理後、画面側でメッセージを表示します。
     saveResponse (response) {
-      this.errorList = response.data.errorList
+      var data = response.data
+      this.$emit('alertMethod', data)
     }
   }
 }

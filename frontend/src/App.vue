@@ -16,6 +16,10 @@
           this.$route.path != '/login' || this.$route.path != '/passwordReset'
         "
       >
+        <div v-if="showAlertComponent">
+          <component @alertMethod="updateResponseData" :is="alertComponent">
+          </component>
+        </div>
         <component :is="headerComponent"></component>
         <v-row v-if="showTitleComponent" class="title">
           <v-col cols="1">
@@ -48,15 +52,17 @@
 <script>
 import Header from '@/components/globals/header.vue'
 import SideMenu from '@/components/globals/sideMenu.vue'
+import Alert from '@/components/globals/alert.vue'
 
 export default {
   name: 'App',
   ownCompanyContents: 1,
-  components: {Header, SideMenu},
+  components: {Header, SideMenu, Alert},
   data () {
     return {
       title: '',
-      contentsId: 1
+      contentsId: 1,
+      responseData: {}
     }
   },
   computed: {
@@ -151,11 +157,24 @@ export default {
         default:
           return ''
       }
+    },
+    alertComponent () {
+      alert('aaa')
+      return Alert
+    },
+    // アラート部表示切替
+    showAlertComponent () {
+      alert('bbb')
+      return false
     }
   },
   methods: {
     updateContentsId (contentsId) {
       this.contentsId = contentsId
+    },
+    updateResponseData (responseData) {
+      console.log(responseData)
+      this.responseData = responseData
     }
   }
 }

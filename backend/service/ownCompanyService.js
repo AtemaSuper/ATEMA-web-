@@ -1,8 +1,8 @@
 const express = require('express')
 const app = express()
 //自社設定Logic
-// const OwnCompanyLogic = require('../middle/dao/ownCompanyLogic')
-// var ownCompanyLogic = new OwnCompanyLogic()
+const OwnCompanyLogic = require('../logic/ownCompanyLogic')
+var ownCompanyLogic = new OwnCompanyLogic()
 //契約テーブル
 const ContactDao = require('../middle/dao/contactDao')
 var contactDao = new ContactDao()
@@ -79,7 +79,7 @@ app.post('/', async function (req, res) {
 //自社設定の入力情報を保存します。
 app.post('/save', async function (req, res) {
     //TODO 入力チェック
-
+    // ownCompanyLogic.checkInputData(req.body)
     //基本情報の場合、工種をテーブル保存用に変換します。
     if(req.body.pageContents == 1){
         var selectWorkTypeList = [];
@@ -92,8 +92,11 @@ app.post('/save', async function (req, res) {
     //契約テーブルから自社情報を取得します。
     await contactDao.updateContact(req.body)
         .then(function (data) {
-            console.log(data)
             //dataをレスポンスで返却します。
+            data = {
+                checkResult: true,
+                messageList: ['自社設定(基本情報)を保存しました。']
+            };
             res.status(200).json(data);
         })
         .catch(function (err) {
