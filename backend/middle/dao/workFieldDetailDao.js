@@ -5,9 +5,9 @@ let NCMB_KEY = require("../../ncmb-key");
 var ncmb = new NCMB(NCMB_KEY.application_key, NCMB_KEY.client_key);
 
 /**
- * 現場テーブルのDaoクラスです。
+ * 工事テーブルのDaoクラスです。
  */
-class WorkFieldDao {
+class WorkDao {
   /**
    * ログインIDをもとに従業員を取得します。
    *
@@ -16,7 +16,7 @@ class WorkFieldDao {
    * @returns
    */
   selectEmployeeByloginId(req, res) {
-    var Item = ncmb.DataStore("workFieldTabl");
+    var Item = ncmb.DataStore("workFieldDetailTable");
     Item.fetchAll()
       .then(function (items) {
         res.status(200).json(items);
@@ -27,4 +27,4 @@ class WorkFieldDao {
   }
 }
 
-module.exports = WorkFieldDao;
+module.exports = WorkDao;
