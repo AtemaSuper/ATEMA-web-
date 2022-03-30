@@ -261,7 +261,7 @@
                               outlined
                               dense
                               v-model="editedWorkerItem.firstname"
-                              :rules="editedWorkerItem.firstnameRules"
+                              :rules="firstnameRules"
                               label="(例)宛間"
                               maxlength='25'
                               clearable
@@ -274,7 +274,7 @@
                               outlined
                               dense
                               v-model="editedWorkerItem.Lastname"
-                              :rules="editedWorkerItem.LastnameRules"
+                              :rules="LastnameRules"
                               label="(例)太郎"
                               maxlength='25'
                               clearable
@@ -297,7 +297,7 @@
                               item-text="postName"
                               item-value="postId"
                               v-model="editedWorkerItem.post"
-                              :rules="editedWorkerItem.post"
+                              :rules="post"
                               solo
                             ></v-select>
                           </v-col>
@@ -312,7 +312,7 @@
                               outlined
                               dense
                               v-model="editedWorkerItem.code"
-                              :rules="editedWorkerItem.codeRules"
+                              :rules="codeRules"
                               label="(例)001"
                               maxlength='8'
                               clearable
@@ -387,7 +387,7 @@
                               outlined
                               dense
                               v-model="editedWorkerItem.address"
-                              :rules="editedWorkerItem.addressRules"
+                              :rules="addressRules"
                               label="(例)千葉県宛間市宛間123-4"
                               maxlength="100"
                               clearable
@@ -406,7 +406,7 @@
                               outlined
                               dense
                               v-model="editedWorkerItem.mail"
-                              :rules="editedWorkerItem.mailRules"
+                              :rules="mailRules"
                               label="(例)abc@example.com"
                               maxlength="50"
                               clearable
@@ -427,7 +427,7 @@
                                 outlined
                                 dense
                                 v-model="editedWorkerItem.telNumberOne"
-                                :rules="editedWorkerItem.telNumberOneRules"
+                                :rules="telNumberOneRules"
                                 maxlength="4"
                                 required
                               ></v-text-field>
@@ -438,7 +438,7 @@
                                   outlined
                                   dense
                                   v-model="editedWorkerItem.telNumberTwo"
-                                  :rules="editedWorkerItem.telNumberTwoRules"
+                                  :rules="telNumberTwoRules"
                                   maxlength="4"
                                   required
                                 ></v-text-field>
@@ -449,7 +449,7 @@
                                   outlined
                                   dense
                                   v-model="editedWorkerItem.telNumberThree"
-                                  :rules="editedWorkerItem.telNumberThreeRules"
+                                  :rules="telNumberThreeRules"
                                   maxlength="4"
                                   required
                                 ></v-text-field>
@@ -469,7 +469,7 @@
                               outlined
                               dense
                               v-model="editedWorkerItem.loginId"
-                              :rules="editedWorkerItem.loginIdRules"
+                              :rules="loginIdRules"
                               label="(例)abc001"
                               maxlength="50"
                               clearable
@@ -490,7 +490,7 @@
                               outlined
                               dense
                               v-model="editedWorkerItem.password"
-                              :rules="editedWorkerItem.passwordRules"
+                              :rules="passwordRules"
                               label="※半角英数字"
                               maxlength="50"
                               clearable
@@ -777,7 +777,7 @@
                             outlined
                             dense
                             v-model="editedPostItem.postName"
-                            :rules="editedPostItem.postNameRules"
+                            :rules="postNameRules"
                             maxlength="50"
                             clearable
                             clear-icon="mdi-close-circle"
@@ -940,69 +940,69 @@ export default {
     dialogPostEdit: false,
     editedPostIndex: -1,
     editedWorkerItem: {
-      firstname: '',
-      firstnameRules: [
-        v => !!v || '姓が未入力です',
-        v => (!!v && v.length <= 25) || `文字数は25文字以内です`
-      ],
-      Lastname: '',
-      LastnameRules: [
-        v => !!v || '名が未入力です',
-        v => (!!v && v.length <= 25) || `文字数は25文字以内です`
-      ],
-      companyName: '',
-      post: 0,
-      postLabel: '',
-      postLabelRules: [
-        v => !!v || '役職が未選択です'
-      ],
-      code: '',
-      codeRules: [
-        v => v.length <= 8 || `文字数は8文字以内です`
-      ],
-      birthday: '',
-      address: '',
-      addressRules: [
-        v => v.length <= 100 || `文字数は100文字以内です`
-      ],
-      mail: '',
-      mailRules: [
-        v => v.length <= 100 || `文字数は100文字以内です`,
-        v => /^[a-z0-9_.-]+@[a-z0-9_.-]+.[a-z0-9]$/.test(v) || ''
-      ],
-      telNumberOne: '',
-      telNumberOneRules: [
-        v => v.length <= 4 || `文字数は4文字以内です`,
-        v => /^[0-9]*$/.test(v) || '入力は半角数字のみです'
-      ],
-      telNumberTwo: '',
-      telNumberTwoRules: [
-        v => v.length <= 4 || `文字数は4文字以内です`,
-        v => /^[0-9]*$/.test(v) || '入力は半角数字のみです'
-      ],
-      telNumberThree: '',
-      telNumberThreeRules: [
-        v => v.length <= 4 || `文字数は4文字以内です`,
-        v => /^[0-9]*$/.test(v) || '入力は半角数字のみです'
-      ],
-      loginId: '',
-      loginIdRules: [
-        v => !!v || 'ログインIDが未入力です',
-        v => /^[A-Za-z0-9]*$/.test(v) || '入力は半角英数字のみです',
-        v => (!!v && v.length <= 50) || `文字数は50文字以内です`
-      ],
-      password: '',
-      passwordRules: [
-        v => !!v || 'パスワードが未入力です',
-        v => /^[A-Za-z0-9]*$/.test(v) || '入力は半角英数字のみです',
-        v => (!!v && v.length <= 50) || `文字数は50文字以内です`
-      ],
       openDate: '',
       cloceDate: '',
       employmentId: 0,
       license: 0,
       licenseDate: ''
     },
+    firstname: '',
+    firstnameRules: [
+      v => !!v || '姓が未入力です',
+      v => (!!v && v.length <= 25) || `文字数は25文字以内です`
+    ],
+    Lastname: '',
+    LastnameRules: [
+      v => !!v || '名が未入力です',
+      v => (!!v && v.length <= 25) || `文字数は25文字以内です`
+    ],
+    companyName: '',
+    post: 0,
+    postLabel: '',
+    postLabelRules: [
+      v => !!v || '役職が未選択です'
+    ],
+    code: '',
+    codeRules: [
+      v => v.length <= 8 || `文字数は8文字以内です`
+    ],
+    birthday: '',
+    address: '',
+    addressRules: [
+      v => v.length <= 100 || `文字数は100文字以内です`
+    ],
+    mail: '',
+    mailRules: [
+      v => v.length <= 100 || `文字数は100文字以内です`,
+      v => /^[a-z0-9_.-]+@[a-z0-9_.-]+.[a-z0-9]$/.test(v) || ''
+    ],
+    telNumberOne: '',
+    telNumberOneRules: [
+      v => v.length <= 4 || `文字数は4文字以内です`,
+      v => /^[0-9]*$/.test(v) || '入力は半角数字のみです'
+    ],
+    telNumberTwo: '',
+    telNumberTwoRules: [
+      v => v.length <= 4 || `文字数は4文字以内です`,
+      v => /^[0-9]*$/.test(v) || '入力は半角数字のみです'
+    ],
+    telNumberThree: '',
+    telNumberThreeRules: [
+      v => v.length <= 4 || `文字数は4文字以内です`,
+      v => /^[0-9]*$/.test(v) || '入力は半角数字のみです'
+    ],
+    loginId: '',
+    loginIdRules: [
+      v => !!v || 'ログインIDが未入力です',
+      v => /^[A-Za-z0-9]*$/.test(v) || '入力は半角英数字のみです',
+      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+    ],
+    password: '',
+    passwordRules: [
+      v => !!v || 'パスワードが未入力です',
+      v => /^[A-Za-z0-9]*$/.test(v) || '入力は半角英数字のみです',
+      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+    ],
     defaultWorkerItem: {
       name: '',
       companyName: '',
@@ -1022,11 +1022,6 @@ export default {
       licenseDate: ''
     },
     editedPostItem: {
-      postName: '',
-      postNameRules: [
-        v => !!v || `役職名が未入力です`,
-        v => (!!v && v.length <= 50) || `文字数は50文字以内です`
-      ],
       attendancePermission: -1,
       attendancePermissionRules: '',
       ownWorkerPermission: -1,
@@ -1038,6 +1033,11 @@ export default {
       planPayPermission: -1,
       planPayPermissionRules: ''
     },
+    postName: '',
+    postNameRules: [
+      v => !!v || `役職名が未入力です`,
+      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+    ],
     defaultPostItem: {
       postName: '',
       attendancePermission: -1,

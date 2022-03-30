@@ -56,7 +56,7 @@
                                 ref="foundationMenu"
                                 v-model="foundationMenu"
                                 :close-on-content-click="false"
-                                :return-value.sync="foundation"
+                                :return-value.sync="foundationMenu"
                                 transition="scale-transition"
                                 offset-y
                                 min-width="auto"
@@ -453,7 +453,7 @@
                       <v-col cols="2">
                       </v-col>
                       <v-col>
-                        <v-text-field  v-model="mailAddressName" :rules="mailAddressRules" label="(例)abc@example.com" maxlength="50" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                        <v-text-field  v-model="mailAddressName" :rules="mailAddressRules" label="(例)abc@example.com" maxlength="50" clearable clear-icon="mdi-close-circle" outlined></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -729,7 +729,7 @@ export default {
     mailAddressName: '',
     mailAddressRules: [
       v => /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(v) || 'メールアドレスの形式が間違っています',
-      v => (!!v && v.length <= 100) || `文字数は100文字以内です`
+      v => v.length <= 100 || `文字数は100文字以内です`
     ],
     employeeIdName: '',
     employeeIdRules: [
