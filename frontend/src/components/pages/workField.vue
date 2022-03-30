@@ -185,7 +185,8 @@ export default {
     JobName: '',
     JobRules: [
       v => !!v || 'JobNoが未入力です',
-      v => (!!v && v.length <= 7) || `7文字以内で入力してください`
+      v => (!!v && v.length <= 7) || `7文字以内で入力してください`,
+      v => /^[A-Za-z0-9-]*$/.test(v) || '入力は半角数字・ハイフンのみです'
     ],
     constructionName: '',
     constructionRules: [
