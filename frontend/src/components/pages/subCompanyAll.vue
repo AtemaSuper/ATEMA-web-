@@ -52,7 +52,57 @@
                           </div>
                         </v-col>
                         <v-col>
-                          <v-text-field v-model="foundationName" :rules="foundationRules" label="(例)2080年12月32日" maxlength='11' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                            <v-menu
+                                ref="foundationMenu"
+                                v-model="foundationMenu"
+                                :close-on-content-click="false"
+                                :return-value.sync="foundation"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="auto"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    v-model="foundation"
+                                    :rules="foundationRules"
+                                    label="設立日を選択"
+                                    placeholder="まず20XX年X月をクリック"
+                                    prepend-inner-icon="mdi-calendar"
+                                    readonly
+                                    outlined
+                                    dense
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    required
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                  v-model="foundation"
+                                  no-title
+                                  scrollable
+                                  locale="jp-ja"
+                                  :day-format="(date) => new Date(date).getDate()"
+                                >
+                                  <v-btn
+                                    color="#ff6669" class="white--text"
+                                    rounded
+                                    @click="
+                                      $refs.foundationMenu.save(
+                                        foundation
+                                      )
+                                    "
+                                  >
+                                    OK
+                                  </v-btn>
+                                  <v-btn
+                                    class="#f5f5f5"
+                                    rounded
+                                    @click="foundationMenu = false"
+                                  >
+                                    キャンセル
+                                  </v-btn>
+                                </v-date-picker>
+                            </v-menu>
                         </v-col>
                       </v-row>
                       <v-row>
@@ -92,7 +142,7 @@
                             outlined
                             v-model = "postNumberLastName"
                             :rules="postNumberLastRules"
-                            label="4567"
+                            label="0000"
                             maxlength='4'
                           ></v-text-field>
                         </v-col>
@@ -125,7 +175,7 @@
                             v-model="telNumberOneName"
                             :rules="telNumberOneRules"
                             label="090"
-                            maxlength="3"
+                            maxlength="4"
                           ></v-text-field>
                         </v-col>
                         <div class="to-label">-</div>
@@ -304,10 +354,10 @@
                           <v-chip color="red" dark>必須</v-chip></div>
                       </v-col>
                       <v-col>
-                        <v-text-field v-model="employeeFirstname" :rules="employeeFirstnameRules" label="(例)宛間" maxlength="50" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                        <v-text-field v-model="employeeFirstname" :rules="employeeFirstnameRules" label="(例)宛間" maxlength="25" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                       </v-col>
                       <v-col>
-                        <v-text-field v-model="employeeLastname" :rules="employeeLastnameRules" label="(例)太郎" maxlength="50" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                        <v-text-field v-model="employeeLastname" :rules="employeeLastnameRules" label="(例)太郎" maxlength="25" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -315,8 +365,6 @@
                         <div class="item-title">職員コード</div>
                       </v-col>
                       <v-col cols="2">
-                        <div class="item-required">
-                          <v-chip color="red" dark>必須</v-chip></div>
                       </v-col>
                       <v-col>
                         <v-text-field v-model="staffCodeName" :rules="staffCodeRules" label="(例)001" maxlength="8" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
@@ -331,53 +379,58 @@
                           <v-chip color="red" dark>必須</v-chip>
                         </div>
                       </v-col>
-                      <v-col cols="12" sm="6" md="6"
-                            ><v-menu
-                              ref="birthdayMenu"
-                              v-model="birthdayMenu"
-                              :close-on-content-click="false"
-                              :return-value.sync="birthdayMenu"
-                              transition="scale-transition"
-                              offset-y
-                              min-width="auto"
+                      <v-col cols="12" sm="7" md="7"
                             >
-                              <template v-slot:activator="{ on, attrs }">
-                                <v-text-field
-                                  v-model="birthday"
-                                  :rules="birthdayRules"
-                                  placeholder="まず20XX年X月をクリック"
-                                  label="日付を選択"
-                                  prepend-inner-icon="mdi-calendar"
-                                  readonly
-                                  outlined
-                                  dense
-                                  v-bind="attrs"
-                                  v-on="on"
-                                ></v-text-field>
-                              </template>
-                              <v-date-picker
-                                v-model="birthday"
-                                no-title
-                                scrollable
-                                locale="jp-ja"
-                                :day-format="(date) => new Date(date).getDate()"
+                            <v-menu
+                                ref="birthdayMenu"
+                                v-model="birthdayMenu"
+                                :close-on-content-click="false"
+                                :return-value.sync="birthday"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="auto"
                               >
-                                <v-btn
-                                    color="#ff6669" class="white--text" rounded
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    v-model="birthday"
+                                    :rules="birthdayRules"
+                                    label="生年月日を選択"
+                                    placeholder="まず20XX年X月をクリック"
+                                    prepend-inner-icon="mdi-calendar"
+                                    readonly
+                                    outlined
+                                    dense
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    required
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                  v-model="birthday"
+                                  no-title
+                                  scrollable
+                                  locale="jp-ja"
+                                  :day-format="(date) => new Date(date).getDate()"
+                                >
+                                  <v-btn
+                                    color="#ff6669" class="white--text"
+                                    rounded
                                     @click="
-                                    $refs.birthdayMenu.save(
-                                      birthday
-                                    )"
-                                >
-                                  OK
-                                </v-btn>
-                                <v-btn
-                                   class="#f5f5f5" rounded
-                                  @click="birthdayMenu = false"
-                                >
-                                  キャンセル
-                                </v-btn>
-                              </v-date-picker>
+                                      $refs.birthdayMenu.save(
+                                        birthday
+                                      )
+                                    "
+                                  >
+                                    OK
+                                  </v-btn>
+                                  <v-btn
+                                    class="#f5f5f5"
+                                    rounded
+                                    @click="birthdayMenu = false"
+                                  >
+                                    キャンセル
+                                  </v-btn>
+                                </v-date-picker>
                             </v-menu>
                           </v-col>
                     </v-row>
@@ -398,11 +451,9 @@
                         <div class="item-title">Mail</div>
                       </v-col>
                       <v-col cols="2">
-                        <div class="item-required">
-                          <v-chip color="red" dark>必須</v-chip></div>
                       </v-col>
                       <v-col>
-                        <v-text-field  v-model="mailAddressName" :rules="mailAddressRules" label="(例)abc@example.com" maxlength="100" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                        <v-text-field  v-model="mailAddressName" :rules="mailAddressRules" label="(例)abc@example.com" maxlength="50" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -420,7 +471,7 @@
                           :rules="telNumberOneRules"
                           name="telNumberOne"
                           label="090"
-                          maxlength="3"
+                          maxlength="4"
                         ></v-text-field>
                       </v-col>
                       <div class="to-label">-</div>
@@ -453,7 +504,7 @@
                           <v-chip color="red" dark>必須</v-chip></div>
                       </v-col>
                       <v-col>
-                        <v-text-field v-model="employeeIdName" :rules="employeeIdRules" label="(例)abc001" maxlength="8" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                        <v-text-field v-model="employeeIdName" :rules="employeeIdRules" label="(例)abc001" maxlength="50" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -473,11 +524,9 @@
                         <div class="item-title">保有資格</div>
                       </v-col>
                       <v-col cols="2">
-                        <div class="item-required">
-                          <v-chip color="white" dark>必須</v-chip></div>
                       </v-col>
                       <v-col>
-                        <v-text-field v-model="licenseName" :rules="lecenseRules" label="(例)普通自動車免許" maxlength="50" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                        <v-text-field v-model="licenseName" :rules="lecenseRules" label="(例)普通自動車免許" maxlength="100" clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                       </v-col>
                     </v-row>
                     <v-btn color="#ff6669" class="white--text" fab small><v-icon>
@@ -603,6 +652,7 @@ export default {
     subCompanyDialog: false,
     noteContentsDialog: false,
     fieldDialog: false,
+    foundationMenu: false,
     birthdayMenu: false,
     companyName: '',
     companyRules: [
@@ -617,16 +667,18 @@ export default {
     leaderName: '',
     leaderRules: [
       v => !!v || '代表者名が未入力です',
-      v => (!!v && v.length <= 20) || `文字数は20文字以内です`
+      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
     ],
     postNumberFirstname: '',
     postNumberFirstRules: [
       v => !!v || '郵便番号が未入力です',
+      v => /^[0-9]*$/.test(v) || '入力は半角数字のみです',
       v => (!!v && v.length <= 3) || `文字数は3文字以内です`
     ],
     postNumberLastName: '',
     postNumberLastRules: [
       v => !!v || '郵便番号が未入力です',
+      v => /^[0-9]*$/.test(v) || '入力は半角数字のみです',
       v => (!!v && v.length <= 4) || `文字数は4文字以内です`
     ],
     addressName: '',
@@ -637,16 +689,19 @@ export default {
     telNumberOneName: '',
     telNumberOneRules: [
       v => !!v || '電話番号が未入力です',
-      v => (!!v && v.length <= 3) || `文字数は3文字以内です`
+      v => /^[0-9]*$/.test(v) || '入力は半角数字のみです',
+      v => (!!v && v.length <= 4) || `文字数は4文字以内です`
     ],
     telNumberTwoName: '',
     telNumberTwoRules: [
       v => !!v || '電話番号が未入力です',
+      v => /^[0-9]*$/.test(v) || '入力は半角数字のみです',
       v => (!!v && v.length <= 4) || `文字数は4文字以内です`
     ],
     telNumberThreeName: '',
     telNumberThreeRules: [
       v => !!v || '電話番号が未入力です',
+      v => /^[0-9]*$/.test(v) || '入力は半角数字のみです',
       v => (!!v && v.length <= 4) || `文字数は4文字以内です`
     ],
     noteName: '',
@@ -656,41 +711,41 @@ export default {
     employeeFirstname: '',
     employeeFirstnameRules: [
       v => !!v || '姓が未入力です',
-      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+      v => (!!v && v.length <= 25) || `文字数は25文字以内です`
     ],
     employeeLastname: '',
     employeeLastnameRules: [
       v => !!v || '名が未入力です',
-      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+      v => (!!v && v.length <= 25) || `文字数は25文字以内です`
     ],
     staffCodeName: '',
     staffCodeRules: [
-      v => !!v || '職員コードが未入力です',
-      v => (!!v && v.length <= 8) || `文字数は8文字以内です`
+      v => v.length <= 8 || `文字数は8文字以内です`
     ],
-    birthday: '',
+    birthdayName: '',
     birthdayRules: [
       v => !!v || '生年月日が未入力です'
     ],
     mailAddressName: '',
     mailAddressRules: [
-      v => !!v || 'メールアドレスが未入力です',
-      v => /.+@.+\..+/.test(v) || '',
+      v => /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(v) || 'メールアドレスの形式が間違っています',
       v => (!!v && v.length <= 100) || `文字数は100文字以内です`
     ],
     employeeIdName: '',
     employeeIdRules: [
       v => !!v || 'ログインIDが未入力です',
-      v => (!!v && v.length <= 8) || `文字数は8文字以内です`
+      v => /^[A-Za-z0-9]*$/.test(v) || '',
+      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
     ],
     passwordName: '',
     passwordRules: [
       v => !!v || 'パスワードが未入力です',
+      v => /^[A-Za-z0-9]*$/.test(v) || '',
       v => (!!v && v.length <= 50) || `文字数は50文字以内です`
     ],
     licenseName: '',
     licenseRules: [
-      v => v.length <= 50 || `文字数は50文字以内です`
+      v => v.length <= 100 || `文字数は100文字以内です`
     ]
   }),
   computed: {
