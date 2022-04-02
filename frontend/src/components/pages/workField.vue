@@ -10,7 +10,7 @@
           <v-col cols="12" sm="4" md="4"> </v-col>
           <v-col cols="12" sm="4" md="2">
             <!-- 工事を追加するボタン -->
-            <v-btn @click="showEditWorkField()" outlined elevation="3">
+            <v-btn @click="showAddWorkField()" outlined elevation="3">
               工事を追加
               <v-icon color="#ff6669">mdi-plus</v-icon>
             </v-btn>
@@ -75,7 +75,7 @@
     >
       <v-card>
         <v-card-title class="text-h6 grey lighten-2">
-          工事編集
+          {{worDialogName}}
         </v-card-title>
 
         <v-card-text>
@@ -100,7 +100,8 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-select v-model="this.editItem.clientFieldName" label="(例)株式会社ABC" :items="['株式会社A', '株式会社B', '株式会社C', '株式会社D']" outlined required></v-select>
+                <v-select v-model="this.editItem.clientFieldName" label="(例)株式会社ABC" :items="clientFieldList" item-text="clientFieldName"
+            item-value="value" outlined required></v-select>
               </v-col>
             </v-row>
             <v-row>
@@ -112,7 +113,8 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-select  v-model="this.editItem.workFieldName" label="(例)現場名A" :items="['現場名A', '現場名B', '現場名C', '現場名D']" outlined required></v-select>
+                <v-select  v-model="this.editItem.workName" label="(例)現場名A" :items="workFieldList" item-text="workName"
+            item-value="value" outlined required></v-select>
               </v-col>
             </v-row>
             <v-row>
@@ -124,7 +126,7 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-text-field v-model="this.editItem.workName" :rules="constructionRules" label="(例)工事件名１－ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                <v-text-field v-model="this.editItem.workFieldName" :rules="constructionRules" label="(例)工事件名１－ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -136,9 +138,9 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-radio-group v-model="this.editItem.status" row mandatory>
-                  <v-radio label="進行中" value="radio-1" color="#ff6669"></v-radio>
-                  <v-radio label="完了済" value="radio-2" color="#ff6669"></v-radio>
+                <v-radio-group v-model="this.editItem.status" row>
+                  <v-radio label="未進行" value="0" color="#ff6669"></v-radio>
+                  <v-radio label="進行中" value="1" color="#ff6669"></v-radio>
                 </v-radio-group>
               </v-col>
             </v-row>
@@ -151,9 +153,9 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-radio-group v-model="this.editItem.status" row mandatory>
-                  <v-radio label="常用" value="radio-1" color="#ff6669"></v-radio>
-                  <v-radio label="請負" value="radio-2" color="#ff6669"></v-radio>
+                <v-radio-group v-model="this.editItem.contractStatus" row>
+                  <v-radio label="常用" value="0" color="#ff6669"></v-radio>
+                  <v-radio label="請負" value="1" color="#ff6669"></v-radio>
                 </v-radio-group>
               </v-col>
             </v-row>
@@ -184,7 +186,10 @@ export default {
   },
   data: () => ({
     workFieldDetailList: [],
+    clientFieldList: [],
+    workFieldList: [],
     editItem: [],
+    worDialogName: '工事編集',
     workFieldDialog: false,
     JobName: '',
     JobRules: [
@@ -254,11 +259,75 @@ export default {
     // 初期表示処理です。
     async getWorkFieldInfo () {
       let response = await Methods.getWorkFieldInfo()
-      this.workFieldDetailList = response.data.workFieldDetailList
+      var clientFieldResponse = response.data.clientFieldResponse
+      var workFieldResponse = response.data.workFieldResponse
+      var workFieldDetailResponse = response.data.workFieldDetailResponse
+      // 工事一覧表示用に変換します。
+      var workFieldDetailList = []
+      for (var i = 0; i < workFieldDetailResponse.length; i++) {
+        var workFieldDetail = {}
+        workFieldDetail.workFieldId = workFieldDetailResponse[i].objectId
+        workFieldDetail.jobNo = workFieldDetailResponse[i].jobNo
+        workFieldDetail.clientFieldName = getClientFieldName(
+          workFieldDetailResponse[i].clientFieldId,
+          clientFieldResponse
+        )
+        workFieldDetail.workId = workFieldDetailResponse[i].workId
+        workFieldDetail.workName = getWorkName(
+          workFieldDetailResponse[i].workId,
+          workFieldResponse
+        )
+        workFieldDetail.workFieldName =
+          workFieldDetailResponse[i].workFieldName
+        workFieldDetail.status = workFieldDetailResponse[i].status.toString()
+        workFieldDetail.statusName = getStatusName(
+          workFieldDetailResponse[i].status
+        )
+        workFieldDetail.contractStatus =
+        workFieldDetailResponse[i].contractStatus.toString()
+        workFieldDetailList.push(workFieldDetail)
+      }
+
+      this.workFieldDetailList = workFieldDetailList
+      // 客先名セレクトボックス用に変換します。
+      var clientFieldList = []
+      for (var j = 0; j < clientFieldResponse.length; j++) {
+        var clientField = {}
+        clientField.clientFieldId = clientFieldResponse[j].objectId
+        clientField.clientFieldName = clientFieldResponse[j].clientFieldName
+        clientFieldList.push(clientField)
+      }
+      this.clientFieldList = clientFieldList
+      // 現場名セレクトボックス用に変換します。
+      var workFieldList = []
+      for (var k = 0; k < workFieldResponse.length; k++) {
+        var workField = {}
+        workField.workId = workFieldResponse[k].objectId
+        workField.workName = workFieldResponse[k].workName
+        workFieldList.push(workField)
+      }
+      this.workFieldList = workFieldList
     },
     // 現場編集 ダイアログ表示処理
     showEditWorkField (item) {
+      console.log(item)
       this.editItem = item
+      this.worDialogName = '工事編集'
+      this.workFieldDialog = true
+    },
+    // 現場追加 ダイアログ表示処理
+    showAddWorkField () {
+      // 入力項目に初期値を設定
+      this.editItem = {
+        workFieldId: '',
+        jobNo: '',
+        clientFieldName: '',
+        workFieldName: '',
+        workName: '',
+        status: '0',
+        contractStatus: '0'
+      }
+      this.worDialogName = '工事追加'
       this.workFieldDialog = true
     },
     // 現場編集 ダイアログ閉じる処理
@@ -267,14 +336,91 @@ export default {
       this.workFieldDialog = false
     },
     // 現場編集 保存処理
-    saveWorkFieldInfo (item) {
-      // TODO 保存処理
+    async saveWorkFieldInfo () {
+      const param = {
+        workFieldId: this.editItem.workFieldId,
+        jobNo: this.editItem.jobNo,
+        clientFieldName: this.editItem.clientFieldName,
+        workFieldName: this.editItem.workFieldName,
+        workName: this.editItem.workName,
+        status: this.editItem.status,
+        contractStatus: this.editItem.contractStatus
+      }
+      // 保存処理
+      let response = await Methods.saveWorkFieldInfo(param)
       this.workFieldDialog = false
+      // TODO 保存完了メッセージ表示
+      console.log(response)
     },
     // 削除ボタン押下処理
-    onClickDelete (item) {
-      alert('削除')
+    async onClickDelete (item) {
+      const param = {
+        jobNo: item.jobNo,
+        clientFieldName: item.clientFieldName,
+        workFieldName: item.workFieldName,
+        workName: item.workName,
+        status: item.status,
+        contractStatus: item.contractStatus
+      }
+      // 削除処理
+      let response = await Methods.deleteWorkFieldInfo(param)
+      // TODO 削除完了メッセージ表示
+      console.log(response)
     }
+  }
+}
+//
+// privateメソッドです。
+//
+/**
+ * 客先IDをもとに客先名を取得します。
+ *
+ * @param {string} clientFieldId 工種IDです。
+ * @param {object} clientFieldResponse 工種のレスポンスデータです。
+ *
+ * @private
+ * @returns
+ */
+function getClientFieldName (clientFieldId, clientFieldResponse) {
+  var clientFieldName = ''
+  for (var i = 0; i < clientFieldResponse.length; i++) {
+    if (clientFieldId === clientFieldResponse[i].objectId) {
+      clientFieldName = clientFieldResponse[i].clientFieldName
+    }
+  }
+  return clientFieldName
+}
+/**
+ * 工事IDをもとに工事件名を取得します。
+ *
+ * @param {string} workId 工種IDです。
+ * @param {object} workFieldResponse 工種のレスポンスデータです。
+ *
+ * @private
+ * @returns
+ */
+function getWorkName (workId, workFieldResponse) {
+  var workName = ''
+  for (var i = 0; i < workFieldResponse.length; i++) {
+    if (workId === workFieldResponse[i].objectId) {
+      workName = workFieldResponse[i].workName
+    }
+  }
+  return workName
+}
+/**
+ * ステータスをもとにステータス名を取得します。
+ *
+ * @param {string} status ステータスです。
+ *
+ * @private
+ * @returns
+ */
+function getStatusName (status) {
+  if (status === 0) {
+    return '未進行'
+  } else {
+    return '進行中'
   }
 }
 </script>

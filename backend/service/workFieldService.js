@@ -25,40 +25,20 @@ app.post("/", async function (req, res) {
     .then(function (items) {
       clientFieldResponse = items;
       //現場テーブルから現場情報を取得します。
-      return workFieldDao.selectWorkAll();
+      return workFieldDao.selectWorkFieldAll();
     })
     .then(function (items) {
       workFieldResponse = items;
       //現場詳細テーブルから現場詳細情報を取得します。
-      return workFieldDetailDao.selectWorkFieldAll();
+      return workFieldDetailDao.selectWorkFieldDetailAll();
     })
     .then(function (items) {
       workFieldDetailResponse = items;
-      var workFieldDetailList = [];
-      for (var i = 0; i < workFieldDetailResponse.length; i++) {
-        var workFieldDetail = {};
-        workFieldDetail.jobNo = workFieldDetailResponse[i].jobNo;
-        workFieldDetail.clientFieldName = getClientFieldName(
-          workFieldDetailResponse[i].clientFieldId,
-          clientFieldResponse
-        );
-        workFieldDetail.workName = getWorkName(
-          workFieldDetailResponse[i].workId,
-          workFieldResponse
-        );
-        workFieldDetail.workFieldName =
-          workFieldDetailResponse[i].workFieldName;
-        workFieldDetail.status = workFieldDetailResponse[i].status;
-        workFieldDetail.statusName = getStatusName(
-          workFieldDetailResponse[i].status
-        );
-        workFieldDetail.contractStatus =
-          workFieldDetailResponse[i].contractStatus;
-        workFieldDetailList.push(workFieldDetail);
-      }
       //返却用のdata
       var data = {
-        workFieldDetailList: workFieldDetailList,
+        clientFieldResponse: clientFieldResponse,
+        workFieldResponse: workFieldResponse,
+        workFieldDetailResponse: workFieldDetailResponse,
       };
       //dataをレスポンスで返却します。
       res.status(200).json(data);
@@ -67,58 +47,19 @@ app.post("/", async function (req, res) {
       res.status(500).json(err);
     });
 });
-//
-// privateメソッドです。
-//
-/**
- * 客先IDをもとに客先名を取得します。
- *
- * @param {string} clientFieldId 工種IDです。
- * @param {object} clientFieldResponse 工種のレスポンスデータです。
- *
- * @private
- * @returns
- */
-function getClientFieldName(clientFieldId, clientFieldResponse) {
-  var clientFieldName = "";
-  for (var i = 0; i < clientFieldResponse.length; i++) {
-    if (clientFieldId == clientFieldResponse[i].objectId) {
-      clientFieldName = clientFieldResponse[i].clientFieldName;
-    }
-  }
-  return clientFieldName;
-}
-/**
- * 工事IDをもとに工事件名を取得します。
- *
- * @param {string} workId 工種IDです。
- * @param {object} workFieldResponse 工種のレスポンスデータです。
- *
- * @private
- * @returns
- */
-function getWorkName(workId, workFieldResponse) {
-  var workName = "";
-  for (var i = 0; i < workFieldResponse.length; i++) {
-    if (workId == workFieldResponse[i].objectId) {
-      workName = workFieldResponse[i].workName;
-    }
-  }
-  return workName;
-}
-/**
- * ステータスをもとにステータス名を取得します。
- *
- * @param {string} status ステータスです。
- *
- * @private
- * @returns
- */
-function getStatusName(status) {
-  if (status == 0) {
-    return "未進行";
-  } else {
-    return "進行中";
-  }
-}
+//工事編集の入力情報を保存します。
+app.post("/save", async function (req, res) {
+  //TODO 入力チェック
+
+  //契約テーブルから自社情報を取得します。
+  await workFieldDetailDao
+    .saveWorkFieldDetail(req.body)
+    .then(function (data) {
+      //dataをレスポンスで返却します。
+      res.status(200).json(data);
+    })
+    .catch(function (err) {
+      res.status(500).json(err);
+    });
+});
 module.exports = app;
