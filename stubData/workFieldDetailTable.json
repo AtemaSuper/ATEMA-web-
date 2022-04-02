@@ -6,6 +6,7 @@
       "clientFieldId": "Y4ybKgE2NXDNBtDB",
       "workId": "AopCbWyXcN126Up9",
       "status": 0,
+      "contractStatus": 0,
       "createUserId": "R4XlUN8vWVoOEg5J",
       "updateUserId": "",
       "deleteFlg": ""
@@ -16,6 +17,7 @@
       "clientFieldId": "8P70h0etfz7j8LC7",
       "workId": "Y63KiJY58Fe1iL2B",
       "status": 0,
+      "contractStatus": 0,
       "createUserId": "R4XlUN8vWVoOEg5J",
       "updateUserId": "",
       "deleteFlg": ""
@@ -26,6 +28,7 @@
       "clientFieldId": "8P70h0etfz7j8LC7",
       "workId": "Q0eHL3hZxHRMVOdA",
       "status": 0,
+      "contractStatus": 0,
       "createUserId": "R4XlUN8vWVoOEg5J",
       "updateUserId": "",
       "deleteFlg": ""
@@ -36,6 +39,7 @@
       "clientFieldId": "8P70h0etfz7j8LC7",
       "workId": "Y63KiJY58Fe1iL2B",
       "status": 0,
+      "contractStatus": 0,
       "createUserId": "R4XlUN8vWVoOEg5J",
       "updateUserId": "",
       "deleteFlg": ""
@@ -46,6 +50,7 @@
       "clientFieldId": "6OpAncDR5oW5GlQ1",
       "workId": "gCSM5aPbICrguIRB",
       "status": 0,
+      "contractStatus": 0,
       "createUserId": "R4XlUN8vWVoOEg5J",
       "updateUserId": "",
       "deleteFlg": ""
@@ -56,6 +61,7 @@
       "clientFieldId": "8vx2n3GqMR5Y9VpP",
       "workId": "oIrOSqG7T94M7GqB",
       "status": 0,
+      "contractStatus": 0,
       "createUserId": "R4XlUN8vWVoOEg5J",
       "updateUserId": "",
       "deleteFlg": ""
@@ -66,6 +72,7 @@
       "clientFieldId": "2ikAfgeUlcMk4a23",
       "workId": "wOGRp68dd6H1KDFC",
       "status": 0,
+      "contractStatus": 1,
       "createUserId": "R4XlUN8vWVoOEg5J",
       "updateUserId": "",
       "deleteFlg": ""

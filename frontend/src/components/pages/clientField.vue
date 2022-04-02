@@ -11,7 +11,7 @@
             <v-col cols="12" sm="4" md="4"> </v-col>
             <v-col cols="12" sm="4" md="2">
               <!-- 客先を追加するボタン -->
-              <v-btn @click="showEditClient()" outlined elevation="3">
+              <v-btn @click="showEditClientField()" outlined elevation="3">
                 客先を追加
                 <v-icon color="#ff6669">mdi-plus</v-icon>
               </v-btn>
@@ -27,7 +27,7 @@
             <!--ToDo  keyの値にnameを設定すると同名で重複エラーが出現するので、基本的にはDB取得時の各レコードごとのユニークIDを設定する -->
             <v-data-table
               :headers="clientHeader"
-              :items="getClient"
+              :items="clientFieldList"
               :search="searchClient"
               :custom-filter="searchClient"
               :items-per-page="-1"
@@ -35,7 +35,7 @@
               class="elevation-1 table"
               rowsPerPage: All
               height= '300'
-              @click:row="showEditClient"
+              @click:row="showEditClientField"
             >
               <template v-slot:top>
                 <v-row >
@@ -61,7 +61,7 @@
               <template v-slot:[`body.append`]> </template>
               <!-- 削除ボタン -->
               <template v-slot:[`item.delete`]="{ item }">
-                <v-btn @click.stop="onClickDelete(item)" color="#00ffd0" elevation="3" outlined fab height="2.5rem" width="2.5rem">
+                <v-btn @click.stop="onClickDeleteClientField(item)" color="#00ffd0" elevation="3" outlined fab height="2.5rem" width="2.5rem">
                   <v-icon large>mdi-delete-empty</v-icon>
                 </v-btn>
               </template>
@@ -84,7 +84,7 @@
               <v-col cols="12" sm="4" md="4"> </v-col>
               <v-col cols="12" sm="4" md="2">
                 <!-- 現場を追加するボタン -->
-                <v-btn @click="showEditField()" outlined elevation="3">
+                <v-btn @click="showEditWorkField()" outlined elevation="3">
                   現場を追加
                   <v-icon color="#ff6669">mdi-plus</v-icon>
                 </v-btn>
@@ -100,7 +100,7 @@
               <!--ToDo  keyの値にnameを設定すると同名で重複エラーが出現するので、基本的にはDB取得時の各レコードごとのユニークIDを設定する -->
               <v-data-table
                 :headers="fieldHeader"
-                :items="getField"
+                :items="workFieldList"
                 :search="searchField"
                 :custom-filter="searchField"
                 :items-per-page="-1"
@@ -108,7 +108,7 @@
                 class="elevation-1 table"
                 rowsPerPage: All
                 height= '300'
-                @click:row="showEditField"
+                @click:row="showEditWorkField"
               >
                 <template v-slot:top>
                   <v-row >
@@ -134,7 +134,7 @@
                 <template v-slot:[`body.append`]> </template>
                 <!-- 削除ボタン -->
                 <template v-slot:[`item.delete`]="{ item }">
-                  <v-btn @click.stop="onClickDelete(item)" color="#00ffd0" elevation="3" outlined fab height="2.5rem" width="2.5rem">
+                  <v-btn @click.stop="onClickDeleteWorkField(item)" color="#00ffd0" elevation="3" outlined fab height="2.5rem" width="2.5rem">
                     <v-icon large>mdi-delete-empty</v-icon>
                   </v-btn>
                 </template>
@@ -142,10 +142,10 @@
             </v-row>
           </v-sheet>
 <!-- 客先編集ダイアログ -->
-          <v-dialog v-model="clientDialog" persistent max-width="480">
+          <v-dialog v-model="clientFieldDialog" persistent max-width="480">
             <v-card>
               <v-card-title class="text-h6 grey lighten-2">
-                客先編集
+                {{clientFieldDialogName}}
               </v-card-title>
 
               <v-card-text>
@@ -158,7 +158,7 @@
                       <v-chip color="red" dark>必須</v-chip></div>
                   </v-col>
                   <v-col>
-                    <v-text-field v-model="clientName" :rules="clientRules"  label="(例)株式会社ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                    <v-text-field v-model="clientFieldEditItem.clientFieldName" :rules="clientRules"  label="(例)株式会社ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -170,9 +170,9 @@
                       <v-chip color="red" dark>必須</v-chip></div>
                   </v-col>
                   <v-col>
-                    <v-radio-group v-model="clientProgress" row>
-                      <v-radio label="進行中" value="inProgress" color="#ff6669"></v-radio>
-                      <v-radio label="未進行" value="notProgress" color="#ff6669"></v-radio>
+                    <v-radio-group v-model="clientFieldEditItem.status" row>
+                      <v-radio label="未進行" value="0" color="#ff6669"></v-radio>
+                      <v-radio label="進行中" value="1" color="#ff6669"></v-radio>
                     </v-radio-group>
                   </v-col>
                 </v-row>
@@ -182,20 +182,20 @@
 
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="#ff6669" class="white--text" rounded @click="saveClientInfo(item)">
+                <v-btn color="#ff6669" class="white--text" rounded @click="saveClientField(item)">
                   OK
                 </v-btn>
-                <v-btn @click="closeClientDialog()" class="#f5f5f5" rounded>
+                <v-btn @click="closeclientFieldDialog()" class="#f5f5f5" rounded>
                   キャンセル
                 </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
 <!-- 現場編集ダイアログ -->
-          <v-dialog v-model="fieldDialog" persistent max-width="480">
+          <v-dialog v-model="workFieldDialog" persistent max-width="480">
             <v-card>
               <v-card-title class="text-h5 grey lighten-2">
-                現場編集
+                {{workFieldDialogName}}
               </v-card-title>
 
               <v-card-text>
@@ -208,7 +208,8 @@
                       <v-chip color="red" dark>必須</v-chip></div>
                   </v-col>
                   <v-col>
-                    <v-select outlined></v-select>
+                    <v-select v-model="workFieldEditItem.selectClientField" label="(例)株式会社ABC" :items="clientFieldList" item-text="clientFieldName"
+            item-value="value" return-object outlined required></v-select>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -220,7 +221,7 @@
                       <v-chip color="red" dark>必須</v-chip></div>
                   </v-col>
                   <v-col>
-                    <v-text-field v-model="workFieldName" :rules="workFieldRules"  label="(例)現場名ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                    <v-text-field v-model="workFieldEditItem.workName" :rules="workFieldRules"  label="(例)現場名ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -232,9 +233,9 @@
                       <v-chip color="red" dark>必須</v-chip></div>
                   </v-col>
                   <v-col>
-                    <v-radio-group v-model="fieldProgress" row>
-                      <v-radio label="進行中" value="inProgress" color="#ff6669"></v-radio>
-                      <v-radio label="未進行" value="notProgress" color="#ff6669"></v-radio>
+                    <v-radio-group v-model="workFieldEditItem.status" row>
+                      <v-radio label="未進行" value="0" color="#ff6669"></v-radio>
+                      <v-radio label="進行中" value="1" color="#ff6669"></v-radio>
                     </v-radio-group>
                   </v-col>
                 </v-row>
@@ -244,10 +245,10 @@
 
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="#ff6669" class="white--text" rounded @click="saveFieldInfo(item)">
+                <v-btn color="#ff6669" class="white--text" rounded @click="saveWorkField()">
                   OK
                 </v-btn>
-                <v-btn @click="closeFieldDialog()" class="#f5f5f5" rounded>
+                <v-btn @click="closeworkFieldDialog()" class="#f5f5f5" rounded>
                   キャンセル
                 </v-btn>
               </v-card-actions>
@@ -259,6 +260,8 @@
 </template>
 
 <script>
+/** 外部コンポーネントの呼び出し */
+import Methods from '@/api/methods'
 /** VueTimepicker（時刻選択用ライブラリ） */
 import VueTimepicker from 'vue2-timepicker'
 import 'vue2-timepicker/dist/VueTimepicker.css'
@@ -269,14 +272,21 @@ export default {
     VueTimepicker
   },
   data: () => ({
+    clientFieldList: [],
+    workFieldList: [],
+    selectClientFieldList: [],
+    clientFieldEditItem: [],
+    workFieldEditItem: [],
     searchClient: '',
     searchField: '',
     clientProgress: 'inProgress',
     fieldProgress: 'inProgress',
     editItem: {},
-    clientDialog: false,
-    fieldDialog: false,
-    workFieldName: '',
+    clientFieldDialog: false,
+    clientFieldDialogName: '客先編集',
+    workFieldDialog: false,
+    workFieldDialogName: '現場編集',
+    workName: '',
     workFieldRules: [
       v => !!v || '客先名が未入力です',
       v => (!!v && v.length <= 100) || `文字数は100文字以内です`
@@ -287,6 +297,10 @@ export default {
       v => (!!v && v.length <= 100) || `文字数は100文字以内です`
     ]
   }),
+  mounted: function () {
+    // 現場編集の画面情報をとってきます。
+    this.getClientFieldInfo()
+  },
   computed: {
     /** v-tableのヘッダーを設定 */
     clientHeader () {
@@ -295,12 +309,12 @@ export default {
           text: '客先',
           align: 'center',
           sortable: false,
-          value: 'clientName',
+          value: 'clientFieldName',
           width: '70%'
         },
         {
           text: 'ステータス',
-          value: 'status',
+          value: 'statusName',
           align: 'center',
           width: '20%'
         },
@@ -318,18 +332,18 @@ export default {
           text: '客先',
           align: 'center',
           sortable: false,
-          value: 'clientName',
+          value: 'selectClientField.clientFieldName',
           width: '20%'
         },
         {
           text: '現場名',
-          value: 'fieldName',
+          value: 'workName',
           align: 'center',
           width: '50%'
         },
         {
           text: 'ステータス',
-          value: 'status',
+          value: 'statusName',
           align: 'center',
           width: '20%'
         },
@@ -340,23 +354,15 @@ export default {
           width: '10%'}
       ]
     },
-    /** Vuex storeで設定した値を取得 (オブジェクトで取得するので、配列を指名して)リターン */
-    getClient () {
-      /** ToDo */
-      /** Vuex clientで定義したActionメソッドをここで呼び出し */
-      return this.$store.state.clientFieldList.clientList
-    },
-    /** Vuex storeで設定した値を取得 (オブジェクトで取得するので、配列を指名して)リターン */
-    getField () {
-      /** ToDo */
-      /** Vuex fieldListで定義したActionメソッドをここで呼び出し */
-      return this.$store.state.clientFieldList.fieldList
-    }
   },
   methods: {
-    // ページ遷移処理
-    download (format) {
-      console.log(format)
+    // 初期表示処理です。
+    async getClientFieldInfo () {
+      let response = await Methods.getClientFieldInfo()
+      // レスポンスから画面情報をセットする
+      this.clientFieldList = createClientFieldList(response)
+      this.workFieldList = createWorkFieldList(response)
+      this.selectClientFieldList = createSelectClientFieldList(response)
     },
     // 検索
     searchClient (value, search, item) {
@@ -372,48 +378,227 @@ export default {
           typeof value === 'string' &&
           value.toString().toLocaleUpperCase().indexOf(search) !== -1
     },
-    /** データ変更処理 */
-    setItem (item) {
-      /** ToDo vuex 必要ないかも？ */
-      /** 2-Vuex attendanceListで定義したActionメソッドをここで呼び出し 変更箇所の引数あり */
-      /** 1-NCMBのデータ更新処理呼び出し express側定義 axioメソッド */
-      console.log(item)
-    },
     // 客先編集 ダイアログ表示処理
-    showEditClient (item) {
-      this.editItem = item
-      this.clientDialog = true
+    showEditClientField (item) {
+      // 編集の場合
+      if(item !== undefined){
+        this.clientFieldEditItem = item
+        this.worDialogName = '客先編集'
+      // 追加の場合
+      }else{
+        // 入力項目に初期値を設定
+        this.clientFieldEditItem = {
+          status: '0',
+        }
+        this.clientFieldDialogName = '客先追加'
+      }
+      this.clientFieldDialog = true
     },
     // 客先編集 ダイアログ閉じる処理
-    closeClientDialog () {
-      this.editItem = []
-      this.clientDialog = false
+    closeclientFieldDialog () {
+      this.clientFieldEditItem = []
+      this.clientFieldDialog = false
     },
     // 客先編集 保存処理
-    saveClientInfo (item) {
-      // TODO 保存処理
-      this.clientDialog = false
+    async saveClientField () {
+      const param = {
+        clientFieldId: this.clientFieldEditItem.clientFieldId,
+        clientFieldName: this.clientFieldEditItem.clientFieldName,
+        status: Number(this.clientFieldEditItem.status),
+        createUserId: '', // ログインユーザのユーザIDをセットする(新規の時だけ)
+        updateUserId: '' // ログインユーザのユーザIDをセットする
+      }
+      // 保存処理
+      let response = await Methods.saveClientField(param)
+      // レスポンスから画面情報をセットする
+      this.clientFieldList = createClientFieldList(response)
+      this.workFieldList = createWorkFieldList(response)
+      this.selectClientFieldList = createSelectClientFieldList(response)
+      this.clientFieldDialog = false
+      // TODO 保存完了メッセージ表示
+      console.log(response)
     },
     // 現場編集 ダイアログ表示処理
-    showEditField (item) {
-      this.editItem = item
-      this.fieldDialog = true
+    showEditWorkField (item) {
+      // 編集の場合
+      if(item !== undefined){
+        this.workFieldEditItem = item
+        this.workFieldDialogName = '客先編集'
+      // 追加の場合
+      }else{
+        // 入力項目に初期値を設定
+        this.workFieldEditItem = {
+          status: '0',
+        }
+        this.workFieldDialogName = '客先追加'
+      }
+      this.workFieldDialog = true
     },
     // 現場編集 ダイアログ閉じる処理
-    closeFieldDialog () {
-      this.editItem = []
-      this.fieldDialog = false
+    closeworkFieldDialog () {
+      this.workFieldEditItem = []
+      this.workFieldDialog = false
     },
     // 現場編集 保存処理
-    saveFieldInfo (item) {
-      // TODO 保存処理
-      this.fieldDialog = false
+    async saveWorkField () {
+      const param = {
+        workId: this.workFieldEditItem.workId,
+        workName: this.workFieldEditItem.workName,
+        clientFieldId: this.workFieldEditItem.selectClientField.clientFieldId,
+        status: Number(this.workFieldEditItem.status),
+        createUserId: '', // ログインユーザのユーザIDをセットする(新規の時だけ)
+        updateUserId: '' // ログインユーザのユーザIDをセットする
+      }
+      // 保存処理
+      let response = await Methods.saveWorkField(param)
+      // レスポンスから画面情報をセットする
+      this.clientFieldList = createClientFieldList(response)
+      this.workFieldList = createWorkFieldList(response)
+      this.selectClientFieldList = createSelectClientFieldList(response)
+      this.workFieldDialog = false
+      // TODO 保存完了メッセージ表示
+      console.log(response)
     },
     // 削除ボタン押下処理
-    onClickDelete (item) {
-      alert('削除')
+    async onClickDeleteClientField (item) {
+      const param = {
+        clientFieldId: item.clientFieldId
+      }
+      // 削除処理
+      let response = await Methods.deleteClientField(param)
+      // レスポンスから画面情報をセットする
+      this.clientFieldList = createClientFieldList(response)
+      this.workFieldList = createWorkFieldList(response)
+      this.selectClientFieldList = createSelectClientFieldList(response)
+      this.clientFieldDialog = false
+      // TODO 保存完了メッセージ表示
+      console.log(response)
+    },
+    // 削除ボタン押下処理
+    async onClickDeleteWorkField (item) {
+      const param = {
+        workId: item.workId
+      }
+      // 削除処理
+      let response = await Methods.deleteWorkField(param)
+      // レスポンスから画面情報をセットする
+      this.clientFieldList = createClientFieldList(response)
+      this.workFieldList = createWorkFieldList(response)
+      this.selectClientFieldList = createSelectClientFieldList(response)
+      this.workFieldDialog = false
+      // TODO 保存完了メッセージ表示
+      console.log(response)
     }
-
+  }
+}
+//
+// privateメソッドです。
+//
+/**
+ * レスポンスをもとに画面情報(客先一覧)を作成します。
+ *
+ * @param {obeject} response レスポンスです。
+ *
+ * @returns
+ *
+ */
+function createClientFieldList (response) {
+  var clientFieldResponse = response.data.clientFieldResponse
+  var clientFieldList = []
+  for (var i = 0; i < clientFieldResponse.length; i++) {
+    var clientField = {}
+    clientField.clientFieldId = clientFieldResponse[i].objectId
+    clientField.clientFieldName = clientFieldResponse[i].clientFieldName
+    clientField.status = String(clientFieldResponse[i].status)
+    clientField.statusName = getStatusName(
+      clientFieldResponse[i].status
+    )
+    clientFieldList.push(clientField)
+  }
+  return clientFieldList
+}
+/**
+ * レスポンスをもとに画面情報(現場一覧)を作成します。
+ *
+ * @param {obeject} response レスポンスです。
+ *
+ * @returns
+ *
+ */
+function createWorkFieldList (response) {
+  var workFieldResponse = response.data.workFieldResponse
+  var clientFieldResponse = response.data.clientFieldResponse
+  var workFieldList = []
+  for (var j = 0; j < workFieldResponse.length; j++) {
+    var workField = {}
+    workField.workId = workFieldResponse[j].objectId
+    workField.workName = workFieldResponse[j].workName
+    // 選択中の客先名を設定
+    workField.selectClientField = {
+      clientFieldId: workFieldResponse[j].clientFieldId,
+      clientFieldName: getClientFieldName(
+        workFieldResponse[j].clientFieldId,
+        clientFieldResponse
+      )
+    }
+    workField.status = String(workFieldResponse[j].status)
+    workField.statusName = getStatusName(
+      workFieldResponse[j].status
+    )
+    workFieldList.push(workField)
+  }
+  return workFieldList
+}
+/**
+ * レスポンスをもとに画面情報(客先名セレクトボックス)を作成します。
+ *
+ * @param {obeject} response レスポンスです。
+ *
+ * @returns
+ *
+ */
+function createSelectClientFieldList (response) {
+  var clientFieldResponse = response.data.clientFieldResponse
+  var clientFieldList = []
+  for (var j = 0; j < clientFieldResponse.length; j++) {
+    var clientField = {}
+    clientField.clientFieldId = clientFieldResponse[j].objectId
+    clientField.clientFieldName = clientFieldResponse[j].clientFieldName
+    clientFieldList.push(clientField)
+  }
+  return clientFieldList
+}
+/**
+ * 客先IDをもとに客先名を取得します。
+ *
+ * @param {string} clientFieldId 工種IDです。
+ * @param {object} clientFieldResponse 工種のレスポンスデータです。
+ *
+ * @private
+ * @returns
+ */
+function getClientFieldName (clientFieldId, clientFieldResponse) {
+  var clientFieldName = ''
+  for (var i = 0; i < clientFieldResponse.length; i++) {
+    if (clientFieldId === clientFieldResponse[i].objectId) {
+      clientFieldName = clientFieldResponse[i].clientFieldName
+    }
+  }
+  return clientFieldName
+}
+/**
+ * ステータスをもとにステータス名を取得します。
+ *
+ * @param {string} status ステータスです。
+ *
+ * @private
+ * @returns
+ */
+function getStatusName (status) {
+  if (status === 0) {
+    return '未進行'
+  } else {
+    return '進行中'
   }
 }
 </script>
