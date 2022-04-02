@@ -16,7 +16,8 @@ class WorkFieldDao {
    */
   async selectWorkFieldAll() {
     var Item = ncmb.DataStore("workFieldTable");
-    const responce = await Item.fetchAll()
+    const responce = await Item.equalTo("deleteFlg", false)
+      .fetchAll()
       .then(function (items) {
         return items;
       })
