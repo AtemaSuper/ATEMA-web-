@@ -193,6 +193,10 @@ export default {
       v => (!!v && v.length <= 100) || `100文字以内で入力してください`
     ]
   }),
+  mounted: function () {
+    // 現場編集の画面情報をとってきます。
+    this.getWorkFieldInfo()
+  },
   computed: {
     /** v-tableのヘッダーを設定 */
     workFieldHeader () {

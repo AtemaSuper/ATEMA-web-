@@ -47,5 +47,12 @@ export default {
   // 入力内容保存処理
   saveOwnCompanyInfo (param) {
     return Api().post('/ownCompany/save', param)
+  },
+
+  /*
+    客先・現場編集画面
+  */
+  getWorkFieldInfo () {
+    return Api().post('/workField')
   }
 }

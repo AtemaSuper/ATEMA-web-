@@ -9,21 +9,21 @@ var ncmb = new NCMB(NCMB_KEY.application_key, NCMB_KEY.client_key);
  */
 class WorkFieldDao {
   /**
-   * ログインIDをもとに従業員を取得します。
+   * 現場情報一覧を取得します。
    *
-   * @param {string} loginId
    *
    * @returns
    */
-  selectEmployeeByloginId(req, res) {
-    var Item = ncmb.DataStore("workFieldTabl");
-    Item.fetchAll()
+  async selectWorkFieldAll() {
+    var Item = ncmb.DataStore("workFieldTable");
+    const responce = await Item.fetchAll()
       .then(function (items) {
-        res.status(200).json(items);
+        return items;
       })
       .catch(function (err) {
         res.status(500).json(err);
       });
+    return responce;
   }
 }
 

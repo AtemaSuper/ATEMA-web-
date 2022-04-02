@@ -6,17 +6,17 @@ var ncmb = new NCMB(NCMB_KEY.application_key,NCMB_KEY.client_key);
 
 
 /**
- * 客先テーブルのDaoクラスです。
+ * 工事テーブルのDaoクラスです。
  */
-class ClientFieldDao {
+class WorkDao {
   /**
-   * 客先情報一覧を取得します。
+   * 工事情報一覧を取得します。
    * 
    * 
    * @returns
    */
-  async selectClientFieldAll() {
-    var Item = ncmb.DataStore('clientFieldTable');
+  async selectWorkAll() {
+    var Item = ncmb.DataStore('workTable');
     const responce = await Item.fetchAll()
           .then(function(items){
             return items
@@ -26,7 +26,7 @@ class ClientFieldDao {
                 .json(err);
     });
     return responce;
-}
+  }
 };
 
-module.exports = ClientFieldDao;
+module.exports = WorkDao;

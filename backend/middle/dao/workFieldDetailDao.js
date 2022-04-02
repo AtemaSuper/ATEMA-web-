@@ -5,26 +5,26 @@ let NCMB_KEY = require("../../ncmb-key");
 var ncmb = new NCMB(NCMB_KEY.application_key, NCMB_KEY.client_key);
 
 /**
- * 工事テーブルのDaoクラスです。
+ * 現場詳細テーブルのDaoクラスです。
  */
-class WorkDao {
+class WorkFieldDetailDao {
   /**
-   * ログインIDをもとに従業員を取得します。
+   * 工事情報一覧を取得します。
    *
-   * @param {string} loginId
    *
    * @returns
    */
-  selectEmployeeByloginId(req, res) {
+  async selectWorkAll() {
     var Item = ncmb.DataStore("workFieldDetailTable");
-    Item.fetchAll()
+    const responce = await Item.fetchAll()
       .then(function (items) {
-        res.status(200).json(items);
+        return items;
       })
       .catch(function (err) {
         res.status(500).json(err);
       });
+    return responce;
   }
 }
 
-module.exports = WorkDao;
+module.exports = WorkFieldDetailDao;
