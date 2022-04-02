@@ -26,7 +26,7 @@
           <!--ToDo  keyの値にnameを設定すると同名で重複エラーが出現するので、基本的にはDB取得時の各レコードごとのユニークIDを設定する -->
           <v-data-table
             :headers="workFieldHeader"
-            :items="getWorkField"
+            :items="workFieldDetailList"
             :search="searchWorkField"
             :custom-filter="searchWorkField"
             :items-per-page="-1"
@@ -88,7 +88,7 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-text-field v-model="JobName" :rules="JobRules"  label="(例)21-0001" maxlength='7' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                <v-text-field v-model="this.editItem.jobNo" :rules="JobRules"  label="(例)21-0001" maxlength='7' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -100,7 +100,7 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-select label="(例)株式会社ABC" :items="['株式会社A', '株式会社B', '株式会社C', '株式会社D']" outlined required></v-select>
+                <v-select v-model="this.editItem.clientFieldName" label="(例)株式会社ABC" :items="['株式会社A', '株式会社B', '株式会社C', '株式会社D']" outlined required></v-select>
               </v-col>
             </v-row>
             <v-row>
@@ -112,7 +112,7 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-select label="(例)現場名A" :items="['現場名A', '現場名B', '現場名C', '現場名D']" outlined required></v-select>
+                <v-select  v-model="this.editItem.workFieldName" label="(例)現場名A" :items="['現場名A', '現場名B', '現場名C', '現場名D']" outlined required></v-select>
               </v-col>
             </v-row>
             <v-row>
@@ -124,7 +124,7 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-text-field v-model="constructionName" :rules="constructionRules" label="(例)工事件名１－ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                <v-text-field v-model="this.editItem.workName" :rules="constructionRules" label="(例)工事件名１－ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -136,7 +136,7 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-radio-group v-model="row" row mandatory>
+                <v-radio-group v-model="this.editItem.status" row mandatory>
                   <v-radio label="進行中" value="radio-1" color="#ff6669"></v-radio>
                   <v-radio label="完了済" value="radio-2" color="#ff6669"></v-radio>
                 </v-radio-group>
@@ -151,7 +151,7 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-radio-group v-model="row" row mandatory>
+                <v-radio-group v-model="this.editItem.status" row mandatory>
                   <v-radio label="常用" value="radio-1" color="#ff6669"></v-radio>
                   <v-radio label="請負" value="radio-2" color="#ff6669"></v-radio>
                 </v-radio-group>
@@ -177,10 +177,14 @@
 </template>
 
 <script>
+/** 外部コンポーネントの呼び出し */
+import Methods from '@/api/methods'
 export default {
   components: {
   },
   data: () => ({
+    workFieldDetailList: [],
+    editItem: [],
     workFieldDialog: false,
     JobName: '',
     JobRules: [
@@ -209,7 +213,7 @@ export default {
         },
         {
           text: '客先',
-          value: 'conmpanyName',
+          value: 'clientFieldName',
           align: 'center',
           width: '18%'
         },
@@ -227,7 +231,7 @@ export default {
         },
         {
           text: 'ステータス',
-          value: 'status',
+          value: 'statusName',
           align: 'center',
           width: '18%'
         },
@@ -238,15 +242,20 @@ export default {
           width: '10%'
         }
       ]
-    },
-    /** Vuex storeで設定した値を取得 (オブジェクトで取得するので、配列を指名して)リターン */
-    getWorkField () {
-      /** ToDo */
-      /** Vuex workFieldListで定義したActionメソッドをここで呼び出し */
-      return this.$store.state.workFieldList.workFieldList
     }
+    /** Vuex storeで設定した値を取得 (オブジェクトで取得するので、配列を指名して)リターン */
+    // getWorkField () {
+    //   /** ToDo */
+    //   /** Vuex workFieldListで定義したActionメソッドをここで呼び出し */
+    //   return this.$store.state.workFieldList.workFieldList
+    // }
   },
   methods: {
+    // 初期表示処理です。
+    async getWorkFieldInfo () {
+      let response = await Methods.getWorkFieldInfo()
+      this.workFieldDetailList = response.data.workFieldDetailList
+    },
     // 現場編集 ダイアログ表示処理
     showEditWorkField (item) {
       this.editItem = item
