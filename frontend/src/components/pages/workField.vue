@@ -10,7 +10,7 @@
           <v-col cols="12" sm="4" md="4"> </v-col>
           <v-col cols="12" sm="4" md="2">
             <!-- 工事を追加するボタン -->
-            <v-btn @click="showAddWorkField()" outlined elevation="3">
+            <v-btn @click="showEditWorkField()" outlined elevation="3">
               工事を追加
               <v-icon color="#ff6669">mdi-plus</v-icon>
             </v-btn>
@@ -248,12 +248,6 @@ export default {
         }
       ]
     }
-    /** Vuex storeで設定した値を取得 (オブジェクトで取得するので、配列を指名して)リターン */
-    // getWorkField () {
-    //   /** ToDo */
-    //   /** Vuex workFieldListで定義したActionメソッドをここで呼び出し */
-    //   return this.$store.state.workFieldList.workFieldList
-    // }
   },
   methods: {
     // 初期表示処理です。
@@ -266,19 +260,20 @@ export default {
     },
     // 現場編集 ダイアログ表示処理
     showEditWorkField (item) {
-      this.editItem = item
-      this.worDialogName = '工事編集'
-      this.workFieldDialog = true
-    },
-    // 現場追加 ダイアログ表示処理
-    showAddWorkField () {
-      // 入力項目に初期値を設定
-      this.editItem = {
-        workFieldId: '',
-        status: '0',
-        contractStatus: '0'
+      // 編集の場合
+      if(item !== undefined){
+        this.editItem = item
+        this.worDialogName = '工事編集'
+      // 追加の場合
+      }else{
+        // 入力項目に初期値を設定
+        this.editItem = {
+          workFieldId: '',
+          status: '0',
+          contractStatus: '0'
+        }
+        this.worDialogName = '工事追加'
       }
-      this.worDialogName = '工事追加'
       this.workFieldDialog = true
     },
     // 現場編集 ダイアログ閉じる処理
@@ -288,7 +283,6 @@ export default {
     },
     // 現場編集 保存処理
     async saveWorkFieldInfo () {
-      console.log(this.editItem)
       const param = {
         workFieldId: this.editItem.workFieldId,
         workFieldName: this.editItem.workFieldName,

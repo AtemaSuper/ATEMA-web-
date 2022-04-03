@@ -14,7 +14,7 @@ var workFieldDetailDao = new WorkFieldDetailDao();
 /**
  * 工事編集画面のService
  */
-
+//工事編集の初期表示処理です。
 app.post("/", async function (req, res) {
   var clientFieldResponse = {};
   var workFieldResponse = {};

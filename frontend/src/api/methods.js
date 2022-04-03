@@ -50,7 +50,7 @@ export default {
   },
 
   /*
-    客先・現場編集画面
+    工事編集画面
   */
   // 初期表示処理
   getWorkFieldInfo() {
@@ -63,5 +63,28 @@ export default {
   // 削除処理
   deleteWorkFieldInfo(param) {
     return Api().post("/workField/delete", param);
+  },
+  /*
+    客先・現場編集画面
+  */
+  // 初期表示処理
+  getClientFieldInfo() {
+    return Api().post("/clientField");
+  },
+  // 入力内容保存処理(客先)
+  saveClientField(param) {
+    return Api().post("/clientField/saveClientField", param);
+  },
+  // 入力内容保存処理(現場)
+  saveWorkField(param) {
+    return Api().post("/clientField/saveWorkField", param);
+  },
+  // 削除処理(客先)
+  deleteClientField(param) {
+    return Api().post("/clientField/deleteClientField", param);
+  },
+  // 削除処理(現場)
+  deleteWorkField(param) {
+    return Api().post("/clientField/deleteWorkField", param);
   }
 };

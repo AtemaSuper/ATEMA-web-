@@ -90,7 +90,7 @@ class WorkFieldDetailDao {
     }
   }
   /**
-   * 現場詳細情報一覧を取得します。
+   * 現場詳細情報を削除します。
    * @param {object} param 削除情報です。
    *
    * @returns
