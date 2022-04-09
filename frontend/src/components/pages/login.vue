@@ -27,6 +27,10 @@
                 type="text"
                 v-model="model.email"
                 :rules="emailRules"
+                maxlength='50'
+                clearable
+                clear-icon="mdi-close-circle"
+                outlined
                 required
               ></v-text-field>
               <v-text-field
@@ -36,8 +40,13 @@
                 type="password"
                 v-model="model.password"
                 :rules="passwordRules"
+                maxlength='50'
+                clearable
+                clear-icon="mdi-close-circle"
+                outlined
                 required
-              ></v-text-field>
+              >
+              </v-text-field>
             </v-form>
             <!-- <v-btn block color="primary" @click="login" :loading="loading">ログイン</v-btn> -->
             <v-card-actions class="justify-center">
@@ -67,13 +76,12 @@ export default {
   data: () => ({
     loading: false,
     emailRules: [
-      v => !!v || 'メールアドレスが未入力です',
-      v => (v && v.length <= 128) || '文字数制限は128文字以内です',
-      v => /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'メールアドレスの形式が正しくありません。'
+      v => !!v || 'IDが未入力です',
+      v => (v && v.length <= 50) || '文字数制限は50文字以内です'
     ],
     passwordRules: [
       v => !!v || 'パスワードが未入力です',
-      v => (v && v.length <= 32) || '文字数制限は32文字以内です'
+      v => (v && v.length <= 50) || '文字数制限は50文字以内です'
     ],
     checkbox: true,
     model: {

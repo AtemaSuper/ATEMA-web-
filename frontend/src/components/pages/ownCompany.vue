@@ -29,35 +29,95 @@
       </v-row>
       <v-row>
         <v-col cols="2" class="item-label">設立</v-col>
-        <v-col cols="1">
-          <v-text-field
-            v-model="ownCompanyData.foundationYear"
-            outlined
-            :rules="companyYearRules"
-            label="年"
-            name="companyYear"
-            maxlength="4"
-          ></v-text-field>
+        <v-col cols="2" sm="3" md="3"
+          ><v-menu
+            ref="foundationMenu"
+            v-model="foundationMenu"
+            :close-on-content-click="false"
+            :return-value.sync="foundation"
+            transition="scale-transition"
+            offset-y
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="foundation"
+                :rules="foundationRules"
+                label="日付を選択"
+                placeholder="まず20XX年X月をクリック"
+                prepend-inner-icon="mdi-calendar"
+                readonly
+                outlined
+                dense
+                v-bind="attrs"
+                v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              v-model="foundation"
+              no-title
+              scrollable
+              locale="jp-ja"
+              :day-format="(date) => new Date(date).getDate()"
+            >
+              <v-btn
+                color="#ff6669"
+                class="white--text"
+                rounded
+                @click="$refs.foundationMenu.save(foundation)"
+              >
+                OK
+              </v-btn>
+              <v-btn class="#f5f5f5" rounded @click="foundationMenu = false">
+                キャンセル
+              </v-btn>
+            </v-date-picker>
+          </v-menu>
         </v-col>
-        <v-col cols="1">
-          <v-text-field
-            v-model="ownCompanyData.foundationMonth"
-            outlined
-            :rules="companyMonthRules"
-            label="月"
-            name="companyMonth"
-            maxlength="2"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="1">
-          <v-text-field
-            v-model="ownCompanyData.foundationDay"
-            outlined
-            :rules="companyDayRules"
-            label="日"
-            name="companyDay"
-            maxlength="2"
-          ></v-text-field>
+        <v-col cols="2" sm="3" md="3"
+          ><v-menu
+            ref="foundationMenu"
+            v-model="foundationMenu"
+            :close-on-content-click="false"
+            :return-value.sync="foundation"
+            transition="scale-transition"
+            offset-y
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="foundation"
+                :rules="foundationRules"
+                label="日付を選択"
+                placeholder="まず20XX年X月をクリック"
+                prepend-inner-icon="mdi-calendar"
+                readonly
+                outlined
+                dense
+                v-bind="attrs"
+                v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              v-model="foundation"
+              no-title
+              scrollable
+              locale="jp-ja"
+              :day-format="(date) => new Date(date).getDate()"
+            >
+              <v-btn
+                color="#ff6669"
+                class="white--text"
+                rounded
+                @click="$refs.foundationMenu.save(foundation)"
+              >
+                OK
+              </v-btn>
+              <v-btn class="#f5f5f5" rounded @click="foundationMenu = false">
+                キャンセル
+              </v-btn>
+            </v-date-picker>
+          </v-menu>
         </v-col>
       </v-row>
       <v-row>
@@ -119,7 +179,7 @@
             :rules="telNumberOneRules"
             name="telNumberOne"
             label="090"
-            maxlength="3"
+            maxlength="4"
           ></v-text-field>
         </v-col>
         <div class="to-label">-</div>
@@ -398,82 +458,75 @@ export default {
       hoursList: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'],
       minutesList: ['00', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59'],
       errorList: [],
+      tardyTime: '1-minutes',
+      roundingTime: '15-minutes',
+      roundTime: 'half-up',
+      foundationMenu: false,
+      foundationName: '',
+      foundationRules: [
+        v => !!v || '設立が未選択です'
+      ],
       companyRules: [
         v => !!v || '会社名が未入力です',
-        v => (v && v.length <= 100) || '文字数制限は100文字以内です'
-      ],
-      companyYearRules: [
-        v => !!v || '設立(年)が未入力です',
-        v => (v && v.length <= 4) || '文字数制限は4文字以内です',
-        v => /[0-9]/.test(v) || '設立(年)の入力は半角数字のみです'
-      ],
-      companyMonthRules: [
-        v => !!v || '設立(月)が未入力です',
-        v => (v && v.length <= 4) || '文字数制限は4文字以内です',
-        v => /[0-9]/.test(v) || '設立(月)の入力は半角数字のみです'
-      ],
-      companyDayRules: [
-        v => !!v || '設立(日)が未入力です',
-        v => (v && v.length <= 4) || '文字数制限は4文字以内です',
-        v => /[0-9]/.test(v) || '設立(月)の入力は半角数字のみです'
+        v => (v && v.length <= 100) || '文字数は100文字以内です'
       ],
       presidentRules: [
         v => !!v || '代表者が未入力です',
-        v => (v && v.length <= 100) || '文字数制限は100文字以内です'
+        v => (v && v.length <= 50) || '文字数は50文字以内です'
       ],
       postNumberFirstRules: [
         v => !!v || '郵便番号1が未入力です',
-        v => (v && v.length <= 3) || '文字数制限は3文字以内です',
-        v => /[0-9]/.test(v) || '郵便番号1の入力は半角数字のみです'
+        v => (v && v.length <= 3) || '文字数は3文字以内です',
+        v => /^[0-9]*$/.test(v) || '郵便番号1の入力は半角数字のみです'
       ],
       postNumberLastRules: [
         v => !!v || '郵便番号2が未入力です',
-        v => (v && v.length <= 4) || '文字数制限は4文字以内です',
-        v => /[0-9]/.test(v) || '郵便番号2の入力は半角数字のみです'
+        v => (v && v.length <= 4) || '文字数は4文字以内です',
+        v => /^[0-9]*$/.test(v) || '郵便番号2の入力は半角数字のみです'
       ],
       addressRules: [
         v => !!v || '住所が未入力です',
-        v => (v && v.length <= 100) || '文字数制限は100文字以内です'
+        v => (v && v.length <= 100) || '文字数は100文字以内です'
       ],
       telNumberOneRules: [
         v => !!v || '電話番号1が未入力です',
-        v => (v && v.length <= 4) || '文字数制限は4文字以内です',
-        v => /[0-9]/.test(v) || '電話番号1の入力は半角数字のみです'
+        v => (v && v.length <= 4) || '文字数は4文字以内です',
+        v => /^[0-9]*$/.test(v) || '電話番号1の入力は半角数字のみです'
       ],
       telNumberTwoRules: [
         v => !!v || '電話番号2が未入力です',
-        v => (v && v.length <= 4) || '文字数制限は4文字以内です',
-        v => /[0-9]/.test(v) || '電話番号2の入力は半角数字のみです'
+        v => (v && v.length <= 4) || '文字数は4文字以内です',
+        v => /^[0-9]*$/.test(v) || '電話番号2の入力は半角数字のみです'
       ],
       telNumberThreeRules: [
         v => !!v || '電話番号3が未入力です',
-        v => (v && v.length <= 4) || '文字数制限は4文字以内です',
-        v => /[0-9]/.test(v) || '電話番号3の入力は半角数字のみです'
+        v => (v && v.length <= 4) || '文字数は4文字以内です',
+        v => /^[0-9]*$/.test(v) || '電話番号3の入力は半角数字のみです'
       ],
       normalWorkHoursRules: [
         v => !!v || '通常業務時間(時)が未入力です',
-        v => (v && v.length <= 2) || '文字数制限は2文字以内です',
-        v => /[0-9]/.test(v) || '通常業務時間(時)の入力は半角数字のみです'
+        v => (v && v.length <= 2) || '文字数は2文字以内です',
+        v => /^[0-9]*$/.test(v) || '通常業務時間(時)の入力は半角数字のみです'
       ],
       normalWorkMinutesRules: [
         v => !!v || '通常業務時間(分)が未入力です',
-        v => (v && v.length <= 2) || '文字数制限は2文字以内です',
-        v => /[0-9]/.test(v) || '通常業務時間(分)の入力は半角数字のみです'
+        v => (v && v.length <= 2) || '文字数は2文字以内です',
+        v => /^[0-9]*$/.test(v) || '通常業務時間(分)の入力は半角数字のみです'
       ],
       exceptionWorkHoursRules: [
         v => !!v || '時間外業務時間(時)が未入力です',
-        v => (v && v.length <= 2) || '文字数制限は2文字以内です',
-        v => /[0-9]/.test(v) || '時間外業務時間(時)の入力は半角数字のみです'
+        v => (v && v.length <= 2) || '文字数は2文字以内です',
+        v => /^[0-9]*$/.test(v) || '時間外業務時間(時)の入力は半角数字のみです'
       ],
       exceptionWorkMinutesRules: [
         v => !!v || '時間外業務時間(分)が未入力です',
-        v => (v && v.length <= 2) || '文字数制限は2文字以内です',
-        v => /[0-9]/.test(v) || '時間外業務時間(分)の入力は半角数字のみです'
+        v => (v && v.length <= 2) || '文字数は2文字以内です',
+        v => /^[0-9]*$/.test(v) || '時間外業務時間(分)の入力は半角数字のみです'
       ],
       roundingTimeRules: [
         v => !!v || '丸めで指定選択時、指定時間(分)が未入力です',
-        v => (v && v.length <= 2) || '文字数制限は2文字以内です',
-        v => /[0-9]/.test(v) || '丸めで指定選択時、指定時間(分)の入力は半角数字のみです'
+        v => (v && v.length <= 2) || '文字数は2文字以内です',
+        v => /^[0-9]*$/.test(v) || '丸めで指定選択時、指定時間(分)の入力は半角数字のみです'
       ]
     }
   },
