@@ -29,35 +29,50 @@
       </v-row>
       <v-row>
         <v-col cols="2" class="item-label">設立</v-col>
-        <v-col cols="1">
-          <v-text-field
-            v-model="ownCompanyData.foundationYear"
-            outlined
-            :rules="companyYearRules"
-            label="年"
-            name="companyYear"
-            maxlength="4"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="1">
-          <v-text-field
-            v-model="ownCompanyData.foundationMonth"
-            outlined
-            :rules="companyMonthRules"
-            label="月"
-            name="companyMonth"
-            maxlength="2"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="1">
-          <v-text-field
-            v-model="ownCompanyData.foundationDay"
-            outlined
-            :rules="companyDayRules"
-            label="日"
-            name="companyDay"
-            maxlength="2"
-          ></v-text-field>
+        <v-col cols="2" sm="3" md="3"
+          ><v-menu
+            ref="foundationMenu"
+            v-model="foundationMenu"
+            :close-on-content-click="false"
+            :return-value.sync="foundation"
+            transition="scale-transition"
+            offset-y
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="foundation"
+                :rules="foundationRules"
+                label="日付を選択"
+                placeholder="まず20XX年X月をクリック"
+                prepend-inner-icon="mdi-calendar"
+                readonly
+                outlined
+                dense
+                v-bind="attrs"
+                v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              v-model="foundation"
+              no-title
+              scrollable
+              locale="jp-ja"
+              :day-format="(date) => new Date(date).getDate()"
+            >
+              <v-btn
+                color="#ff6669"
+                class="white--text"
+                rounded
+                @click="$refs.foundationMenu.save(foundation)"
+              >
+                OK
+              </v-btn>
+              <v-btn class="#f5f5f5" rounded @click="foundationMenu = false">
+                キャンセル
+              </v-btn>
+            </v-date-picker>
+          </v-menu>
         </v-col>
         <v-col cols="2" sm="3" md="3"
           ><v-menu
