@@ -372,7 +372,7 @@
                                   OK
                                 </v-btn>
                                 <v-btn
-                                   class="#f5f5f5" rounded
+                                  class="#f5f5f5" rounded
                                   @click="birthdayMenu = false"
                                 >
                                   キャンセル

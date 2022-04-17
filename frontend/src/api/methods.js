@@ -86,5 +86,28 @@ export default {
   // 削除処理(現場)
   deleteWorkField(param) {
     return Api().post("/clientField/deleteWorkField", param);
+  },
+  /*
+    自社員管理画面
+  */
+  // 初期表示処理
+  getEmployeeInfo() {
+    return Api().post("/ownWorkerAll");
+  },
+  // 入力内容保存処理(自社員)
+  saveEmployee(param) {
+    return Api().post("/ownWorkerAll/saveEmployee", param);
+  },
+  // 入力内容保存処理(役職)
+  savePost(param) {
+    return Api().post("/ownWorkerAll/savePost", param);
+  },
+  // 削除処理(自社員)
+  deleteEmployee(param) {
+    return Api().post("/ownWorkerAll/deleteEmployee", param);
+  },
+  // 削除処理(役職)
+  deletePost(param) {
+    return Api().post("/ownWorkerAll/deletePost", param);
   }
 };
