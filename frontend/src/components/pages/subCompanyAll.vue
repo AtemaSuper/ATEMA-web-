@@ -390,20 +390,6 @@
                                 offset-y
                                 min-width="auto"
                               >
-<<<<<<< HEAD
-                                <v-btn
-                                    color="#ff6669" class="white--text" rounded
-                                    @click="
-                                    $refs.birthdayMenu.save(
-                                      birthday
-                                    )"
-                                >
-                                  OK
-                                </v-btn>
-                                <v-btn
-                                  class="#f5f5f5" rounded
-                                  @click="birthdayMenu = false"
-=======
                                 <template v-slot:activator="{ on, attrs }">
                                   <v-text-field
                                     v-model="birthday"
@@ -425,7 +411,6 @@
                                   scrollable
                                   locale="jp-ja"
                                   :day-format="(date) => new Date(date).getDate()"
->>>>>>> 541d599720cd3068ce4549912bd1cb190c3dc9cb
                                 >
                                   <v-btn
                                     color="#ff6669" class="white--text"
