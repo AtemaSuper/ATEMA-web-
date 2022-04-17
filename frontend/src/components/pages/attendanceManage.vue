@@ -32,12 +32,17 @@
                   locale="jp-ja"
                   :day-format="(date) => new Date(date).getDate()"
                 >
-                <v-btn color="#ff6669" class="white--text" rounded @click="$refs.menu.save(date)">
-                  OK
-                </v-btn>
-                <v-btn class="#f5f5f5" rounded @click="menu = false">
+                  <v-btn
+                    color="#ff6669"
+                    class="white--text"
+                    rounded
+                    @click="$refs.menu.save(date)"
+                  >
+                    OK
+                  </v-btn>
+                  <v-btn class="#f5f5f5" rounded @click="menu = false">
                     キャンセル
-                </v-btn>
+                  </v-btn>
                 </v-date-picker>
               </v-menu>
               <!-- 検索窓 -->
@@ -49,7 +54,6 @@
                 outlined
                 dense
               ></v-text-field>
-
             </v-col>
             <v-col cols="12" sm="4" md="4"> </v-col>
             <v-col cols="12" sm="4" md="4"> </v-col>
@@ -57,7 +61,11 @@
               <!-- ダウンロード形式選択 -->
               <v-menu offset-y>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn v-bind="attrs" v-on="on" outlined elevation="3">ダウンロード<v-icon color="#00ffd0">mdi-download</v-icon></v-btn>
+                  <v-btn v-bind="attrs" v-on="on" outlined elevation="3"
+                    >ダウンロード<v-icon color="#00ffd0"
+                      >mdi-download</v-icon
+                    ></v-btn
+                  >
                 </template>
                 <v-list>
                   <v-list-item @click="download('myCompanyAll')">
@@ -87,7 +95,6 @@
               :items-per-page="-1"
               item-key="name"
               class="elevation-1"
-              rowsPerPage: All
             >
               <template v-slot:top> </template>
               <template v-slot:[`body.append`]> </template>
@@ -117,9 +124,9 @@
 
               <!-- field Row -->
               <template v-slot:[`item.field`]="{ item }">
-                <v-btn outlined  @click="fieldContents(item)">
-                      {{ item.field }}
-                    </v-btn>
+                <v-btn outlined @click="fieldContents(item)">
+                  {{ item.field }}
+                </v-btn>
               </template>
 
               <!-- contract Row -->
@@ -152,41 +159,35 @@
                   large
                   @save="setItem(item.start)"
                 >
-                <v-chip
-                label
-                outlined
-                >{{ item.start }}
-                </v-chip>
+                  <v-chip label outlined>{{ item.start }} </v-chip>
                   <template v-slot:input>
                     <vue-timepicker
-                     format="HH:mm"
-                     manual-input
-                     hide-dropdown
-                     v-model="item.start">
-                     </vue-timepicker>
+                      format="HH:mm"
+                      manual-input
+                      hide-dropdown
+                      v-model="item.start"
+                    >
+                    </vue-timepicker>
                   </template>
                 </v-edit-dialog>
               </template>
 
-            <!-- restStart Row -->
+              <!-- restStart Row -->
               <template v-slot:[`item.restStart`]="{ item }">
                 <v-edit-dialog
                   :return-value.sync="item.restStart"
                   large
                   @save="setItem(item.restStart)"
                 >
-                <v-chip
-                label
-                outlined
-                >{{ item.restStart }}
-                </v-chip>
+                  <v-chip label outlined>{{ item.restStart }} </v-chip>
                   <template v-slot:input>
                     <vue-timepicker
-                     format="HH:mm"
-                     manual-input
-                     hide-dropdown
-                     v-model="item.restStart">
-                     </vue-timepicker>
+                      format="HH:mm"
+                      manual-input
+                      hide-dropdown
+                      v-model="item.restStart"
+                    >
+                    </vue-timepicker>
                   </template>
                 </v-edit-dialog>
               </template>
@@ -198,18 +199,15 @@
                   large
                   @save="setItem(item.restEnd)"
                 >
-                <v-chip
-                label
-                outlined
-                >{{ item.restEnd }}
-                </v-chip>
+                  <v-chip label outlined>{{ item.restEnd }} </v-chip>
                   <template v-slot:input>
-                   <vue-timepicker
-                     format="HH:mm"
-                     manual-input
-                     hide-dropdown
-                     v-model="item.restEnd">
-                     </vue-timepicker>
+                    <vue-timepicker
+                      format="HH:mm"
+                      manual-input
+                      hide-dropdown
+                      v-model="item.restEnd"
+                    >
+                    </vue-timepicker>
                   </template>
                 </v-edit-dialog>
               </template>
@@ -221,102 +219,97 @@
                   large
                   @save="setItem(item.end)"
                 >
-                <v-chip
-                label
-                outlined
-                >{{ item.end }}
-                </v-chip>
+                  <v-chip label outlined>{{ item.end }} </v-chip>
                   <template v-slot:input>
                     <vue-timepicker
-                     format="HH:mm"
-                     manual-input
-                     hide-dropdown
-                     v-model="item.end">
-                     </vue-timepicker>
+                      format="HH:mm"
+                      manual-input
+                      hide-dropdown
+                      v-model="item.end"
+                    >
+                    </vue-timepicker>
                   </template>
                 </v-edit-dialog>
               </template>
               <!-- noteContents Row -->
-              <template v-slot:[`item.note`]="{ item }" >
+              <template v-slot:[`item.note`]="{ item }">
                 <v-btn outlined @click="noteContents(item)">
-                      {{ item.note }}
-                    </v-btn>
+                  {{ item.note }}
+                </v-btn>
               </template>
             </v-data-table>
           </div>
         </v-sheet>
         <!-- noteContentsDialog-->
         <v-dialog v-model="noteContentsDialog" max-width="300">
-           <v-card>
-                    <v-card-title class="text-h5 grey lighten-2">
-                      備考欄
-                    </v-card-title>
-                    <v-card-text>
-                      <v-textarea
-                      v-model="ditaileEdit.noteContents"
-                      outlined
-                      name="input-7-4"
-                      value= ditaileEdit.noteContents
-                      ></v-textarea>
-                    </v-card-text>
-                    <v-divider></v-divider>
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                    </v-card-actions>
-                  </v-card>
-              </v-dialog>
-<!--fieldDialog-->
-              <v-dialog v-model="fieldDialog" max-width="300">
-                  <v-card>
-                    <v-card-title class="text-h5 grey lighten-2">
-                      現場詳細表示
-                    </v-card-title>
+          <v-card>
+            <v-card-title class="text-h5 grey lighten-2"> 備考欄 </v-card-title>
+            <v-card-text>
+              <v-textarea
+                v-model="ditaileEdit.noteContents"
+                outlined
+                name="input-7-4"
+                value="ditaileEdit.noteContents"
+              ></v-textarea>
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <!--fieldDialog-->
+        <v-dialog v-model="fieldDialog" max-width="300">
+          <v-card>
+            <v-card-title class="text-h5 grey lighten-2">
+              現場詳細表示
+            </v-card-title>
 
-                    <v-card-text>
-                      現場名以外内容はベタ書きです
-                      <v-row>
-                        <v-col cols="12" sm="4" md="4" align="right">
-                          <h4>jobNo:</h4>
-                        </v-col>
-                        <v-col cols="12" sm="8" md="8" align="left">
-                          <h4>21-1234</h4>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" sm="4" md="4" align="right">
-                          <h4>客先:</h4>
-                        </v-col>
-                        <v-col cols="12" sm="8" md="8" align="left">
-                          <h4>株式会社ABC運送</h4>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" sm="4" md="4" align="right">
-                          <h4>現場名:</h4>
-                        </v-col>
-                        <v-col cols="12" sm="8" md="8" align="left">
-                          <h4>{{ ditaileEdit.field }}</h4>
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12" sm="4" md="4" align="right">
-                          <h4>工事件名:</h4>
-                        </v-col>
-                        <v-col cols="12" sm="8" md="8" align="left">
-                          <h4>
-                            ダクト修繕・改築工事ダクト修繕・改築工事ダクト修繕・改築工事
-                          </h4>
-                        </v-col>
-                      </v-row>
-                    </v-card-text>
+            <v-card-text>
+              現場名以外内容はベタ書きです
+              <v-row>
+                <v-col cols="12" sm="4" md="4" align="right">
+                  <h4>jobNo:</h4>
+                </v-col>
+                <v-col cols="12" sm="8" md="8" align="left">
+                  <h4>21-1234</h4>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12" sm="4" md="4" align="right">
+                  <h4>客先:</h4>
+                </v-col>
+                <v-col cols="12" sm="8" md="8" align="left">
+                  <h4>株式会社ABC運送</h4>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12" sm="4" md="4" align="right">
+                  <h4>現場名:</h4>
+                </v-col>
+                <v-col cols="12" sm="8" md="8" align="left">
+                  <h4>{{ ditaileEdit.field }}</h4>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12" sm="4" md="4" align="right">
+                  <h4>工事件名:</h4>
+                </v-col>
+                <v-col cols="12" sm="8" md="8" align="left">
+                  <h4>
+                    ダクト修繕・改築工事ダクト修繕・改築工事ダクト修繕・改築工事
+                  </h4>
+                </v-col>
+              </v-row>
+            </v-card-text>
 
-                    <v-divider></v-divider>
+            <v-divider></v-divider>
 
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-container>
     </v-main>
   </v-app>
