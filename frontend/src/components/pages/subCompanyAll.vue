@@ -29,6 +29,8 @@
             <v-data-table
               :headers="subCompanyHeader"
               :items="subCompanyList"
+              :search="subCompanySearch"
+              :custom-filter="filterOnlyCapsText"
               item-key="name"
               class="elevation-1 table"
               height="300"
@@ -39,6 +41,7 @@
                   <v-col cols="4">
                     <!-- 検索窓 -->
                     <v-text-field
+                      v-model="subCompanySearch"
                       label="検索"
                       class="expanding-search mt-1"
                       prepend-inner-icon="mdi-magnify"
@@ -99,6 +102,8 @@
             <v-data-table
               :headers="subWorkerHeader"
               :items="subEmployeeList"
+              :search="subEmployeeSearch"
+              :custom-filter="filterOnlyCapsText"
               item-key="name"
               class="elevation-1 table"
               height="300"
@@ -109,6 +114,7 @@
                   <v-col cols="4">
                     <!-- 検索窓 -->
                     <v-text-field
+                      v-model="subEmployeeSearch"
                       label="検索"
                       class="expanding-search mt-1"
                       prepend-inner-icon="mdi-magnify"
@@ -896,6 +902,7 @@ export default {
     subCompanyCancelBtnName: '閉じる',
     subCompanyDeleteConfirmDialog: false,
     deleteSubcompanyItem: [],
+    subCompanySearch: '',
     //* * 協力会社員一覧 */ 
     subEmployeeList: [],
     subCompanyPullDown: [],
@@ -909,6 +916,7 @@ export default {
     deleteSubEmployeeItem: [],
     foundationMenu: false,
     birthdayMenu: false,
+    subEmployeeSearch: '',
     // 入力チェック
     companyRules: [
       v => !!v || '会社名が未入力です',
@@ -1040,15 +1048,16 @@ export default {
       this.workTypePullDown = createWorkTypePullDown(response)
       this.subCompanyPullDown = createSubCompanyPullDown(response)
     },
-    // TODO 検索
-    // filterOnlyCapsText (value, search, item) {
-    //   return value != null &&
-    //       search != null &&
-    //       typeof value === 'string' &&
-    //       value.toString().toLocaleUpperCase().indexOf(search) !== -1
-    // },
+    // 日付のフォーマット処理です。
     displayDateFormat(date) {
       return dayjs(date).format("YYYY/MM/DD");
+    },
+    // 検索処理です。
+    filterOnlyCapsText (value, search, item) {
+      return value != null &&
+          search != null &&
+          typeof value === 'string' &&
+          value.toString().toLocaleUpperCase().indexOf(search) !== -1
     },
 
     //* * 協力会社一覧 */ 

@@ -1,5 +1,6 @@
 <template>
   <v-app id="ownWorkerAll">
+<!-- 自社員一覧 -->
     <v-card>
       <v-container>
         <v-sheet color="white" rounded outlined>
@@ -75,462 +76,7 @@
                     </v-menu>
                   </v-col>
                 </v-row>
-                <!-- 従業員削除ダイアログ -->
-                <v-dialog v-model="employeeDeleteConfirmDialog" max-width="500px">
-                  <v-card>
-                    <v-card-title align="center"
-                      >この社員を削除しますか?</v-card-title
-                    >
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn color="primary" @click="onClickDeleteEmployee">
-                        OK
-                      </v-btn>
-                      <v-btn color="white" @click="employeeDeleteConfirmDialog = false">
-                        キャンセル
-                      </v-btn>
-                      <v-spacer></v-spacer>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
-                <!-- 従業員詳細表示ダイアログ -->
-                <v-dialog
-                  v-model="employeeDialog"
-                  persistent
-                  max-width="600px"
-                >
-                  <v-card>
-                    <v-card-title class="text-h5 grey lighten-2">
-                      {{employeeDialogName}}
-                    </v-card-title>
-                    <v-card-text>
-                      <v-container>
-                        <v-row>
-                          <v-col cols="12" lg="4" sm="4">
-                            <p>名前</p>
-                          </v-col>
-                          <v-col cols="6" sm="3" md="3">
-                            <div v-if="!employeeEditFlag">
-                            {{ employeeEditItem.employeeFirstname }}
-                            </div>
-                            <div v-if="employeeEditFlag">
-                              <v-text-field
-                                v-model="employeeEditItem.employeeFirstname"
-                                label="名前(姓)"
-                                outlined
-                                dense
-                              ></v-text-field>
-                            </div>
-                          </v-col>
-                          <v-col cols="6" sm="3" md="3">
-                            <div v-if="!employeeEditFlag">
-                            {{ employeeEditItem.employeeLastname }}
-                            </div>
-                            <div v-if="employeeEditFlag">
-                              <v-text-field
-                                v-model="employeeEditItem.employeeLastname"
-                                label="名前(名)"
-                                outlined
-                                dense
-                              ></v-text-field>
-                            </div>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col cols="12" lg="4" sm="4">
-                            <p>役職</p>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="6">
-                            <div v-if="!employeeEditFlag">
-                              {{ employeeEditItem.selectPost ? employeeEditItem.selectPost["postName"] : "" }}
-                            </div>
-                            <div v-if="employeeEditFlag">
-                              <v-select 
-                                v-model="employeeEditItem.selectPost" 
-                                :items="postList" 
-                                item-text="postName"
-                                item-value="value" 
-                                return-object
-                              ></v-select>
-                            </div>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col cols="12" lg="4" sm="4">
-                            <p>職員コード</p>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="6">
-                            <div v-if="!employeeEditFlag">
-                            {{ employeeEditItem.staffCode }}
-                            </div>
-                            <div v-if="employeeEditFlag">
-                              <v-text-field
-                                v-model="employeeEditItem.staffCode"
-                                label=""
-                                outlined
-                                dense
-                              ></v-text-field>
-                            </div>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col cols="12" lg="4" sm="4">
-                            <p>生年月日</p>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="6">
-                            <div v-if="!employeeEditFlag">
-                              {{ displayDateFormat(employeeEditItem.birthday) }}
-                            </div>
-                            <div v-if="employeeEditFlag">
-                              <v-menu
-                                ref="birthdayMenu"
-                                v-model="birthdayMenu"
-                                :close-on-content-click="false"
-                                :return-value.sync="birthdayMenu"
-                                transition="scale-transition"
-                                offset-y
-                                min-width="auto"
-                              >
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-text-field
-                                    :value="displayDateFormat(employeeEditItem.birthday)"
-                                    placeholder="まず20XX年X月をクリック"
-                                    label="日付を選択"
-                                    prepend-inner-icon="mdi-calendar"
-                                    readonly
-                                    outlined
-                                    dense
-                                    v-bind="attrs"
-                                    v-on="on"
-                                  ></v-text-field>
-                                </template>
-                                <v-date-picker
-                                  v-model="employeeEditItem.birthday"
-                                  no-title
-                                  scrollable
-                                  locale="jp-ja"
-                                  :day-format="(date) => new Date(date).getDate()"
-                                >
-                                  <v-btn
-                                      color="#ff6669" class="white--text" rounded
-                                      @click="
-                                      $refs.birthdayMenu.save(
-                                        employeeEditItem.birthday
-                                      )"
-                                  >
-                                    OK
-                                  </v-btn>
-                                  <v-btn
-                                    class="#f5f5f5" rounded
-                                    @click="birthdayMenu = false"
-                                  >
-                                    キャンセル
-                                  </v-btn>
-                                </v-date-picker>
-                              </v-menu>
-                            </div>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col cols="12" lg="4" sm="4">
-                            <p>住所</p>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="6">
-                            <div v-if="!employeeEditFlag">
-                            {{ employeeEditItem.address }}
-                            </div>
-                            <div v-if="employeeEditFlag">
-                              <v-text-field
-                                v-model="employeeEditItem.address"
-                                label=""
-                                outlined
-                                dense
-                              ></v-text-field>
-                            </div>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col cols="12" lg="4" sm="4">
-                            <p>Mail</p>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="6">
-                            <div v-if="!employeeEditFlag">
-                            {{ employeeEditItem.mailAddress }}
-                            </div>
-                            <div v-if="employeeEditFlag">
-                              <v-text-field
-                                v-model="employeeEditItem.mailAddress"
-                                label=""
-                                outlined
-                                dense
-                              ></v-text-field>
-                            </div>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col cols="12" lg="4" sm="4">
-                            <p>電話番号</p>
-                          </v-col>
-                          <v-col cols="3" sm="2" md="2">
-                            <div v-if="!employeeEditFlag">
-                              {{ employeeEditItem.telNumber1}}
-                            </div>
-                            <div v-if="employeeEditFlag">
-                              <v-text-field
-                                v-model="employeeEditItem.telNumber1"
-                                label=""
-                                outlined
-                                dense
-                              ></v-text-field>
-                            </div>
-                          </v-col>
-                          <div v-if="employeeEditFlag" class="to-edit-label">-</div>
-                          <div  v-if="!employeeEditFlag" class="to-label">-</div>
-                          <v-col cols="3" sm="2" md="2">
-                            <div v-if="!employeeEditFlag">
-                              {{ employeeEditItem.telNumber2}}
-                            </div>
-                            <div v-if="employeeEditFlag">
-                              <v-text-field
-                                v-model="employeeEditItem.telNumber2"
-                                label=""
-                                outlined
-                                dense
-                              ></v-text-field>
-                            </div>
-                          </v-col>
-                          <div v-if="employeeEditFlag" class="to-edit-label">-</div>
-                          <div  v-if="!employeeEditFlag" class="to-label">-</div>
-                          <v-col cols="3" sm="2" md="2">
-                            <div v-if="!employeeEditFlag">
-                              {{ employeeEditItem.telNumber3}}
-                            </div>
-                            <div v-if="employeeEditFlag">
-                              <v-text-field
-                                v-model="employeeEditItem.telNumber3"
-                                label=""
-                                outlined
-                                dense
-                              ></v-text-field>
-                            </div>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col cols="12" lg="4" sm="4">
-                            <p>ログインID</p>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="6">
-                            <div v-if="!employeeEditFlag">
-                              {{ employeeEditItem.loginId }}
-                              </div>
-                              <div v-if="employeeEditFlag">
-                                <v-text-field
-                                  v-model="employeeEditItem.loginId"
-                                  label=""
-                                  outlined
-                                  dense
-                                ></v-text-field>
-                            </div>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col cols="12" lg="4" sm="4">
-                            <p>パスワード</p>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="6">
-                            <div v-if="!employeeEditFlag">
-                              {{ employeeEditItem.password }}
-                              </div>
-                              <div v-if="employeeEditFlag">
-                                <v-text-field
-                                  v-model="employeeEditItem.password"
-                                  label=""
-                                  outlined
-                                  dense
-                                ></v-text-field>
-                            </div>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col cols="12" lg="4" sm="4">
-                            <p>所属期間</p>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="6">
-                            <div v-if="!employeeEditFlag">
-                              {{ displayDateFormat(employeeEditItem.entryFirstDate) }}～{{
-                                displayDateFormat(employeeEditItem.entryEndDate)
-                              }}
-                            </div>
-                            <div v-if="employeeEditFlag">
-                              <v-menu
-                                ref="entryFirstMenu"
-                                v-model="entryFirstMenu"
-                                :close-on-content-click="false"
-                                :return-value.sync="entryFirstMenu"
-                                transition="scale-transition"
-                                offset-y
-                                min-width="auto"
-                              >
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-text-field
-                                    :value="displayDateFormat(employeeEditItem.entryFirstDate)"
-                                    placeholder="まず20XX年X月をクリック"
-                                    label="日付を選択"
-                                    prepend-inner-icon="mdi-calendar"
-                                    readonly
-                                    outlined
-                                    dense
-                                    v-bind="attrs"
-                                    v-on="on"
-                                  ></v-text-field>
-                                </template>
-                                <v-date-picker
-                                  v-model="employeeEditItem.entryFirstDate"
-                                  no-title
-                                  scrollable
-                                  locale="jp-ja"
-                                  :day-format="(date) => new Date(date).getDate()"
-                                >
-                                  <v-btn
-                                      color="#ff6669" class="white--text" rounded
-                                      @click="
-                                      $refs.entryFirstMenu.save(
-                                        employeeEditItem.birthday
-                                      )"
-                                  >
-                                    OK
-                                  </v-btn>
-                                  <v-btn
-                                    class="#f5f5f5" rounded
-                                    @click="entryFirstMenu = false"
-                                  >
-                                    キャンセル
-                                  </v-btn>
-                                </v-date-picker>
-                              </v-menu>
-                              <div class="to-label">
-                                <v-menu
-                                  ref="entryEndMenu"
-                                  v-model="entryEndMenu"
-                                  :close-on-content-click="false"
-                                  :return-value.sync="entryEndMenu"
-                                  transition="scale-transition"
-                                  offset-y
-                                  min-width="auto"
-                                >
-                                  <template v-slot:activator="{ on, attrs }">
-                                    <v-text-field
-                                      :value="displayDateFormat(employeeEditItem.entryEndDate)"
-                                      placeholder="まず20XX年X月をクリック"
-                                      label="日付を選択"
-                                      prepend-inner-icon="mdi-calendar"
-                                      readonly
-                                      outlined
-                                      dense
-                                      v-bind="attrs"
-                                      v-on="on"
-                                    ></v-text-field>
-                                  </template>
-                                  <v-date-picker
-                                    v-model="employeeEditItem.entryEndDate"
-                                    no-title
-                                    scrollable
-                                    locale="jp-ja"
-                                    :day-format="(date) => new Date(date).getDate()"
-                                  >
-                                    <v-btn
-                                        color="#ff6669" class="white--text" rounded
-                                        @click="
-                                        $refs.entryEndMenu.save(
-                                          employeeEditItem.birthday
-                                        )"
-                                    >
-                                      OK
-                                    </v-btn>
-                                    <v-btn
-                                      class="#f5f5f5" rounded
-                                      @click="entryEndMenu = false"
-                                    >
-                                      キャンセル
-                                    </v-btn>
-                                  </v-date-picker>
-                                </v-menu>
-                              </div>
-                            </div>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col cols="12" lg="4" sm="4">
-                            <p>雇用形態</p>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="6">
-                            <div v-if="!employeeEditFlag">
-                              {{ employeeEditItem.employmentName }}
-                              </div>
-                              <div v-if="employeeEditFlag">
-                                <v-radio-group v-model="employeeEditItem.employment" row>
-                                  <v-radio label="正規" value="0" color="#ff6669"></v-radio>
-                                  <v-radio label="非正規" value="1" color="#ff6669"></v-radio>
-                                  <v-radio label="委託" value="2" color="#ff6669"></v-radio>
-                                  <v-radio label="派遣" value="3" color="#ff6669"></v-radio>
-                                </v-radio-group>
-                            </div>
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col cols="12" lg="4" sm="4">
-                            <p>保有資格</p>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="6">
-                            <ul>
-                              <li v-for="(item, index) in employeeEditItem.license" :key="index">
-                                <div v-if="!employeeEditFlag">
-                                  {{item}}
-                                </div>
-                                <v-text-field
-                                  v-if="employeeEditFlag"
-                                  v-model="employeeEditItem.license[index]"
-                                  outlined
-                                  name="licenseName"
-                                  label="資格名"
-                                ></v-text-field>
-                              </li>
-                            </ul>
-                              <v-btn
-                                v-if="employeeEditFlag && employeeEditItem.license.length <= 9"
-                                color="#ff6669"
-                                class="white--text"
-                                fab
-                                @click="onTouchPlusBtn()"
-                                ><v-icon>mdi-plus-thick</v-icon></v-btn
-                              >
-                              <v-btn
-                                v-if="employeeEditFlag && employeeEditItem.license.length != 1"
-                                color="#00ffd0"
-                                elevation="3"
-                                outlined
-                                fab
-                                @click="onTouchDeleteBtn()"
-                                ><v-icon>mdi-delete-empty</v-icon>
-                              </v-btn>
-                          </v-col>
-                        </v-row>
-                      </v-container>
-                    </v-card-text>
-
-                    <v-divider></v-divider>
-
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn @click="onClickEmployeeEditBtn()" color="#ff6669" elevation="3" outlined rounded>
-                        {{employeeEditBtnName}}
-                      </v-btn>
-                      <v-btn @click="onClickEmployeeCancelBtn()" class="#f5f5f5" rounded
-                        >{{employeeCancelBtnName}}</v-btn
-                      >
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
+                
               </template>
               <!-- name Row -->
               <template v-slot:[`item.name`]="{ item }">
@@ -562,6 +108,7 @@
             </v-data-table>
           </v-row>
         </v-sheet>
+
       </v-container>
     </v-card>
     <div class="page-border-area">
@@ -569,6 +116,7 @@
     </div>
     <v-container>
       <v-sheet color="white" rounded outlined>
+<!-- 役職一覧 -->
         <v-card>
           <h2>役職管理</h2>
           <v-row align="center">
@@ -595,117 +143,6 @@
             @click:row="showEditPost"
           >
             <template v-slot:top>
-              <!-- 役職削除ダイアログ -->
-              <v-dialog v-model="postDeleteConfirmDialog" max-width="500px">
-                <v-card>
-                  <v-card-title align="center"
-                    >この役職を削除しますか?</v-card-title
-                  >
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="primary" @click="onClickDeletePost">
-                      OK
-                    </v-btn>
-                    <v-btn color="white" @click="postDeleteConfirmDialog = false"> キャンセル </v-btn>
-                    <v-spacer></v-spacer>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
-              <!-- 役職編集・追加ダイアログ -->
-              <v-dialog v-model="postDialog" persistent max-width="1200px">
-                <v-card>
-                  <v-card-title class="text-h5 grey lighten-2">
-                    {{ postDialogName }}
-                  </v-card-title>
-                  <v-card-text>
-                    <v-container>
-                      <v-row>
-                        <v-col cols="2">
-                          <p>役職名</p>
-                        </v-col>
-                        <v-col cols="6">
-                          <v-text-field
-                            outlined
-                            dense
-                            v-model="postEditItem.postName"
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-                      <v-divider></v-divider>
-                      <v-row>
-                        <v-col cols="2">出退勤管理 </v-col>
-                        <v-col cols="2"> 自社員管理</v-col>
-                        <v-col cols="2"> 協力会社管理</v-col>
-                        <v-col cols="2"> 自社設定</v-col>
-                        <v-col cols="2"> プラン・支払い</v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="2"
-                          ><v-select
-                            :items="postPermissionList"
-                            v-model="postEditItem.attendanceAuth"
-                            item-text="label"
-                            item-value="value"
-                            label="権限を選択"
-                            solo
-                          ></v-select>
-                        </v-col>
-                        <v-col cols="2"
-                          ><v-select
-                            :items="postPermissionList"
-                            v-model="postEditItem.ownWokerManageAuth"
-                            item-text="label"
-                            item-value="value"
-                            label="権限を選択"
-                            solo
-                          ></v-select>
-                        </v-col>
-                        <v-col cols="2"
-                          ><v-select
-                            :items="postPermissionList"
-                            v-model="postEditItem.subCompanyManageAuth"
-                            item-text="label"
-                            item-value="value"
-                            label="権限を選択"
-                            solo
-                          ></v-select>
-                        </v-col>
-                        <v-col cols="2"
-                          ><v-select
-                            :items="postPermissionList"
-                            v-model="postEditItem.ownCompanyManageAuth"
-                            item-text="label"
-                            item-value="value"
-                            label="権限を選択"
-                            solo
-                          ></v-select> </v-col
-                        ><v-col cols="2"
-                          ><v-select
-                            :items="postPermissionList"
-                            v-model="postEditItem.payPlanAuth"
-                            item-text="label"
-                            item-value="value"
-                            label="権限を選択"
-                            solo
-                          ></v-select>
-                        </v-col>
-                      </v-row>
-                    </v-container>
-                  </v-card-text>
-
-                  <v-divider></v-divider>
-
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                      <v-btn @click="onClickPostEditBtn()" color="#ff6669" elevation="3" outlined rounded>
-                        保存
-                      </v-btn>
-                      <v-btn @click="onClickPostCancelBtn()" class="#f5f5f5" rounded
-                        >閉じる</v-btn
-                      >
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
             </template>
             <!-- postName Row -->
             <template v-slot:[`item.postName`]="{ item }">
@@ -757,6 +194,619 @@
             </template>
           </v-data-table>
         </v-card>
+<!-- 従業員詳細表示ダイアログ -->
+        <v-dialog
+          v-model="employeeDialog"
+          persistent
+          max-width="600px"
+        >
+          <v-card>
+            <v-card-title class="text-h5 grey lighten-2">
+              {{employeeDialogName}}
+            </v-card-title>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols="3">
+                    <div class="item-title">名前</div>
+                  </v-col>
+                  <v-col cols="2">
+                    <div v-if="employeeEditFlag" class="item-required">
+                      <v-chip color="red" dark>必須</v-chip>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6">
+                    <div v-if="!employeeEditFlag" class="dialog-label">
+                      {{ employeeEditItem.employeeName }}
+                    </div>
+                    <div v-if="employeeEditFlag">
+                      <v-col>
+                        <v-text-field
+                          v-model="employeeEditItem.employeeFirstname"
+                          label="名前(姓)"
+                          outlined
+                          dense
+                        ></v-text-field>
+                      </v-col>
+                      <v-col>
+                        <v-text-field
+                          v-model="employeeEditItem.employeeLastname"
+                          label="名前(名)"
+                          outlined
+                          dense
+                        ></v-text-field>
+                      </v-col>
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="3">
+                    <div class="item-title">役職</div>
+                  </v-col>
+                  <v-col cols="2">
+                    <div v-if="employeeEditFlag" class="item-required">
+                      <v-chip color="red" dark>必須</v-chip>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6">
+                    <div v-if="!employeeEditFlag" class="dialog-label">
+                      {{ employeeEditItem.selectPost ? employeeEditItem.selectPost["postName"] : "" }}
+                    </div>
+                    <div v-if="employeeEditFlag">
+                      <v-select 
+                        v-model="employeeEditItem.selectPost" 
+                        :items="postList" 
+                        item-text="postName"
+                        item-value="value" 
+                        return-object
+                      ></v-select>
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="3">
+                    <div class="item-title">職員コード</div>
+                  </v-col>
+                  <v-col cols="2">
+                    <div v-if="employeeEditFlag" class="item-required">
+                      <v-chip color="red" dark>必須</v-chip>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6">
+                    <div v-if="!employeeEditFlag" class="dialog-label">
+                      {{ employeeEditItem.staffCode }}
+                    </div>
+                    <div v-if="employeeEditFlag">
+                      <v-text-field
+                        v-model="employeeEditItem.staffCode"
+                        label=""
+                        outlined
+                        dense
+                      ></v-text-field>
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="3">
+                    <div class="item-title">生年月日</div>
+                  </v-col>
+                  <v-col cols="2">
+                    <div v-if="employeeEditFlag" class="item-required">
+                      <v-chip color="red" dark>必須</v-chip>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6">
+                    <div v-if="!employeeEditFlag" class="dialog-label">
+                      {{ displayDateFormat(employeeEditItem.birthday) }}
+                    </div>
+                    <div v-if="employeeEditFlag">
+                      <v-menu
+                        ref="birthdayMenu"
+                        v-model="birthdayMenu"
+                        :close-on-content-click="false"
+                        :return-value.sync="birthdayMenu"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            :value="displayDateFormat(employeeEditItem.birthday)"
+                            placeholder="まず20XX年X月をクリック"
+                            label="日付を選択"
+                            prepend-inner-icon="mdi-calendar"
+                            readonly
+                            outlined
+                            dense
+                            v-bind="attrs"
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
+                          v-model="employeeEditItem.birthday"
+                          no-title
+                          scrollable
+                          locale="jp-ja"
+                          :day-format="(date) => new Date(date).getDate()"
+                        >
+                          <v-btn
+                              color="#ff6669" class="white--text" rounded
+                              @click="
+                              $refs.birthdayMenu.save(
+                                employeeEditItem.birthday
+                              )"
+                          >
+                            OK
+                          </v-btn>
+                          <v-btn
+                            class="#f5f5f5" rounded
+                            @click="birthdayMenu = false"
+                          >
+                            キャンセル
+                          </v-btn>
+                        </v-date-picker>
+                      </v-menu>
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="3">
+                    <div class="item-title">住所</div>
+                  </v-col>
+                  <v-col cols="2">
+                    <div v-if="employeeEditFlag" class="item-required">
+                      <v-chip color="red" dark>必須</v-chip>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6">
+                    <div v-if="!employeeEditFlag" class="dialog-label">
+                    {{ employeeEditItem.address }}
+                    </div>
+                    <div v-if="employeeEditFlag">
+                      <v-text-field
+                        v-model="employeeEditItem.address"
+                        label=""
+                        outlined
+                        dense
+                      ></v-text-field>
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="3">
+                    <div class="item-title">Mail</div>
+                  </v-col>
+                  <v-col cols="2">
+                    <div v-if="employeeEditFlag" class="item-required">
+                      <v-chip color="red" dark>必須</v-chip>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6">
+                    <div v-if="!employeeEditFlag" class="dialog-label">
+                    {{ employeeEditItem.mailAddress }}
+                    </div>
+                    <div v-if="employeeEditFlag">
+                      <v-text-field
+                        v-model="employeeEditItem.mailAddress"
+                        label=""
+                        outlined
+                        dense
+                      ></v-text-field>
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="3">
+                    <div class="item-title">電話番号</div>
+                  </v-col>
+                  <v-col cols="2">
+                    <div v-if="employeeEditFlag" class="item-required">
+                      <v-chip color="red" dark>必須</v-chip>
+                    </div>
+                  </v-col>
+                  <div v-if="!employeeEditFlag" class="dialog-to-label">
+                    {{ employeeEditItem.telNumber1 + "-" + employeeEditItem.telNumber2 + "-" + employeeEditItem.telNumber3}}
+                  </div>
+                  <v-col cols="3" sm="2" md="2">
+                    <div v-if="employeeEditFlag">
+                      <v-text-field
+                        v-model="employeeEditItem.telNumber1"
+                        label=""
+                        outlined
+                        dense
+                      ></v-text-field>
+                    </div>
+                  </v-col>
+                  <div v-if="employeeEditFlag" class="to-edit-label">-</div>
+                  <v-col cols="3" sm="2" md="2">
+                    <div v-if="employeeEditFlag">
+                      <v-text-field
+                        v-model="employeeEditItem.telNumber2"
+                        label=""
+                        outlined
+                        dense
+                      ></v-text-field>
+                    </div>
+                  </v-col>
+                  <div v-if="employeeEditFlag" class="to-edit-label">-</div>
+                  <v-col cols="3" sm="2" md="2">
+                    <div v-if="employeeEditFlag">
+                      <v-text-field
+                        v-model="employeeEditItem.telNumber3"
+                        label=""
+                        outlined
+                        dense
+                      ></v-text-field>
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="3">
+                    <div class="item-title">ログインID</div>
+                  </v-col>
+                  <v-col cols="2">
+                    <div v-if="employeeEditFlag" class="item-required">
+                      <v-chip color="red" dark>必須</v-chip>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6">
+                    <div v-if="!employeeEditFlag" class="dialog-label">
+                      {{ employeeEditItem.loginId }}
+                    </div>
+                    <div v-if="employeeEditFlag">
+                      <v-text-field
+                        v-model="employeeEditItem.loginId"
+                        label=""
+                        outlined
+                        dense
+                      ></v-text-field>
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="3">
+                    <div class="item-title">パスワード</div>
+                  </v-col>
+                  <v-col cols="2">
+                    <div v-if="employeeEditFlag" class="item-required">
+                      <v-chip color="red" dark>必須</v-chip>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6">
+                    <div v-if="!employeeEditFlag" class="dialog-label">
+                      {{ employeeEditItem.password }}
+                    </div>
+                    <div v-if="employeeEditFlag">
+                      <v-text-field
+                        v-model="employeeEditItem.password"
+                        label=""
+                        outlined
+                        dense
+                      ></v-text-field>
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="3">
+                    <div class="item-title">所属期間</div>
+                  </v-col>
+                  <v-col cols="2">
+                    <div v-if="employeeEditFlag" class="item-required">
+                      <v-chip color="red" dark>必須</v-chip>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6">
+                    <div v-if="!employeeEditFlag" class="dialog-label">
+                      {{ displayDateFormat(employeeEditItem.entryFirstDate) }}～{{
+                        displayDateFormat(employeeEditItem.entryEndDate)
+                      }}
+                    </div>
+                    <div v-if="employeeEditFlag">
+                      <v-menu
+                        ref="entryFirstMenu"
+                        v-model="entryFirstMenu"
+                        :close-on-content-click="false"
+                        :return-value.sync="entryFirstMenu"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            :value="displayDateFormat(employeeEditItem.entryFirstDate)"
+                            placeholder="まず20XX年X月をクリック"
+                            label="日付を選択"
+                            prepend-inner-icon="mdi-calendar"
+                            readonly
+                            outlined
+                            dense
+                            v-bind="attrs"
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
+                          v-model="employeeEditItem.entryFirstDate"
+                          no-title
+                          scrollable
+                          locale="jp-ja"
+                          :day-format="(date) => new Date(date).getDate()"
+                        >
+                          <v-btn
+                              color="#ff6669" class="white--text" rounded
+                              @click="
+                              $refs.entryFirstMenu.save(
+                                employeeEditItem.birthday
+                              )"
+                          >
+                            OK
+                          </v-btn>
+                          <v-btn
+                            class="#f5f5f5" rounded
+                            @click="entryFirstMenu = false"
+                          >
+                            キャンセル
+                          </v-btn>
+                        </v-date-picker>
+                      </v-menu>
+                      <div class="to-label">
+                        <v-menu
+                          ref="entryEndMenu"
+                          v-model="entryEndMenu"
+                          :close-on-content-click="false"
+                          :return-value.sync="entryEndMenu"
+                          transition="scale-transition"
+                          offset-y
+                          min-width="auto"
+                        >
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-text-field
+                              :value="displayDateFormat(employeeEditItem.entryEndDate)"
+                              placeholder="まず20XX年X月をクリック"
+                              label="日付を選択"
+                              prepend-inner-icon="mdi-calendar"
+                              readonly
+                              outlined
+                              dense
+                              v-bind="attrs"
+                              v-on="on"
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker
+                            v-model="employeeEditItem.entryEndDate"
+                            no-title
+                            scrollable
+                            locale="jp-ja"
+                            :day-format="(date) => new Date(date).getDate()"
+                          >
+                            <v-btn
+                                color="#ff6669" class="white--text" rounded
+                                @click="
+                                $refs.entryEndMenu.save(
+                                  employeeEditItem.birthday
+                                )"
+                            >
+                              OK
+                            </v-btn>
+                            <v-btn
+                              class="#f5f5f5" rounded
+                              @click="entryEndMenu = false"
+                            >
+                              キャンセル
+                            </v-btn>
+                          </v-date-picker>
+                        </v-menu>
+                      </div>
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="3">
+                    <div class="item-title">雇用形態</div>
+                  </v-col>
+                  <v-col cols="2">
+                    <div v-if="employeeEditFlag" class="item-required">
+                      <v-chip color="red" dark>必須</v-chip>
+                    </div>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6">
+                    <div v-if="!employeeEditFlag" class="dialog-label">
+                      {{ employeeEditItem.employmentName }}
+                    </div>
+                    <div v-if="employeeEditFlag">
+                      <v-radio-group v-model="employeeEditItem.employment" row>
+                        <v-radio label="正規" value="0" color="#ff6669"></v-radio>
+                        <v-radio label="非正規" value="1" color="#ff6669"></v-radio>
+                        <v-radio label="委託" value="2" color="#ff6669"></v-radio>
+                        <v-radio label="派遣" value="3" color="#ff6669"></v-radio>
+                      </v-radio-group>
+                    </div>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="3">
+                    <div class="item-title">保有資格</div>
+                  </v-col>
+                  <v-col cols="2">
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6">
+                    <ul>
+                      <li v-for="(item, index) in employeeEditItem.license" :key="index">
+                        <div v-if="!employeeEditFlag" class="dialog-label">
+                          {{item}}
+                        </div>
+                        <v-text-field
+                          v-if="employeeEditFlag"
+                          v-model="employeeEditItem.license[index]"
+                          outlined
+                          name="licenseName"
+                          label="資格名"
+                        ></v-text-field>
+                      </li>
+                    </ul>
+                      <v-btn
+                        v-if="employeeEditFlag && employeeEditItem.license.length <= 9"
+                        color="#ff6669"
+                        class="white--text"
+                        fab
+                        @click="onTouchPlusBtn()"
+                        ><v-icon>mdi-plus-thick</v-icon></v-btn
+                      >
+                      <v-btn
+                        v-if="employeeEditFlag && employeeEditItem.license.length != 1"
+                        color="#00ffd0"
+                        elevation="3"
+                        outlined
+                        fab
+                        @click="onTouchDeleteBtn()"
+                        ><v-icon>mdi-delete-empty</v-icon>
+                      </v-btn>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <v-divider></v-divider>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn @click="onClickEmployeeEditBtn()" color="#ff6669" elevation="3" outlined rounded>
+                {{employeeEditBtnName}}
+              </v-btn>
+              <v-btn @click="onClickEmployeeCancelBtn()" class="#f5f5f5" rounded
+                >{{employeeCancelBtnName}}</v-btn
+              >
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+<!-- 従業員削除確認ダイアログ -->
+        <v-dialog v-model="employeeDeleteConfirmDialog" max-width="500px">
+          <v-card>
+            <v-card-title align="center"
+              >この社員を削除しますか?</v-card-title
+            >
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" @click="onClickDeleteEmployee">
+                OK
+              </v-btn>
+              <v-btn color="white" @click="employeeDeleteConfirmDialog = false">
+                キャンセル
+              </v-btn>
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+<!-- 役職削除確認ダイアログ -->
+        <v-dialog v-model="postDeleteConfirmDialog" max-width="500px">
+          <v-card>
+            <v-card-title align="center"
+              >この役職を削除しますか?</v-card-title
+            >
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" @click="onClickDeletePost">
+                OK
+              </v-btn>
+              <v-btn color="white" @click="postDeleteConfirmDialog = false"> キャンセル </v-btn>
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+<!-- 役職編集・追加ダイアログ -->
+        <v-dialog v-model="postDialog" persistent max-width="1200px">
+          <v-card>
+            <v-card-title class="text-h5 grey lighten-2">
+              {{ postDialogName }}
+            </v-card-title>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols="2">
+                    <p>役職名</p>
+                  </v-col>
+                  <v-col cols="6">
+                    <v-text-field
+                      outlined
+                      dense
+                      v-model="postEditItem.postName"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+                <v-divider></v-divider>
+                <v-row>
+                  <v-col cols="2">出退勤管理 </v-col>
+                  <v-col cols="2"> 自社員管理</v-col>
+                  <v-col cols="2"> 協力会社管理</v-col>
+                  <v-col cols="2"> 自社設定</v-col>
+                  <v-col cols="2"> プラン・支払い</v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="2"
+                    ><v-select
+                      :items="postPermissionList"
+                      v-model="postEditItem.attendanceAuth"
+                      item-text="label"
+                      item-value="value"
+                      label="権限を選択"
+                      solo
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="2"
+                    ><v-select
+                      :items="postPermissionList"
+                      v-model="postEditItem.ownWokerManageAuth"
+                      item-text="label"
+                      item-value="value"
+                      label="権限を選択"
+                      solo
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="2"
+                    ><v-select
+                      :items="postPermissionList"
+                      v-model="postEditItem.subCompanyManageAuth"
+                      item-text="label"
+                      item-value="value"
+                      label="権限を選択"
+                      solo
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="2"
+                    ><v-select
+                      :items="postPermissionList"
+                      v-model="postEditItem.ownCompanyManageAuth"
+                      item-text="label"
+                      item-value="value"
+                      label="権限を選択"
+                      solo
+                    ></v-select> </v-col
+                  ><v-col cols="2"
+                    ><v-select
+                      :items="postPermissionList"
+                      v-model="postEditItem.payPlanAuth"
+                      item-text="label"
+                      item-value="value"
+                      label="権限を選択"
+                      solo
+                    ></v-select>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <v-divider></v-divider>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+                <v-btn @click="onClickPostEditBtn()" color="#ff6669" elevation="3" outlined rounded>
+                  保存
+                </v-btn>
+                <v-btn @click="onClickPostCancelBtn()" class="#f5f5f5" rounded
+                  >閉じる</v-btn
+                >
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-sheet>
     </v-container>
   </v-app>
@@ -775,6 +825,7 @@ export default {
   components: {
   },
   data: () => ({
+    //* * 自社員一覧 */ 
     employeeList: [],
     postList: [],
     selectPostList: [],
@@ -786,71 +837,52 @@ export default {
     employeeCancelBtnName: 'キャンセル',
     deleteEmployeeItem: [],
     employeeDeleteConfirmDialog: false,
+    search: '',
+    //* * 役職一覧 */ 
     postEditItem: [],
     postDialog: false,
     postDialogName: '役職追加',
     deletePostItem: [],
     postDeleteConfirmDialog: false,
-    search: '',
     birthdayMenu: false,
     entryFirstMenu: false,
     entryEndMenu: false,
-    // employeeEditItem: {
-    //   firstname: '',
-    //   firstnameRules: [
-    //     v => !!v || '姓が未入力です',
-    //     v => (!!v && v.length <= 50) || `文字数は50文字以内です`
-    //   ],
-    //   Lastname: '',
-    //   LastnameRules: [
-    //     v => !!v || '名が未入力です',
-    //     v => (!!v && v.length <= 50) || `文字数は50文字以内です`
-    //   ],
-    //   companyName: '',
-    //   post: 0,
-    //   postLabel: '',
-    //   code: '',
-    //   codeRules: [
-    //     v => v.length <= 8 || `文字数は8文字以内です`
-    //   ],
-    //   birthday: '',
-    //   address: '',
-    //   addressRules: [
-    //     v => v.length <= 100 || `文字数は100文字以内です`
-    //   ],
-    //   mail: '',
-    //   mailRules: [
-    //     v => v.length <= 100 || `文字数は100文字以内です`
-    //   ],
-    //   tellNumberOne: '',
-    //   tellNumberOneRules: [
-    //     v => v.length <= 3 || `文字数は3文字以内です`
-    //   ],
-    //   tellNumberTwo: '',
-    //   tellNumberTwoRules: [
-    //     v => v.length <= 4 || `文字数は4文字以内です`
-    //   ],
-    //   tellNumberThree: '',
-    //   tellNumberThreeRules: [
-    //     v => v.length <= 4 || `文字数は4文字以内です`
-    //   ],
-    //   loginId: '',
-    //   loginIdRules: [
-    //     v => !!v || 'ログインIDが未入力です',
-    //     v => (!!v && v.length <= 50) || `文字数は50文字以内です`
-    //   ],
-    //   password: '',
-    //   passwordRules: [
-    //     v => !!v || 'パスワードが未入力です',
-    //     v => (!!v && v.length <= 50) || `文字数は50文字以内です`
-    //   ],
-    //   openDate: '',
-    //   cloceDate: '',
-    //   employmentId: 0,
-    //   license: 0,
-    //   licenseDate: ''
-    // },
-    postPermissionList: [{value: 2, label: '✕'}, {value: 1, label: '閲覧のみ'}, {value: 0, label: '全て'}]
+    postPermissionList: [{value: 2, label: '✕'}, {value: 1, label: '閲覧のみ'}, {value: 0, label: '全て'}],
+    // 入力チェック
+    firstnameRules: [
+      v => !!v || '姓が未入力です',
+      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+    ],
+    LastnameRules: [
+      v => !!v || '名が未入力です',
+      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+    ],
+    codeRules: [
+      v => v.length <= 8 || `文字数は8文字以内です`
+    ],
+    addressRules: [
+      v => v.length <= 100 || `文字数は100文字以内です`
+    ],
+    mailRules: [
+      v => v.length <= 100 || `文字数は100文字以内です`
+    ],
+    tellNumberOneRules: [
+      v => v.length <= 3 || `文字数は3文字以内です`
+    ],
+    tellNumberTwoRules: [
+      v => v.length <= 4 || `文字数は4文字以内です`
+    ],
+    tellNumberThreeRules: [
+      v => v.length <= 4 || `文字数は4文字以内です`
+    ],
+    loginIdRules: [
+      v => !!v || 'ログインIDが未入力です',
+      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+    ],
+    passwordRules: [
+      v => !!v || 'パスワードが未入力です',
+      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+    ],
   }),
   mounted: function () {
     // 自社員管理の画面情報をとってきます。
@@ -934,9 +966,9 @@ export default {
     
   },
   methods: {
-    displayDateFormat(date) {
-      return dayjs(date).format("YYYY/MM/DD");
-    },
+        
+    //* * 共通 */ 
+
     // 初期表示処理です。
     async getEmployeeInfo () {
       let response = await Methods.getEmployeeInfo()
@@ -945,6 +977,13 @@ export default {
       this.postList = createPostList(response)
       this.selectPostList = createSelectPostList(response)
     },
+    // 日付のフォーマット処理です。
+    displayDateFormat(date) {
+      return dayjs(date).format("YYYY/MM/DD");
+    },
+    
+    //* * 自社員一覧 */ 
+
     // 自社員ダイアログの表示
     showEditEmployee (item) {
       // 編集の場合
@@ -1034,6 +1073,20 @@ export default {
     onTouchDeleteBtn () {
       this.employeeEditItem.license.pop()
     },
+    // 自社員の検索処理です。
+    filterOnlyCapsText (value, search, item) {
+      return value != null &&
+          search != null &&
+          typeof value === 'string' &&
+          value.toString().toLocaleUpperCase().indexOf(search) !== -1
+    },
+    // TODO 社員一覧ダウンロード処理
+    download (format) {
+      console.log(format)
+    },
+        
+    //* * 役職一覧 */ 
+        
     // 役職ダイアログの表示
     showEditPost (item) {
       // 編集の場合
@@ -1126,17 +1179,6 @@ export default {
       this.postDeleteConfirmDialog = false;
       // TODO 保存完了メッセージ表示
       console.log(response)
-    },
-    // ページ遷移処理
-    download (format) {
-      console.log(format)
-    },
-    // 検索
-    filterOnlyCapsText (value, search, item) {
-      return value != null &&
-          search != null &&
-          typeof value === 'string' &&
-          value.toString().toLocaleUpperCase().indexOf(search) !== -1
     },
   }
 }
@@ -1310,6 +1352,12 @@ function getEmploymentName (employment) {
   font-size: 3.8rem;
   background-color: #cccccc;
 }
+.item-title {
+  padding-top: 20px;
+}
+.item-required {
+  padding-top: 15px;
+}
 .table {
   width: 100%;
 }
@@ -1326,5 +1374,13 @@ function getEmploymentName (employment) {
 }
 .to-label {
   line-height: 45px;
+}
+.dialog-label {
+  text-align: left;
+  line-height: 60px;
+}
+.dialog-to-label {
+  padding-left: 12px;
+  line-height: 80px;
 }
 </style>
