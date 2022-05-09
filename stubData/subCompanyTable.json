@@ -1,0 +1,36 @@
+{
+  "results": [
+    {
+      "subCompanyName": "株式会社KYOURYOKU",
+      "foundation": "1995-11-11",
+      "leaderName": "協力　する夫",
+      "postNumber1": "010",
+      "postNumber2": "123",
+      "address": "東京都中央区八重洲",
+      "telNumber1": "090",
+      "telNumber2": "1234",
+      "telNumber3": "5678",
+      "workTypeId": "IQFdE7AR1XcX56ZB",
+      "note": "テストデータです。",
+      "createUserId": "mpbIHwhVu51QyHGM",
+      "updateUserId": "smO9DRbq1AaLFOuX",
+      "deleteFlg": false
+    },
+    {
+      "subCompanyName": "株式会社KYOURYOKU2",
+      "foundation": "1996-11-11",
+      "leaderName": "協力　する代",
+      "postNumber1": "010",
+      "postNumber2": "123",
+      "address": "千葉県千葉市中央区",
+      "telNumber1": "080",
+      "telNumber2": "1234",
+      "telNumber3": "5678",
+      "workTypeId": "C9xlNmAcKVAGpRT4",
+      "note": "テストデータです。",
+      "createUserId": "mpbIHwhVu51QyHGM",
+      "updateUserId": "smO9DRbq1AaLFOuX",
+      "deleteFlg": false
+    }
+  ]
+}

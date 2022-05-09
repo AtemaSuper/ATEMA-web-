@@ -405,8 +405,8 @@ export default {
         clientFieldId: this.clientFieldEditItem.clientFieldId,
         clientFieldName: this.clientFieldEditItem.clientFieldName,
         status: Number(this.clientFieldEditItem.status),
-        createUserId: '', // ログインユーザのユーザIDをセットする(新規の時だけ)
-        updateUserId: '' // ログインユーザのユーザIDをセットする
+        createUserId: '', // TODO ログインユーザのユーザIDをセットする(新規の時だけ)
+          updateUserId: '' // TODO ログインユーザのユーザIDをセットする
       }
       // 保存処理
       let response = await Methods.saveClientField(param)
@@ -446,8 +446,8 @@ export default {
         workName: this.workFieldEditItem.workName,
         clientFieldId: this.workFieldEditItem.selectClientField.clientFieldId,
         status: Number(this.workFieldEditItem.status),
-        createUserId: '', // ログインユーザのユーザIDをセットする(新規の時だけ)
-        updateUserId: '' // ログインユーザのユーザIDをセットする
+        createUserId: '', // TODO ログインユーザのユーザIDをセットする(新規の時だけ)
+          updateUserId: '' // TODO ログインユーザのユーザIDをセットする
       }
       // 保存処理
       let response = await Methods.saveWorkField(param)

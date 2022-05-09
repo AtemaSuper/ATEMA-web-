@@ -993,8 +993,8 @@ export default {
           entryEndDate: this.employeeEditItem.entryEndDate,
           employment: this.employeeEditItem.employment,
           license: this.employeeEditItem.license,
-          createUserId: '', // ログインユーザのユーザIDをセットする(新規の時だけ)
-          updateUserId: '' // ログインユーザのユーザIDをセットする
+          createUserId: '', // TODO ログインユーザのユーザIDをセットする(新規の時だけ)
+          updateUserId: '' // TODO ログインユーザのユーザIDをセットする
         }
         // 保存処理
         let response = await Methods.saveEmployee(param)
@@ -1060,8 +1060,8 @@ export default {
         subCompanyManageAuth: this.postEditItem.subCompanyManageAuth,
         ownCompanyManageAuth: this.postEditItem.ownCompanyManageAuth,
         payPlanAuth: this.postEditItem.payPlanAuth,
-        createUserId: '', // ログインユーザのユーザIDをセットする(新規の時だけ)
-        updateUserId: '' // ログインユーザのユーザIDをセットする
+        createUserId: '', // TODO ログインユーザのユーザIDをセットする(新規の時だけ)
+          updateUserId: '' // TODO ログインユーザのユーザIDをセットする
       }
       // 保存処理
       let response = await Methods.savePost(param)

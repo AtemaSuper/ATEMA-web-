@@ -109,5 +109,28 @@ export default {
   // 削除処理(役職)
   deletePost(param) {
     return Api().post("/ownWorkerAll/deletePost", param);
+  },
+  /*
+    協力会社管理画面
+  */
+  // 初期表示処理
+  getSubCompanyInfo() {
+    return Api().post("/subCompanyAll");
+  },
+  // 入力内容保存処理(協力会社)
+  saveSubCompany(param) {
+    return Api().post("/subCompanyAll/saveSubCompany", param);
+  },
+  // 入力内容保存処理(協力会社員)
+  saveSubEmployee(param) {
+    return Api().post("/subCompanyAll/saveSubEmployee", param);
+  },
+  // 削除処理(協力会社)
+  deleteSubCompany(param) {
+    return Api().post("/subCompanyAll/deleteSubCompany", param);
+  },
+  // 削除処理(協力会社員)
+  deleteSubEmployee(param) {
+    return Api().post("/subCompanyAll/deleteSubEmployee", param);
   }
 };

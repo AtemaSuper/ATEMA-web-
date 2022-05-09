@@ -292,8 +292,8 @@ export default {
         workId: this.editItem.selectWork.workId,
         status: Number(this.editItem.status),
         contractStatus: Number(this.editItem.contractStatus),
-        createUserId: '', // ログインユーザのユーザIDをセットする(新規の時だけ)
-        updateUserId: '' // ログインユーザのユーザIDをセットする
+        createUserId: '', // TODO ログインユーザのユーザIDをセットする(新規の時だけ)
+        updateUserId: '' // TODO ログインユーザのユーザIDをセットする
       }
       // 保存処理
       let response = await Methods.saveWorkFieldInfo(param)
