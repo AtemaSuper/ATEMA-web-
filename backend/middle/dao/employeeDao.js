@@ -17,7 +17,26 @@ class EmployeeDao {
   async selectEmployeeAll() {
     var Item = ncmb.DataStore("employeeTable");
     const responce = await Item.equalTo("deleteFlg", false)
-      .notEqualTo("companyId", "68vFyGzOcf9lMn1F") //TODO 自社データだけとらないようにする
+      .equalTo("companyId", "68vFyGzOcf9lMn1F") // TODO 協力会社員を省くようにする
+      .fetchAll()
+      .then(function (items) {
+        return items;
+      })
+      .catch(function (err) {
+        res.status(500).json(err);
+      });
+    return responce;
+  }
+  /**
+   * 協力会社員情報一覧を取得します。
+   *
+   *
+   * @returns
+   */
+  async selectSubEmployeeAll() {
+    var Item = ncmb.DataStore("employeeTable");
+    const responce = await Item.equalTo("deleteFlg", false)
+      .notEqualTo("companyId", "68vFyGzOcf9lMn1F") // TODO 自社員を省くようにする
       .fetchAll()
       .then(function (items) {
         return items;

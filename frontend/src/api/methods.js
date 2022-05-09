@@ -132,5 +132,12 @@ export default {
   // 削除処理(協力会社員)
   deleteSubEmployee(param) {
     return Api().post("/subCompanyAll/deleteSubEmployee", param);
+  },
+  /*
+    通知管理画面
+  */
+  // 初期表示処理
+  getAlertInfo() {
+    return Api().post("/contactBox");
   }
 };

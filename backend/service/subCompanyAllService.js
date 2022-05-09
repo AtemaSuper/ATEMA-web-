@@ -27,7 +27,7 @@ app.post("/", async function (req, res) {
       subCompanyResponse = items;
       //社員テーブルから社員情報を取得します。
       //TODO ここで自社のIDから協力会社のみ持ってくるようにする
-      return employeeDao.selectEmployeeAll();
+      return employeeDao.selectSubEmployeeAll();
     })
     .then(function (items) {
       subEmployeeResponse = items;
@@ -79,7 +79,7 @@ app.post("/saveSubCompany", async function (req, res) {
       subCompanyResponse = items;
       //工種テーブルから工種情報を取得します。
       //TODO ここで自社のIDから協力会社のみ持ってくるようにする
-      return employeeDao.selectEmployeeAll();
+      return employeeDao.selectSubEmployeeAll();
     })
     .then(function (items) {
       subEmployeeResponse = items;
@@ -125,7 +125,7 @@ app.post("/saveSubEmployee", async function (req, res) {
       subCompanyResponse = items;
       //工種テーブルから工種情報を取得します。
       //TODO ここで自社のIDから協力会社のみ持ってくるようにする
-      return employeeDao.selectEmployeeAll();
+      return employeeDao.selectSubEmployeeAll();
     })
     .then(function (items) {
       subEmployeeResponse = items;
@@ -171,7 +171,7 @@ app.post("/deleteSubCompany", async function (req, res) {
       subCompanyResponse = items;
       //工種テーブルから工種情報を取得します。
       //TODO ここで自社のIDから協力会社のみ持ってくるようにする
-      return employeeDao.selectEmployeeAll();
+      return employeeDao.selectSubEmployeeAll();
     })
     .then(function (items) {
       subEmployeeResponse = items;
@@ -217,7 +217,7 @@ app.post("/deleteSubEmployee", async function (req, res) {
       subCompanyResponse = items;
       //工種テーブルから工種情報を取得します。
       //TODO ここで自社のIDから協力会社のみ持ってくるようにする
-      return employeeDao.selectEmployeeAll();
+      return employeeDao.selectSubEmployeeAll();
     })
     .then(function (items) {
       subEmployeeResponse = items;
