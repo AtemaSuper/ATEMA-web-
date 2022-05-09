@@ -28,8 +28,8 @@
             <v-data-table
               :headers="clientHeader"
               :items="clientFieldList"
-              :search="searchClient"
-              :custom-filter="searchClient"
+              :search="searchClientField"
+              :custom-filter="filterOnlyCapsText"
               :items-per-page="-1"
               item-key="name"
               class="elevation-1 table"
@@ -42,7 +42,7 @@
                   <v-col cols='4'>
                     <!-- 検索窓 -->
                     <v-text-field
-                      v-model="search"
+                      v-model="searchClientField"
                       label="検索"
                       class="expanding-search mt-1"
                       prepend-inner-icon="mdi-magnify"
@@ -101,8 +101,8 @@
               <v-data-table
                 :headers="fieldHeader"
                 :items="workFieldList"
-                :search="searchField"
-                :custom-filter="searchField"
+                :search="searchWorkField"
+                :custom-filter="filterOnlyCapsText"
                 :items-per-page="-1"
                 item-key="name"
                 class="elevation-1 table"
@@ -115,7 +115,7 @@
                     <v-col cols='4'>
                       <!-- 検索窓 -->
                       <v-text-field
-                        v-model="search"
+                        v-model="searchWorkField"
                         label="検索"
                         class="expanding-search mt-1"
                         prepend-inner-icon="mdi-magnify"
@@ -277,10 +277,10 @@ export default {
     selectClientFieldList: [],
     clientFieldEditItem: [],
     workFieldEditItem: [],
-    searchClient: '',
-    searchField: '',
     clientProgress: 'inProgress',
     fieldProgress: 'inProgress',
+    searchClientField: '',
+    searchWorkField: '',
     editItem: {},
     clientFieldDialog: false,
     clientFieldDialogName: '客先編集',
@@ -356,6 +356,9 @@ export default {
     },
   },
   methods: {
+    
+    //* * 共通 */ 
+
     // 初期表示処理です。
     async getClientFieldInfo () {
       let response = await Methods.getClientFieldInfo()
@@ -364,20 +367,16 @@ export default {
       this.workFieldList = createWorkFieldList(response)
       this.selectClientFieldList = createSelectClientFieldList(response)
     },
-    // 検索
-    searchClient (value, search, item) {
+    // 検索処理です。
+    filterOnlyCapsText (value, search, item) {
       return value != null &&
           search != null &&
           typeof value === 'string' &&
           value.toString().toLocaleUpperCase().indexOf(search) !== -1
     },
-    // 検索
-    searchField (value, search, item) {
-      return value != null &&
-          search != null &&
-          typeof value === 'string' &&
-          value.toString().toLocaleUpperCase().indexOf(search) !== -1
-    },
+    
+    //* * 客先一覧 */ 
+
     // 客先編集 ダイアログ表示処理
     showEditClientField (item) {
       // 編集の場合
@@ -418,6 +417,9 @@ export default {
       // TODO 保存完了メッセージ表示
       console.log(response)
     },
+        
+    //* * 現場一覧 */ 
+
     // 現場編集 ダイアログ表示処理
     showEditWorkField (item) {
       // 編集の場合

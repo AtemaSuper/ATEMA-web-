@@ -28,7 +28,7 @@
             :headers="workFieldHeader"
             :items="workFieldDetailList"
             :search="searchWorkField"
-            :custom-filter="searchWorkField"
+            :custom-filter="filterOnlyCapsText"
             :items-per-page="-1"
             item-key="name"
             class="elevation-1 table"
@@ -41,7 +41,7 @@
                 <v-col cols='4'>
                   <!-- 検索窓 -->
                   <v-text-field
-                    v-model="search"
+                    v-model="searchWorkField"
                     label="検索"
                     class="expanding-search mt-1"
                     prepend-inner-icon="mdi-magnify"
@@ -192,6 +192,7 @@ export default {
     worDialogName: '工事編集',
     workFieldDialog: false,
     JobName: '',
+    searchWorkField:'',
     JobRules: [
       v => !!v || 'JobNoが未入力です',
       v => (!!v && v.length <= 7) || `7文字以内で入力してください`,
@@ -258,6 +259,13 @@ export default {
       this.workFieldDetailList = createWorkFieldDetailList(response)
       this.clientFieldList = createClientFieldList(response)
       this.workFieldList = createWorkFieldList(response)
+    },
+    // 工事一覧の検索処理です。
+    filterOnlyCapsText (value, search, item) {
+      return value != null &&
+          search != null &&
+          typeof value === 'string' &&
+          value.toString().toLocaleUpperCase().indexOf(search) !== -1
     },
     // 現場編集 ダイアログ表示処理
     showEditWorkField (item) {
