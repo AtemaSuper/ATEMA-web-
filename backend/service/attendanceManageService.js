@@ -90,7 +90,7 @@ const clientFieldFecthAll = function () {
 const employeeFecthAll = function () {
   return new Promise(function (resolve, reject) {
     employee
-      .selectEmployeeAll()
+      .selectfetchAll()
       .then(function (items) {
         employeeAll = items;
         resolve(items);
