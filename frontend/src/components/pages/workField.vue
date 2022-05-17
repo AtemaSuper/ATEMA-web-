@@ -310,8 +310,8 @@ export default {
       this.clientFieldList = createClientFieldList(response)
       this.workFieldList = createWorkFieldList(response)
       this.workFieldDialog = false
-      // TODO 保存完了メッセージ表示
-      console.log(response)
+      // 保存完了メッセージ表示
+      this.$emit('alertMethod', response);
     },
     // 削除ボタン押下処理
     async onClickDelete (item) {
@@ -324,8 +324,8 @@ export default {
       this.workFieldDetailList = createWorkFieldDetailList(response)
       this.clientFieldList = createClientFieldList(response)
       this.workFieldList = createWorkFieldList(response)
-      // TODO 削除完了メッセージ表示
-      console.log(response)
+      // 削除完了メッセージ表示
+      this.$emit('alertMethod', response);
     }
   }
 }

@@ -1122,8 +1122,8 @@ export default {
         this.subCompanyPullDown = createSubCompanyPullDown(response)
         this.subCompanyEditFlag = false
         this.subCompanyDialog = false
-        // TODO 保存完了メッセージ表示
-        console.log(response)
+        // 保存完了メッセージ表示
+        this.$emit('alertMethod', response);
       }else{
         this.subCompanyEditBtnName = '保存';
         this.subCompanyCancelBtnName = '戻る';
@@ -1163,8 +1163,8 @@ export default {
       this.subCompanyPullDown = createSubCompanyPullDown(response)
       // 削除確認ダイアログを閉じる
       this.subCompanyDeleteConfirmDialog = false;
-      // TODO 削除完了メッセージ表示
-      console.log(response)
+      // 削除完了メッセージ表示
+      this.$emit('alertMethod', response);
     },
 
     //* * 協力会社員一覧 */ 
@@ -1225,8 +1225,8 @@ export default {
         this.subCompanyPullDown = createSubCompanyPullDown(response)
         this.subEmployeeEditFlag = false
         this.subEmployeeDialog = false
-        // TODO 保存完了メッセージ表示
-        console.log(response)
+        // 保存完了メッセージ表示
+        this.$emit('alertMethod', response);
       }else{
         this.subEmployeeEditBtnName = '保存';
         this.subEmployeeCancelBtnName = '戻る';
@@ -1266,8 +1266,8 @@ export default {
       this.subCompanyPullDown = createSubCompanyPullDown(response)
       // 削除確認ダイアログを閉じる
       this.subEmployeeDeleteConfirmDialog = false;
-      // TODO 削除完了メッセージ表示
-      console.log(response)
+      // 削除完了メッセージ表示
+      this.$emit('alertMethod', response);
     },
     // 保有資格プラスボタン押下時の処理です。
     onTouchLicensePlusBtn () {

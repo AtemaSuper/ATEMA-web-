@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
 //通知テーブル
-const ContactDao = require("../middle/dao/contactDao");
-var contactDao = new ContactDao();
+const AlertDao = require("../middle/dao/alertDao");
+var alertDao = new AlertDao();
 //社員テーブル
 const EmployeeDao = require("../middle/dao/employeeDao");
 var employeeDao = new EmployeeDao();
@@ -15,7 +15,7 @@ app.post("/", async function (req, res) {
   var alertResponse = {};
   var employeeResponse = {};
   //客先テーブルから客先情報を取得します。
-  await contactDao
+  await alertDao
     .selectAlertAll()
     .then(function (items) {
       alertResponse = items;

@@ -1043,8 +1043,9 @@ export default {
         this.selectPostList = createSelectPostList(response)
         this.employeeEditFlag = false
         this.employeeDialog = false
-        // TODO 保存完了メッセージ表示
-        console.log(response)
+        // 保存完了メッセージ表示
+        this.$emit('alertMethod', response);
+        // console.log(response)
       }else{
         this.employeeEditBtnName = '保存';
         this.employeeCancelBtnName = '戻る';
@@ -1072,6 +1073,26 @@ export default {
     // 自社員ダイアログの資格削除ボタン押下時の処理です。
     onTouchDeleteBtn () {
       this.employeeEditItem.license.pop()
+    },
+    // 削除確認処理(自社員)
+    showDeleteEmployeeConfirm (item) {
+      this.deleteEmployeeItem.employeeId = item.employeeId;
+      this.employeeDeleteConfirmDialog = true;
+    },
+    // 削除ボタン押下処理(自社員)
+    async onClickDeleteEmployee () {
+      const param = {
+        employeeId: this.deleteEmployeeItem.employeeId
+      }
+      // 削除処理
+      let response = await Methods.deleteEmployee(param)
+      // レスポンスから画面情報をセットする
+      this.employeeList = createEmployeeList(response)
+      this.postList = createPostList(response)
+      this.selectPostList = createSelectPostList(response)
+      this.employeeDeleteConfirmDialog = false;
+      // 削除完了メッセージ表示
+      this.$emit('alertMethod', response);
     },
     // 自社員の検索処理です。
     filterOnlyCapsText (value, search, item) {
@@ -1123,8 +1144,8 @@ export default {
       this.postList = createPostList(response)
       this.selectPostList = createSelectPostList(response)
       this.postDialog = false
-      // TODO 保存完了メッセージ表示
-      console.log(response)
+      // 保存完了メッセージ表示
+      this.$emit('alertMethod', response);
     },
     // 役職ダイアログの閉じる・戻るボタン処理です。
     onClickPostCancelBtn () {
@@ -1139,26 +1160,6 @@ export default {
       }else{
         this.postDialog = false;
       }
-    },
-    // 削除確認処理(自社員)
-    showDeleteEmployeeConfirm (item) {
-      this.deleteEmployeeItem.employeeId = item.employeeId;
-      this.employeeDeleteConfirmDialog = true;
-    },
-    // 削除ボタン押下処理(自社員)
-    async onClickDeleteEmployee () {
-      const param = {
-        employeeId: this.deleteEmployeeItem.employeeId
-      }
-      // 削除処理
-      let response = await Methods.deleteEmployee(param)
-      // レスポンスから画面情報をセットする
-      this.employeeList = createEmployeeList(response)
-      this.postList = createPostList(response)
-      this.selectPostList = createSelectPostList(response)
-      this.employeeDeleteConfirmDialog = false;
-      // TODO 保存完了メッセージ表示
-      console.log(response)
     },
     // 削除確認処理(役職)
     showDeletePostConfirm (item) {
@@ -1177,8 +1178,8 @@ export default {
       this.postList = createPostList(response)
       this.selectPostList = createSelectPostList(response)
       this.postDeleteConfirmDialog = false;
-      // TODO 保存完了メッセージ表示
-      console.log(response)
+      // 削除完了メッセージ表示
+      this.$emit('alertMethod', response);
     },
   }
 }

@@ -16,10 +16,13 @@
           this.$route.path != '/login' || this.$route.path != '/passwordReset'
         "
       >
-        <div v-if="showAlertComponent">
-          <component @alertMethod="updateResponseData" :is="alertComponent">
+        <v-overlay 
+          :value="responseData.showAlert"
+          :opacity=true
+        >
+          <component :is="alertComponent" v-bind:responseData="responseData" class="alert-component">
           </component>
-        </div>
+        </v-overlay>
         <component :is="headerComponent"></component>
         <v-row v-if="showTitleComponent" class="title">
           <v-col cols="1">
@@ -39,7 +42,7 @@
           <v-col cols="1"> </v-col>
           <v-col>
             <v-card class="page-contents">
-              <router-view v-bind:showContents="contentsId" />
+              <router-view v-bind:showContents="contentsId" @alertMethod="updateResponseData" />
             </v-card>
           </v-col>
           <v-col cols="1"></v-col>
@@ -62,7 +65,12 @@ export default {
     return {
       title: '',
       contentsId: 1,
-      responseData: {}
+      isSuccess: true,
+      responseData: {
+        showAlert: false,
+        type: "success",
+        messageList: [],
+      }
     }
   },
   computed: {
@@ -161,18 +169,18 @@ export default {
     alertComponent () {
       return Alert
     },
-    // アラート部表示切替
-    showAlertComponent () {
-      return false
-    }
   },
   methods: {
     updateContentsId (contentsId) {
       this.contentsId = contentsId
     },
-    updateResponseData (responseData) {
-      console.log(responseData)
-      this.responseData = responseData
+    updateResponseData (response) {
+      this.responseData = {
+        showAlert: true,
+        type: response.data.checkResult ? 'success' : 'error',
+        messageList: response.data.messageList,
+        // TODO メッセージの数分メッセージを表示するように修正
+      }
     }
   }
 }
@@ -209,5 +217,8 @@ export default {
 .page-title {
   font-size: 1.6rem;
   font-weight: 700;
+}
+.alert-component {
+  z-index : 999;
 }
 </style>

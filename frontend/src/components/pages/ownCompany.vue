@@ -6,7 +6,7 @@
         <v-col cols="1" class="page-contents-title">基本情報</v-col>
         <v-col cols="10"></v-col>
         <v-col cols="1">
-          <v-btn color="#ff6669" class="white--text" rounded @click="testf()">
+          <v-btn color="#ff6669" class="white--text" rounded @click="onTouchSave()">
             OK
           </v-btn>
         </v-col>
@@ -584,7 +584,8 @@ export default {
           selectWorkTypeList: this.ownCompanyData.selectWorkTypeList
         }
         let response = await Methods.saveOwnCompanyInfo(param)
-        this.saveResponse(response)
+        // 保存完了メッセージ表示
+        this.$emit('alertMethod', response)
       // 勤怠情報の保存ボタン押下の場合
       } else {
         const param = {
@@ -600,18 +601,10 @@ export default {
           updownSelect: this.ownCompanyData.updownSelect
         }
         let response = await Methods.saveOwnCompanyInfo(param)
-        this.saveResponse(response)
+        // 保存完了メッセージ表示
+        this.$emit('alertMethod', response)
       }
     },
-    testf () {
-      var responseData = {}
-      this.$emit('alertMethod', responseData)
-    },
-    // 保存処理後、画面側でメッセージを表示します。
-    saveResponse (response) {
-      var data = response.data
-      this.$emit('alertMethod', data)
-    }
   }
 }
 
