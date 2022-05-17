@@ -7,6 +7,29 @@ export default {
 
   // exsample処理
 
+  /*
+    出退勤管理画面
+    attendanceManege
+  */
+
+  // 初期表示処理
+  findAttendanceListAsync(specifiedDateRangeFrom, specifiedDateRangeTo) {
+    const item = {
+      specifiedDateRangeTo: specifiedDateRangeTo,
+      specifiedDateRangeFrom: specifiedDateRangeFrom
+    };
+    return Api().post("/attendanceManage/list", item);
+  },
+  // 更新
+  updateAttendanceListAsync(objectId, clumns, items) {
+    const item = {
+      objectId: objectId,
+      clumns: clumns,
+      items: items
+    };
+    return Api().put("/attendanceManage/list/update", item);
+  },
+
   testPost() {
     const item = { text: "Success!" };
     return Api().post("/test", item);

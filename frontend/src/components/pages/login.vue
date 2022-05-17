@@ -16,7 +16,7 @@
                 <h2
                   class="headline font-weight-bold orange--text text--accent-2"
                 >
-                  管理者用ログイン
+                  契約者用ログイン
                 </h2>
               </div>
             </v-card-title>
@@ -27,7 +27,7 @@
                 type="text"
                 v-model="model.email"
                 :rules="emailRules"
-                maxlength='50'
+                maxlength="50"
                 clearable
                 clear-icon="mdi-close-circle"
                 outlined
@@ -40,7 +40,7 @@
                 type="password"
                 v-model="model.password"
                 :rules="passwordRules"
-                maxlength='50'
+                maxlength="50"
                 clearable
                 clear-icon="mdi-close-circle"
                 outlined
@@ -76,17 +76,17 @@ export default {
   data: () => ({
     loading: false,
     emailRules: [
-      v => !!v || 'IDが未入力です',
-      v => (v && v.length <= 50) || '文字数制限は50文字以内です'
+      v => !!v || "IDが未入力です",
+      v => (v && v.length <= 50) || "文字数制限は50文字以内です"
     ],
     passwordRules: [
-      v => !!v || 'パスワードが未入力です',
-      v => (v && v.length <= 50) || '文字数制限は50文字以内です'
+      v => !!v || "パスワードが未入力です",
+      v => (v && v.length <= 50) || "文字数制限は50文字以内です"
     ],
     checkbox: true,
     model: {
-      email: '',
-      password: ''
+      email: "",
+      password: ""
     }
   }),
 
@@ -113,7 +113,7 @@ export default {
       }
     } */
   }
-}
+};
 </script>
 <style scoped>
 .bg {

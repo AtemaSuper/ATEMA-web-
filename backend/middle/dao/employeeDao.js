@@ -14,6 +14,24 @@ class EmployeeDao {
    *
    * @returns
    */
+  async selectfetchAll() {
+    var Item = ncmb.DataStore("employeeTable");
+    const responce = await Item.equalTo("deleteFlg", false)
+      .fetchAll()
+      .then(function (items) {
+        return items;
+      })
+      .catch(function (err) {
+        res.status(500).json(err);
+      });
+    return responce;
+  }
+  /**
+   * 自社員情報一覧を取得します。
+   *
+   *
+   * @returns
+   */
   async selectEmployeeAll() {
     var Item = ncmb.DataStore("employeeTable");
     const responce = await Item.equalTo("deleteFlg", false)

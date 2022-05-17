@@ -53,17 +53,17 @@
 </template>
 
 <script>
-import Header from '@/components/globals/header.vue'
-import SideMenu from '@/components/globals/sideMenu.vue'
-import Alert from '@/components/globals/alert.vue'
+import Header from "@/components/globals/header.vue";
+import SideMenu from "@/components/globals/sideMenu.vue";
+import Alert from "@/components/globals/alert.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   ownCompanyContents: 1,
-  components: {Header, SideMenu, Alert},
-  data () {
+  components: { Header, SideMenu, Alert },
+  data() {
     return {
-      title: '',
+      title: "",
       contentsId: 1,
       isSuccess: true,
       responseData: {
@@ -75,104 +75,104 @@ export default {
   },
   computed: {
     // ヘッダー表示切替(true 表示)
-    headerComponent () {
+    headerComponent() {
       switch (this.$route.path) {
-        case '/ownCompany':
-          return 'Header'
-        case '/main':
-          return 'Header'
-        case '/attendanceManage':
-          return 'Header'
-        case '/subCompanyAll':
-          return 'Header'
-        case '/clientField':
-          return 'Header'
-        case '/workField':
-          return 'Header'
-        case '/contactBox':
-          return 'Header'
-        case '/ownWorkerAll':
-          return 'Header'
+        case "/ownCompany":
+          return "Header";
+        case "/main":
+          return "Header";
+        case "/attendanceManage":
+          return "Header";
+        case "/subCompanyAll":
+          return "Header";
+        case "/clientField":
+          return "Header";
+        case "/workField":
+          return "Header";
+        case "/contactBox":
+          return "Header";
+        case "/ownWorkerAll":
+          return "Header";
         default:
-          return ''
+          return "";
       }
     },
     // サイドメニュー部表示切替
-    sideComponent () {
+    sideComponent() {
       switch (this.$route.path) {
-        case '/ownCompany':
-          return 'SideMenu'
-        case '/clientField':
-          return 'SideMenu'
-        case '/workField':
-          return 'SideMenu'
+        case "/ownCompany":
+          return "SideMenu";
+        case "/clientField":
+          return "SideMenu";
+        case "/workField":
+          return "SideMenu";
         default:
-          return ''
+          return "";
       }
     },
     // サイドメニュー部表示切替
     // サイドメニューを表示しない場合は、colごと消す
-    showSideComponent () {
+    showSideComponent() {
       switch (this.$route.path) {
-        case '/ownCompany':
-          return true
-        case '/clientField':
-          return true
-        case '/workField':
-          return true
+        case "/ownCompany":
+          return true;
+        case "/clientField":
+          return true;
+        case "/workField":
+          return true;
         default:
-          return false
+          return false;
       }
     },
     // タイトル部表示切替
-    showTitleComponent () {
+    showTitleComponent() {
       switch (this.$route.path) {
-        case '/attendanceManage':
-          return true
-        case '/contactBox':
-          return true
-        case '/ownCompany':
-          return true
-        case '/ownWorkerAll':
-          return true
-        case '/clientField':
-          return true
-        case '/workField':
-          return true
-        case '/subCompanyAll':
-          return true
+        case "/attendanceManage":
+          return true;
+        case "/contactBox":
+          return true;
+        case "/ownCompany":
+          return true;
+        case "/ownWorkerAll":
+          return true;
+        case "/clientField":
+          return true;
+        case "/workField":
+          return true;
+        case "/subCompanyAll":
+          return true;
         default:
-          return false
+          return false;
       }
     },
     // タイトル部表示切替
-    setTitle () {
+    setTitle() {
       switch (this.$route.path) {
-        case '/attendanceManage':
-          return '出退勤管理'
-        case '/contactBox':
-          return '通知BOX'
-        case '/ownWorkerAll':
-          return '自社員管理/役職管理'
-        case '/ownCompany':
-          return '自社設定'
-        case '/clientField':
-          return '客先編集'
-        case '/workField':
-          return '現場編集'
-        case '/subCompanyAll':
-          return '協力会社管理'
+        case "/attendanceManage":
+          return "出退勤管理";
+        case "/contactBox":
+          return "通知BOX";
+        case "/ownWorkerAll":
+          return "自社員管理/役職管理";
+        case "/ownCompany":
+          return "自社設定";
+        case "/clientField":
+          return "客先編集";
+        case "/workField":
+          return "現場編集";
+        case "/subCompanyAll":
+          return "協力会社管理";
         default:
-          return ''
+          return "";
       }
     },
-    alertComponent () {
-      return Alert
+    alertComponent() {
+      return Alert;
     },
   },
   methods: {
-    updateContentsId (contentsId) {
-      this.contentsId = contentsId
+    updateContentsId(contentsId) {
+      this.contentsId = contentsId;
     },
     updateResponseData (response) {
       this.responseData = {
@@ -183,7 +183,7 @@ export default {
       }
     }
   }
-}
+};
 </script>
 
 <style>
