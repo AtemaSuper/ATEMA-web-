@@ -18,7 +18,7 @@
       >
         <v-overlay 
           :value="responseData.showAlert"
-          :opacity=true
+          opacity="opacity"
         >
           <component :is="alertComponent" v-bind:responseData="responseData" class="alert-component">
           </component>
@@ -66,6 +66,7 @@ export default {
       title: "",
       contentsId: 1,
       isSuccess: true,
+      opacity: true,
       responseData: {
         showAlert: false,
         type: "success",
