@@ -27,6 +27,28 @@ class WorkFieldDao {
     return responce;
   }
   /**
+   * 指定されたobjectIdに対する現場情報一覧を取得します。
+   * @param {string} objectId 取得したいobjectIdです。
+   *
+   * @returns
+   */
+  async findWorkField(objectId) {
+    var Item = ncmb.DataStore("workFieldTable");
+    const responce = await Item.equalTo("objectId", objectId)
+      .fetch()
+      .then(function (results) {
+        var data = {
+          checkResult: true,
+          messageList: ["現場情報一覧を取得しました。"],
+        };
+        return results;
+      })
+      .catch(function (err) {
+        res.status(500).json(err);
+      });
+    return responce;
+  }
+  /**
    * 現場情報を保存します。
    * @param {object} param 入力情報です。
    *
