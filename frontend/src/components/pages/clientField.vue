@@ -411,8 +411,8 @@ export default {
       this.workFieldList = createWorkFieldList(response)
       this.selectClientFieldList = createSelectClientFieldList(response)
       this.clientFieldDialog = false
-      // TODO 保存完了メッセージ表示
-      console.log(response)
+      // 保存完了メッセージ表示
+      this.$emit('alertMethod', response);
     },
         
     //* * 現場一覧 */ 
@@ -455,8 +455,8 @@ export default {
       this.workFieldList = createWorkFieldList(response)
       this.selectClientFieldList = createSelectClientFieldList(response)
       this.workFieldDialog = false
-      // TODO 保存完了メッセージ表示
-      console.log(response)
+      // 保存完了メッセージ表示
+      this.$emit('alertMethod', response);
     },
     // 削除ボタン押下処理
     async onClickDeleteClientField (item) {
@@ -470,8 +470,8 @@ export default {
       this.workFieldList = createWorkFieldList(response)
       this.selectClientFieldList = createSelectClientFieldList(response)
       this.clientFieldDialog = false
-      // TODO 保存完了メッセージ表示
-      console.log(response)
+      // 削除完了メッセージ表示
+      this.$emit('alertMethod', response);
     },
     // 削除ボタン押下処理
     async onClickDeleteWorkField (item) {
@@ -485,8 +485,8 @@ export default {
       this.workFieldList = createWorkFieldList(response)
       this.selectClientFieldList = createSelectClientFieldList(response)
       this.workFieldDialog = false
-      // TODO 保存完了メッセージ表示
-      console.log(response)
+      // 削除完了メッセージ表示
+      this.$emit('alertMethod', response);
     }
   }
 }

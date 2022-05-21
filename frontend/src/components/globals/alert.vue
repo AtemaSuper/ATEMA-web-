@@ -1,17 +1,26 @@
 <template>
-    <v-alert type="error" dismissible></v-alert>
+  <v-card class="alert-contents">
+    <v-alert
+      v-model="responseData.showAlert"
+      close-text="Close Alert"
+      dismissible
+      dense
+      outlined
+      :type='responseData.type'
+      text
+      transition="scale-transition"
+    >
+      {{responseData.messageList[0]}}
+    </v-alert>
+  </v-card>
 </template>
 
 <script>
 
 export default {
-  data () {
-    return {
-      items: []
-    }
-  },
+  name: 'alertComponent',
+  props: ["responseData"],
   computed: {
-    // 画面に応じてサイドメニューをセットします。
   }
 }
 </script>
@@ -19,5 +28,11 @@ export default {
 <style scoped>
 .btn-label {
   font-size: 0.5rem;
+}
+.alert-contents {
+  background-color: #fff;
+  max-width: 100%;
+  width: 100%;
+  margin: auto;
 }
 </style>

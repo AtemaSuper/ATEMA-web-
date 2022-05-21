@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
 
+//会員管理
+const UserDao = require("../middle/dao/userDao");
+var userDao = new UserDao();
 //協力会社テーブル
 const SubCompanyDao = require("../middle/dao/subCompanyDao");
 var subCompanyDao = new SubCompanyDao();

@@ -1,5 +1,6 @@
 <template>
   <v-app id="contactBox">
+<!-- 通知一覧 -->
     <v-main>
       <v-container>
         <v-sheet color="white" rounded outlined>
@@ -122,7 +123,7 @@
           <v-data-table
             :search="search"
             :headers="headers"
-            :items="getContactList"
+            :items="alertList"
             item-key="name"
             class="elevation-1 pa-6"
             sort-by="createDate"
@@ -164,11 +165,19 @@
 </template>
 
 <script>
+/** 外部コンポーネントの呼び出し */
+import Methods from '@/api/methods'
+import dayjs from "dayjs";
+import ja from "dayjs/locale/ja";
+
+dayjs.locale(ja);
+
 export default {
   name: 'contactBox',
   components: {
   },
   data: () => ({
+    alertList: [],
     //  values for our select.
     statusList: [
       {text: '全て', value: null},
@@ -188,6 +197,10 @@ export default {
     startDate: null,
     endDate: null
   }),
+  mounted: function () {
+    // 通知管理の画面情報をとってきます。
+    this.getEmployeeInfo()
+  },
   computed: {
     /** v-tableのヘッダーを設定 */
     headers () {
@@ -201,33 +214,37 @@ export default {
         },
         {
           text: 'タイトル',
-          value: 'contactTitle',
+          value: 'title',
           align: 'center',
           width: '10%'
         },
         { text: '送信者',
-          value: 'sendUser',
+          value: 'sendEmployeeName',
           align: 'center',
           width: '20%' },
         { text: '内容',
-          value: 'contents',
+          value: 'sendDetail',
           align: 'center',
           width: '40%' },
         { text: '送信日時',
-          value: 'createDate',
+          value: 'sendDate',
           align: 'center',
           width: '20%',
           filter: this.dateFilter }
       ]
     },
-    /** Vuex storeで設定した値を取得 (オブジェクトで取得するので、配列を指名して)リターン */
-    getContactList () {
-      /** ToDo */
-      /** Vuex contactListで定義したActionメソッドをここで呼び出し */
-      return this.$store.state.contactList.contactList
-    }
   },
   methods: {
+       // 初期表示処理です。
+    async getEmployeeInfo () {
+      let response = await Methods.getAlertInfo()
+      // レスポンスから画面情報をセットする
+      this.alertList = createAlertList(response)
+    },
+    // 日付のフォーマット処理です。
+    displayDateFormat(date) {
+      return dayjs(date).format("YYYY/MM/DD");
+    },
     /**
        * Filter for status column.
        * @param value Value is items
@@ -271,6 +288,56 @@ export default {
       console.log(item)
     }
   }
+}
+//
+// privateメソッドです。
+//
+/**
+ * レスポンスをもとに画面情報(通知)を作成します。
+ *
+ * @param {obeject} response レスポンスです。
+ *
+ * @returns
+ *
+ */
+function createAlertList (response) {
+  var alertResponse = response.data.alertResponse
+  var employeeResponse = response.data.employeeResponse
+  // 通知一覧表示用に変換します。
+  var alertList = []
+  for (var i = 0; i < alertResponse.length; i++) {
+    var alert = {}
+    alert.alertId = alertResponse[i].objectId
+    alert.title = alertResponse[i].title
+    alert.employeeId = alertResponse[i].employeeId
+    alert.status = alertResponse[i].status
+    alert.sendDetail = alertResponse[i].sendDetail
+    alert.sendDate = alertResponse[i].sendDate
+    alert.sendEmployeeName = getEmployeeName(alertResponse[i].senderId, employeeResponse)
+    alert.createUserId = alertResponse[i].createUserId
+    alert.updateUserId = alertResponse[i].updateUserId
+    alertList.push(alert)
+  }
+
+  return alertList
+}
+/**
+ * 社員IDをもとに社員名を取得します。
+ *
+ * @param {string} senderId 送信者ID（社員ID）です。
+ * @param {object} employeeResponse 社員のレスポンスデータです。
+ *
+ * @private
+ * @returns
+ */
+function getEmployeeName (senderId, employeeResponse) {
+  var employeeName = ''
+  for (var j = 0; j < employeeResponse.length; j++) {
+    if (senderId === employeeResponse[j].objectId) {
+      employeeName = employeeResponse[j].employeeFirstname + employeeResponse[j].employeeLastname
+    }
+  }
+  return employeeName
 }
 </script>
 

@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
 
+//会員管理
+const UserDao = require("../middle/dao/userDao");
+var userDao = new UserDao();
 //客先テーブル
 const EmployeeDao = require("../middle/dao/employeeDao");
 var employeeDao = new EmployeeDao();
@@ -9,9 +12,9 @@ const PostDao = require("../middle/dao/postDao");
 var postDao = new PostDao();
 
 /**
- * 工事編集画面のService
+ * 自社員管理画面のService
  */
-//工事編集の初期表示処理です。
+//自社員編集の初期表示処理です。
 app.post("/", async function (req, res) {
   var employeeResponse = {};
   var postResponse = {};
@@ -41,6 +44,7 @@ app.post("/", async function (req, res) {
 //社員編集の入力情報を保存します。
 app.post("/saveEmployee", async function (req, res) {
   var employeeResponse = {};
+  var userResponse = {};
   var postResponse = {};
   var checkResult = false;
   var messageList = [];
@@ -52,6 +56,11 @@ app.post("/saveEmployee", async function (req, res) {
     .then(function (data) {
       checkResult = data.checkResult;
       messageList = data.messageList;
+      //会員管理に社員情報を保存します。
+      return userDao.saveEmployee(req.body);
+    })
+    .then(function (items) {
+      userResponse = items;
       //社員テーブルから社員情報を取得します。
       return employeeDao.selectEmployeeAll();
     })
@@ -65,6 +74,7 @@ app.post("/saveEmployee", async function (req, res) {
       //返却用のdata
       var data = {
         employeeResponse: employeeResponse,
+        userResponse: userResponse,
         postResponse: postResponse,
         checkResult: checkResult,
         messageList: messageList,
@@ -126,6 +136,11 @@ app.post("/deleteEmployee", async function (req, res) {
     .then(function (data) {
       checkResult = data.checkResult;
       messageList = data.messageList;
+      //会員管理に社員情報を保存します。
+      return userDao.deleteEmployee(req.body);
+    })
+    .then(function (items) {
+      userResponse = items;
       //社員テーブルから社員情報を取得します。
       return employeeDao.selectEmployeeAll();
     })
