@@ -229,7 +229,7 @@
                           ></v-select>
                         </v-col>
                       </v-row>
-                      <v-row align="center">
+                      <v-row>
                         <v-col md="3">
                           <p>備考欄</p>
                         </v-col>

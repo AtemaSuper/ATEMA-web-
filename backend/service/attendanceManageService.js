@@ -62,7 +62,7 @@ const attendanceManageFind = function (
 const attendanceManageUpdate = function (objectId, clumns, items) {
   return new Promise(function (resolve, reject) {
     attendanceManage
-      .update(objectId, clumns, items)
+      .singleUpdate(objectId, clumns, items)
       .then(function (items) {
         attendanceManageFecthResults[0] = items;
         resolve(items);
@@ -101,7 +101,7 @@ const employeeFecthAll = function () {
   });
 };
 
-const workFieldAllFecthAll = function () {
+const workFieldFecthAll = function () {
   return new Promise(function (resolve, reject) {
     workField
       .selectWorkFieldAll()
@@ -197,7 +197,7 @@ app.post("/list", async function (req, res) {
   );
   promises.push(clientFieldFecthAll());
   promises.push(employeeFecthAll());
-  promises.push(workFieldAllFecthAll());
+  promises.push(workFieldFecthAll());
   promises.push(workFieldDetailFecthAll());
   Promise.all(promises)
     .then(async function (result) {
@@ -218,7 +218,7 @@ app.put("/list/update", async function (req, res) {
   );
   promises.push(clientFieldFecthAll());
   promises.push(employeeFecthAll());
-  promises.push(workFieldAllFecthAll());
+  promises.push(workFieldFecthAll());
   promises.push(workFieldDetailFecthAll());
   Promise.all(promises)
     .then(async function (result) {
