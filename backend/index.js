@@ -15,6 +15,9 @@ const ownWorkerAllController = require("./controller/ownWorkerAllController");
 const subCompanyAllController = require("./controller/subCompanyAllController");
 const passwordResetController = require("./controller/passwordResetController");
 const workFieldController = require("./controller/workFieldController");
+const Util = require("./public/util");
+var util = new Util();
+global.express = require("./public/util");
 
 const app = express();
 app.use(bodyParser.json());
