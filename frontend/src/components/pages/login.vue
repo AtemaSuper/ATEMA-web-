@@ -50,7 +50,7 @@
             </v-form>
             <!-- <v-btn block color="primary" @click="login" :loading="loading">ログイン</v-btn> -->
             <v-card-actions class="justify-center">
-              <v-btn block color="primary" to="/main">ログイン</v-btn>
+              <v-btn block color="primary" @click="login()">ログイン</v-btn>
             </v-card-actions>
             <v-spacer />
             <v-card-actions class="justify-center">
@@ -71,7 +71,12 @@
 </template>
 
 <script>
-/** import Axios from 'axios' */
+// eslint-disable-next-line no-unused-vars
+import { firebaseApp } from "../../plugins/firebaseConfig";
+import { getAuth, signInWithEmailAndPassword } from "@firebase/auth";
+import firebaseUtils from "./../../store/modules/firebaseUtils";
+const auth = getAuth();
+
 export default {
   data: () => ({
     loading: false,
@@ -91,27 +96,26 @@ export default {
   }),
 
   methods: {
-    /** login () {
-      // バリデーションが通った場合
+    login() {
       if (this.$refs.loginForm.validate()) {
-        // ぐるぐる表示にしてボタンを二度押しできなくする
-        this.loading = true
-        // APIでログイン認証を行う
-        Axios.post('/api/auth/login', this.model).then(res => {
-          // 成功した場合
-          if (res.data.result) {
-            // ログイン情報を store に保存
-            this.$store.dispatch('setLoginInfo', res.data)
-            // 元の画面に戻る
-            this.$router.push({path: 'backuri' in this.$route.query && this.$route.query.backuri.match(/^\//) ? this.$route.query.backuri : '/'})
-          // メールアドレスとパスワードが正しくない組み合わせだった場合
-          } else {
-            this.loading = false
-            alert(Object.values(res.data.errors).join('\n'))
-          }
-        })
+        signInWithEmailAndPassword(auth, this.model.email, this.model.password)
+          .then(() => {
+            firebaseUtils.onAuthStoreStateChanged();
+            alert("login success");
+            if (!this.$route.query.redirect) {
+              this.$router.push("/main");
+            }
+            const redirectTo = this.$route.query.redirect;
+            this.$router.push(redirectTo);
+          })
+          .catch(e => {
+            alert("login error");
+            console.log("error", e);
+          });
+      } else {
+        alert("validate error");
       }
-    } */
+    }
   }
 };
 </script>
