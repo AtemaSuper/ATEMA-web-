@@ -1,8 +1,6 @@
 const express = require("express");
 const app = express();
 
-// const Const = require("..public//const");
-
 //自社設定Logic
 const OwnCompanyLogic = require("../logic/ownCompanyLogic");
 var ownCompanyLogic = new OwnCompanyLogic();
@@ -50,13 +48,13 @@ app.post("/", async function (req, res) {
         workTypeList.push(workType);
       }
       //通常業務時間と時間外業務時間を時と分に分けます。
-      var normalWorkStartTime = contactResponse.normalWorkStartTime.split("：");
+      var normalWorkStartTime = contactResponse.normalWorkStartTime.split(":");
       var normalWorkFinishTime =
-        contactResponse.normalWorkFinishTime.split("：");
+        contactResponse.normalWorkFinishTime.split(":");
       var exceptionWorkStartTime =
-        contactResponse.exceptionWorkStartTime.split("：");
+        contactResponse.exceptionWorkStartTime.split(":");
       var exceptionWorkFinishTime =
-        contactResponse.exceptionWorkFinishTime.split("：");
+        contactResponse.exceptionWorkFinishTime.split(":");
 
       //返却用のdata
       var data = {
@@ -79,9 +77,7 @@ app.post("/", async function (req, res) {
         telNumber1: contactResponse.telNumber1,
         telNumber2: contactResponse.telNumber2,
         telNumber3: contactResponse.telNumber3,
-        foundationDay: contactResponse.foundationDay,
-        foundationMonth: contactResponse.foundationMonth,
-        foundationYear: contactResponse.foundationYear,
+        foundation: contactResponse.foundation,
         leaderName: contactResponse.leaderName,
         updownSelect: contactResponse.updownSelect,
         selectWorkTypeList: selectWorkTypeList,
@@ -97,12 +93,14 @@ app.post("/", async function (req, res) {
 });
 //自社設定の入力情報を保存します。
 app.post("/save", async function (req, res) {
-  //TODO 入力チェック
+  var pageContents = 2;
+  //入力チェック
   await ownCompanyLogic
     .checkInputData(req.body)
     .then(function () {
       //基本情報の場合、工種をテーブル保存用に変換します。
       if (req.body.pageContents == 1) {
+        pageContents = 1;
         var selectWorkTypeList = [];
         for (var i = 0; i < req.body.selectWorkTypeList.length; i++) {
           selectWorkTypeList.push(req.body.selectWorkTypeList[i].workTypeId);
@@ -116,12 +114,18 @@ app.post("/save", async function (req, res) {
       //dataをレスポンスで返却します。
       data = {
         checkResult: true,
-        messageList: [util.stringFormat("{0}の保存が完了しました。", "会社名")],
+        messageList: [ownCompanyLogic.createSuccessMessage(pageContents)],
       };
       res.status(200).json(data);
     })
-    .catch(function (err) {
-      res.status(500).json(err);
+    .catch(function (data) {
+      if (data.messageList.length != 0) {
+        res.status(400).json(data);
+      } else {
+        data.checkResult = false;
+        data.messageList = createSytemErrorMessage();
+        res.status(500).json(data);
+      }
     });
 });
 //

@@ -40,9 +40,94 @@ class Util {
     if (isNaN(num)) {
       return false;
     }
-
     return num == 0;
   }
+
+  /**
+   *
+   * 時間形式かどうかチェックします。
+   *
+   * @param {string} val 判定する値です。
+   * @returns
+   */
+  isTime(val) {
+    return val.match(/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/) !== null;
+  }
+
+  /**
+   *
+   * 日付形式かどうかチェックします。
+   *
+   * @param {string} val 判定する値です。
+   * @returns
+   */
+  isDate(val) {
+    //TODO 年-月-日の形式のみ許容する
+    return true;
+    if (!val.match(/(\d{4})\-(\d{2})\-(\d{2})/)) {
+      console.log("dds");
+      return false;
+    }
+
+    // 日付変換された日付が入力値と同じ事を確認
+    // new Date()の引数に不正な日付が入力された場合、相当する日付に変換されてしまうため
+    var date = new Date(val);
+    if (
+      date.getFullYear() != val.split("-")[0] ||
+      date.getMonth() != val.split("-")[1] - 1 ||
+      date.getDate() != val.split("-")[2]
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   *
+   * 半角英数字かどうかチェックします。(空文字〇)
+   *
+   * @param {string} val 判定する値です。
+   * @returns
+   */
+  isHalf(val) {
+    return val.match(/^[0-9a-zA-Z]*$/);
+  }
+
+  /**
+   *
+   * 半角英字かどうかチェックします。(空文字×)
+   *
+   * @param {string} val 判定する値です。
+   * @returns
+   */
+  isHalfWidthChar(val) {
+    return val.match(/^[a-zA-Z]+$/);
+  }
+
+  /**
+   *
+   * 半角数字かどうかチェックします。(空文字×)
+   *
+   * @param {string} val 判定する値です。
+   * @returns
+   */
+  isHalfWidthNumber(val) {
+    return val.match(/^[0-9]+$/);
+  }
+
+  /**
+   *
+   * 型が指定の型かどうかチェックします。
+   *
+   * @param {string} val 判定する値です。
+   * @param {string} type 型です。
+   * @returns
+   */
+  isType(value, type) {
+    return typeof value == type;
+  }
+
   /**
    * 指定されたJSファイルを読み込みます。
    *

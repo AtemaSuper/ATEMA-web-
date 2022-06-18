@@ -34,14 +34,14 @@
             ref="foundationMenu"
             v-model="foundationMenu"
             :close-on-content-click="false"
-            :return-value.sync="foundation"
+            :return-value.sync="foundationMenu"
             transition="scale-transition"
             offset-y
             min-width="auto"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                v-model="foundation"
+                :value="displayDateFormat(ownCompanyData.foundation)"
                 :rules="foundationRules"
                 label="日付を選択"
                 placeholder="まず20XX年X月をクリック"
@@ -54,7 +54,7 @@
               ></v-text-field>
             </template>
             <v-date-picker
-              v-model="foundation"
+              v-model="ownCompanyData.foundation"
               no-title
               scrollable
               locale="jp-ja"
@@ -64,52 +64,7 @@
                 color="#ff6669"
                 class="white--text"
                 rounded
-                @click="$refs.foundationMenu.save(foundation)"
-              >
-                OK
-              </v-btn>
-              <v-btn class="#f5f5f5" rounded @click="foundationMenu = false">
-                キャンセル
-              </v-btn>
-            </v-date-picker>
-          </v-menu>
-        </v-col>
-        <v-col cols="2" sm="3" md="3"
-          ><v-menu
-            ref="foundationMenu"
-            v-model="foundationMenu"
-            :close-on-content-click="false"
-            :return-value.sync="foundation"
-            transition="scale-transition"
-            offset-y
-            min-width="auto"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-model="foundation"
-                :rules="foundationRules"
-                label="日付を選択"
-                placeholder="まず20XX年X月をクリック"
-                prepend-inner-icon="mdi-calendar"
-                readonly
-                outlined
-                dense
-                v-bind="attrs"
-                v-on="on"
-              ></v-text-field>
-            </template>
-            <v-date-picker
-              v-model="foundation"
-              no-title
-              scrollable
-              locale="jp-ja"
-              :day-format="(date) => new Date(date).getDate()"
-            >
-              <v-btn
-                color="#ff6669"
-                class="white--text"
-                rounded
-                @click="$refs.foundationMenu.save(foundation)"
+                @click="$refs.foundationMenu.save(ownCompanyData.foundation)"
               >
                 OK
               </v-btn>
@@ -447,6 +402,10 @@
 <script>
 /** 外部コンポーネントの呼び出し */
 import Methods from '@/api/methods'
+import dayjs from "dayjs";
+import ja from "dayjs/locale/ja";
+
+dayjs.locale(ja);
 
 export default {
   name: 'OwnCompany',
@@ -454,9 +413,9 @@ export default {
   data () {
     return {
       radioGroup: 1,
-      ownCompanyData: {},
-      hoursList: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'],
-      minutesList: ['00', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59'],
+      ownCompanyData: {selectWorkTypeList: []},
+      hoursList: ['0','1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'],
+      minutesList: ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59'],
       errorList: [],
       tardyTime: '1-minutes',
       roundingTime: '15-minutes',
@@ -503,25 +462,45 @@ export default {
         v => (v && v.length <= 4) || '文字数は4文字以内です',
         v => /^[0-9]*$/.test(v) || '電話番号3の入力は半角数字のみです'
       ],
-      normalWorkHoursRules: [
-        v => !!v || '通常業務時間(時)が未入力です',
+      normalWorkStartHoursRules: [
+        v => !!v || '通常業務開始時間(時)が未入力です',
         v => (v && v.length <= 2) || '文字数は2文字以内です',
-        v => /^[0-9]*$/.test(v) || '通常業務時間(時)の入力は半角数字のみです'
+        v => /^[0-9]*$/.test(v) || '通常業務開始時間(時)の入力は半角数字のみです'
       ],
-      normalWorkMinutesRules: [
-        v => !!v || '通常業務時間(分)が未入力です',
+      normalWorkStartMinutesRules: [
+        v => !!v || '通常業務開始時間(分)が未入力です',
         v => (v && v.length <= 2) || '文字数は2文字以内です',
-        v => /^[0-9]*$/.test(v) || '通常業務時間(分)の入力は半角数字のみです'
+        v => /^[0-9]*$/.test(v) || '通常業務開始時間(分)の入力は半角数字のみです'
       ],
-      exceptionWorkHoursRules: [
-        v => !!v || '時間外業務時間(時)が未入力です',
+      normalWorkFinishHoursRules: [
+        v => !!v || '通常業務終了時間(時)が未入力です',
         v => (v && v.length <= 2) || '文字数は2文字以内です',
-        v => /^[0-9]*$/.test(v) || '時間外業務時間(時)の入力は半角数字のみです'
+        v => /^[0-9]*$/.test(v) || '通常業務終了時間(時)の入力は半角数字のみです'
       ],
-      exceptionWorkMinutesRules: [
-        v => !!v || '時間外業務時間(分)が未入力です',
+      normalWorkFinishMinutesRules: [
+        v => !!v || '通常業務開始時間(分)が未入力です',
         v => (v && v.length <= 2) || '文字数は2文字以内です',
-        v => /^[0-9]*$/.test(v) || '時間外業務時間(分)の入力は半角数字のみです'
+        v => /^[0-9]*$/.test(v) || '通常業務開始時間(分)の入力は半角数字のみです'
+      ],
+      exceptionWorkStartHoursRules: [
+        v => !!v || '時間外業務開始時間(時)が未入力です',
+        v => (v && v.length <= 2) || '文字数は2文字以内です',
+        v => /^[0-9]*$/.test(v) || '時間外業務開始時間(時)の入力は半角数字のみです'
+      ],
+      exceptionWorkStartMinutesRules: [
+        v => !!v || '時間外業務開始時間(分)が未入力です',
+        v => (v && v.length <= 2) || '文字数は2文字以内です',
+        v => /^[0-9]*$/.test(v) || '時間外業務開始時間(分)の入力は半角数字のみです'
+      ],
+      exceptionWorkFinishHoursRules: [
+        v => !!v || '時間外業務終了時間(時)が未入力です',
+        v => (v && v.length <= 2) || '文字数は2文字以内です',
+        v => /^[0-9]*$/.test(v) || '時間外業務終了時間(時)の入力は半角数字のみです'
+      ],
+      exceptionWorkFinishMinutesRules: [
+        v => !!v || '時間外業務終了時間(分)が未入力です',
+        v => (v && v.length <= 2) || '文字数は2文字以内です',
+        v => /^[0-9]*$/.test(v) || '時間外業務終了時間(分)の入力は半角数字のみです'
       ],
       roundingTimeRules: [
         v => !!v || '丸めで指定選択時、指定時間(分)が未入力です',
@@ -555,6 +534,10 @@ export default {
       let response = await Methods.getOwnComapanyInfo('68vFyGzOcf9lMn1F')
       this.ownCompanyData = response.data
     },
+    // 日付のフォーマット処理です。
+    displayDateFormat(date) {
+      return dayjs(date).format("YYYY/MM/DD");
+    },
     // 工種プラスボタン押下時の処理です。
     onTouchPlusBtn () {
       this.ownCompanyData.selectWorkTypeList.push({})
@@ -577,32 +560,52 @@ export default {
           telNumber1: this.ownCompanyData.telNumber1,
           telNumber2: this.ownCompanyData.telNumber2,
           telNumber3: this.ownCompanyData.telNumber3,
-          foundationDay: this.ownCompanyData.foundationDay,
-          foundationMonth: this.ownCompanyData.foundationMonth,
-          foundationYear: this.ownCompanyData.foundationYear,
+          foundation: this.ownCompanyData.foundation,
           leaderName: this.ownCompanyData.leaderName,
-          selectWorkTypeList: this.ownCompanyData.selectWorkTypeList
+          selectWorkTypeList: this.ownCompanyData.selectWorkTypeList,
+          createUserId: this.ownCompanyData.createUserId,
+          createDate: this.ownCompanyData.createDate,
+          updateUserId: this.ownCompanyData.updateUserId,
+          updateDate: this.ownCompanyData.updateDate,
+          deleteFlg: this.ownCompanyData.deleteFlg,
         }
-        let response = await Methods.saveOwnCompanyInfo(param)
-        // 保存完了メッセージ表示
-        this.$emit('alertMethod', response)
+        try {
+          let response = await Methods.saveOwnCompanyInfo(param)
+          // 保存完了メッセージ表示
+          this.$emit('alertMethod', response)
+        }catch (err){
+          let response = err.response;
+          // エラーメッセージ表示
+          this.$emit('alertMethod', response)
+        }
       // 勤怠情報の保存ボタン押下の場合
       } else {
         const param = {
           pageContents: this.pageContents,
           objectId: this.ownCompanyData.objectId,
-          exceptionWorkStartTime: this.ownCompanyData.exceptionWorkStartHours + '：' + this.ownCompanyData.exceptionWorkStartMinutes,
-          exceptionWorkFinishTime: this.ownCompanyData.exceptionWorkFinishHours + '：' + this.ownCompanyData.exceptionWorkFinishMinutes,
-          normalWorkStartTime: this.ownCompanyData.normalWorkStartHours + '：' + this.ownCompanyData.normalWorkStartMinutes,
-          normalWorkFinishTime: this.ownCompanyData.normalWorkFinishHours + '：' + this.ownCompanyData.normalWorkFinishMinutes,
+          exceptionWorkStartTime: this.ownCompanyData.exceptionWorkStartHours + ':' + this.ownCompanyData.exceptionWorkStartMinutes,
+          exceptionWorkFinishTime: this.ownCompanyData.exceptionWorkFinishHours + ':' + this.ownCompanyData.exceptionWorkFinishMinutes,
+          normalWorkStartTime: this.ownCompanyData.normalWorkStartHours + ':' + this.ownCompanyData.normalWorkStartMinutes,
+          normalWorkFinishTime: this.ownCompanyData.normalWorkFinishHours + ':' + this.ownCompanyData.normalWorkFinishMinutes,
           roundingTime: this.ownCompanyData.roundingTime,
           selectRoundingTime: this.ownCompanyData.selectRoundingTime,
           tardyTime: this.ownCompanyData.tardyTime,
-          updownSelect: this.ownCompanyData.updownSelect
+          updownSelect: this.ownCompanyData.updownSelect,
+          createUserId: this.ownCompanyData.createUserId,
+          createDate: this.ownCompanyData.createDate,
+          updateUserId: this.ownCompanyData.updateUserId,
+          updateDate: this.ownCompanyData.updateDate,
+          deleteFlg: this.ownCompanyData.deleteFlg,
         }
-        let response = await Methods.saveOwnCompanyInfo(param)
-        // 保存完了メッセージ表示
-        this.$emit('alertMethod', response)
+        try {
+          let response = await Methods.saveOwnCompanyInfo(param)
+          // 保存完了メッセージ表示
+          this.$emit('alertMethod', response)
+        }catch (err){
+          let response = err.response;
+          // エラーメッセージ表示
+          this.$emit('alertMethod', response)
+        }
       }
     },
   }

@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 // corsポリシーに抵触するため、その対策としてcorsを利用する
 const cors = require("cors");
+const constractor = require("./public/const");
 const test = require("./middle/test");
 const user = require("./middle/user");
 const ncmb = require("./middle/ncmb");
@@ -15,14 +16,16 @@ const ownWorkerAllController = require("./controller/ownWorkerAllController");
 const subCompanyAllController = require("./controller/subCompanyAllController");
 const passwordResetController = require("./controller/passwordResetController");
 const workFieldController = require("./controller/workFieldController");
-const Util = require("./public/util");
-var util = new Util();
-global.express = require("./public/util");
+const commonLogic = require("./logic/commonLogic");
 
 const app = express();
 app.use(bodyParser.json());
 //異なるサーバ間でのやり取り許可（オリジン間）
 app.use(cors({ origin: true, credentials: true }));
+
+app.set("errorMessage", constractor.ErrorMessage);
+app.set("successMessage", constractor.SuccessMessage);
+app.set("column", constractor.Colum);
 
 app.use("/attendanceManage", attendanceManageController);
 app.use("/clientField", clientFieldController);
