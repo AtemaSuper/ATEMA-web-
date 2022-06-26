@@ -15,11 +15,11 @@
         <v-col cols="2" class="item-label">会社名</v-col>
         <v-col cols="3">
           <v-text-field
-            v-model="ownCompanyData.contactCompanyName"
+            v-model="ownCompanyData.contractorName"
             outlined
             label="(例)株式会社ATEMA"
             :rules="companyRules"
-            name="companyName"
+            name="contractorName"
             maxlength="100"
             clearable
             clear-icon="mdi-close-circle"
@@ -164,55 +164,55 @@
         <v-col cols="2" class="item-label">工種</v-col>
         <v-col cols="3">
           <v-select
-            v-model="ownCompanyData.selectWorkTypeList[0]"
+            v-model="ownCompanyData.workTypeIdList[0]"
             item-text="workTypeName"
             item-value="value"
             return-object
-            :items="ownCompanyData.workTypeList"
+            :items="workTypePullDown"
             label="工種を選択してください。"
             solo
             name="workType"
           ></v-select>
           <v-select
-            v-if="ownCompanyData.selectWorkTypeList.length >= 2"
-            v-model="ownCompanyData.selectWorkTypeList[1]"
+            v-if="ownCompanyData.workTypeIdList.length >= 2"
+            v-model="ownCompanyData.workTypeIdList[1]"
             item-text="workTypeName"
             item-value="value"
             return-object
-            :items="ownCompanyData.workTypeList"
+            :items="workTypePullDown"
             label="工種を選択してください。"
             solo
             name="workType"
           ></v-select>
           <v-select
-            v-if="ownCompanyData.selectWorkTypeList.length >= 3"
-            v-model="ownCompanyData.selectWorkTypeList[2]"
+            v-if="ownCompanyData.workTypeIdList.length >= 3"
+            v-model="ownCompanyData.workTypeIdList[2]"
             item-text="workTypeName"
             item-value="value"
             return-object
-            :items="ownCompanyData.workTypeList"
+            :items="workTypePullDown"
             label="工種を選択してください。"
             solo
             name="workType"
           ></v-select>
           <v-select
-            v-if="ownCompanyData.selectWorkTypeList.length >= 4"
-            v-model="ownCompanyData.selectWorkTypeList[3]"
+            v-if="ownCompanyData.workTypeIdList.length >= 4"
+            v-model="ownCompanyData.workTypeIdList[3]"
             item-text="workTypeName"
             item-value="value"
             return-object
-            :items="ownCompanyData.workTypeList"
+            :items="workTypePullDown"
             label="工種を選択してください。"
             solo
             name="workType"
           ></v-select>
           <v-select
-            v-if="ownCompanyData.selectWorkTypeList.length >= 5"
-            v-model="ownCompanyData.selectWorkTypeList[4]"
+            v-if="ownCompanyData.workTypeIdList.length >= 5"
+            v-model="ownCompanyData.workTypeIdList[4]"
             item-text="workTypeName"
             item-value="value"
             return-object
-            :items="ownCompanyData.workTypeList"
+            :items="workTypePullDown"
             label="工種を選択してください。"
             solo
             name="workType"
@@ -223,7 +223,7 @@
         <v-col cols="3"></v-col>
         <v-col cols="1">
           <v-btn
-            v-if="ownCompanyData.selectWorkTypeList.length <= 4"
+            v-if="ownCompanyData.workTypeIdList.length <= 4"
             color="#ff6669"
             class="white--text"
             fab
@@ -233,7 +233,7 @@
         </v-col>
         <v-col cols="1">
           <v-btn
-            v-if="ownCompanyData.selectWorkTypeList.length != 1"
+            v-if="ownCompanyData.workTypeIdList.length != 1"
             color="#00ffd0"
             elevation="3"
             outlined
@@ -412,8 +412,15 @@ export default {
   props: ['showContents'],
   data () {
     return {
+      // TODO ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
+      userId: '6tQPHzHQwlGErXeLSzt1',
+      // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
+      // ※複数社契約になった場合、セッションで契約IDを保持して、
+      // ※そのIDをもとに検索するように修正
+      contractorId: '00000001',
       radioGroup: 1,
-      ownCompanyData: {selectWorkTypeList: []},
+      ownCompanyData: {workTypeIdList: []},
+      workTypePullDown: [],
       hoursList: ['0','1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'],
       minutesList: ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59'],
       errorList: [],
@@ -510,6 +517,10 @@ export default {
     }
   },
   components: {},
+  mounted: function () {
+    // 自社設定の画面情報をとってきます。
+    this.getOwnComapanyInfo()
+  },
   computed: {
     // 表示するページコンテンツを切り替えます。
     pageContents: {
@@ -521,18 +532,13 @@ export default {
       }
     }
   },
-  mounted: function () {
-    // 自社設定の画面情報をとってきます。
-    this.getOwnComapanyInfo()
-  },
   methods: {
     // 初期表示処理です。
     async getOwnComapanyInfo () {
-      // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
-      // ※複数社契約になった場合、セッションで契約IDを保持して、
-      // ※そのIDをもとに検索するように修正
-      let response = await Methods.getOwnComapanyInfo('68vFyGzOcf9lMn1F')
-      this.ownCompanyData = response.data
+      let response = await Methods.getOwnComapanyInfo(this.contractorId)
+      // レスポンスから画面情報をセットする
+      this.ownCompanyData = createOwnCompanyData(response);
+      this.workTypePullDown = createWorkTypePullDown(response);
     },
     // 日付のフォーマット処理です。
     displayDateFormat(date) {
@@ -540,37 +546,40 @@ export default {
     },
     // 工種プラスボタン押下時の処理です。
     onTouchPlusBtn () {
-      this.ownCompanyData.selectWorkTypeList.push({})
+      this.ownCompanyData.workTypeIdList.push({})
     },
     // 工種削除ボタン押下時の処理です。
     onTouchDeleteBtn () {
-      this.ownCompanyData.selectWorkTypeList.pop()
+      this.ownCompanyData.workTypeIdList.pop()
     },
     // 自社設定入力内容保存ボタン押下時の処理です。
     async onTouchSave () {
       // 基本情報の保存ボタン押下の場合
       if (this.pageContents === 1) {
+        // 工種は工種IDだけ渡します。
+        let selectworkTypeId = JSON.parse(JSON.stringify(this.ownCompanyData.workTypeIdList))
+        let workTypeIdList = selectworkTypeId.map(item => item.workTypeId);
         const param = {
+          contractorId: this.contractorId,
+          userId: this.userId,
           pageContents: this.pageContents,
-          objectId: this.ownCompanyData.objectId,
-          address: this.ownCompanyData.address,
-          contactCompanyName: this.ownCompanyData.contactCompanyName,
+          contractorName: this.ownCompanyData.contractorName,
+          foundation: this.ownCompanyData.foundation,
+          leaderName: this.ownCompanyData.leaderName,
           postNumber1: this.ownCompanyData.postNumber1,
           postNumber2: this.ownCompanyData.postNumber2,
+          address: this.ownCompanyData.address,
           telNumber1: this.ownCompanyData.telNumber1,
           telNumber2: this.ownCompanyData.telNumber2,
           telNumber3: this.ownCompanyData.telNumber3,
-          foundation: this.ownCompanyData.foundation,
-          leaderName: this.ownCompanyData.leaderName,
-          selectWorkTypeList: this.ownCompanyData.selectWorkTypeList,
-          createUserId: this.ownCompanyData.createUserId,
-          createDate: this.ownCompanyData.createDate,
-          updateUserId: this.ownCompanyData.updateUserId,
-          updateDate: this.ownCompanyData.updateDate,
-          deleteFlg: this.ownCompanyData.deleteFlg,
+          workTypeIdList: workTypeIdList,
+          
         }
         try {
           let response = await Methods.saveOwnCompanyInfo(param)
+          // レスポンスから画面情報をセットする
+          this.ownCompanyData = createOwnCompanyData(response);
+          this.workTypePullDown = createWorkTypePullDown(response);
           // 保存完了メッセージ表示
           this.$emit('alertMethod', response)
         }catch (err){
@@ -581,24 +590,23 @@ export default {
       // 勤怠情報の保存ボタン押下の場合
       } else {
         const param = {
+          contractorId: this.contractorId,
+          userId: this.userId,
           pageContents: this.pageContents,
-          objectId: this.ownCompanyData.objectId,
-          exceptionWorkStartTime: this.ownCompanyData.exceptionWorkStartHours + ':' + this.ownCompanyData.exceptionWorkStartMinutes,
-          exceptionWorkFinishTime: this.ownCompanyData.exceptionWorkFinishHours + ':' + this.ownCompanyData.exceptionWorkFinishMinutes,
           normalWorkStartTime: this.ownCompanyData.normalWorkStartHours + ':' + this.ownCompanyData.normalWorkStartMinutes,
           normalWorkFinishTime: this.ownCompanyData.normalWorkFinishHours + ':' + this.ownCompanyData.normalWorkFinishMinutes,
+          exceptionWorkStartTime: this.ownCompanyData.exceptionWorkStartHours + ':' + this.ownCompanyData.exceptionWorkStartMinutes,
+          exceptionWorkFinishTime: this.ownCompanyData.exceptionWorkFinishHours + ':' + this.ownCompanyData.exceptionWorkFinishMinutes,
+          tardyTime: this.ownCompanyData.tardyTime,
           roundingTime: this.ownCompanyData.roundingTime,
           selectRoundingTime: this.ownCompanyData.selectRoundingTime,
-          tardyTime: this.ownCompanyData.tardyTime,
           updownSelect: this.ownCompanyData.updownSelect,
-          createUserId: this.ownCompanyData.createUserId,
-          createDate: this.ownCompanyData.createDate,
-          updateUserId: this.ownCompanyData.updateUserId,
-          updateDate: this.ownCompanyData.updateDate,
-          deleteFlg: this.ownCompanyData.deleteFlg,
         }
         try {
           let response = await Methods.saveOwnCompanyInfo(param)
+          // レスポンスから画面情報をセットする
+          this.ownCompanyData = createOwnCompanyData(response);
+          this.workTypePullDown = createWorkTypePullDown(response);
           // 保存完了メッセージ表示
           this.$emit('alertMethod', response)
         }catch (err){
@@ -610,7 +618,91 @@ export default {
     },
   }
 }
+//
+// privateメソッドです。
+//
+/**
+ * レスポンスをもとに画面情報(自社設定)を作成します。
+ *
+ * @param {obeject} response レスポンスです。
+ *
+ * @returns
+ *
+ */
+function createOwnCompanyData (response) {
+  var ownCompanyResponse = response.data.ownCompanyResponse
+  var workTypeResponse = response.data.workTypeResponse
+  // 自社員一覧表示用に変換します。
+  var ownCompanyData = {}
+  ownCompanyData.contractorName = ownCompanyResponse.contractorName
+  ownCompanyData.foundation = ownCompanyResponse.foundation
+  ownCompanyData.leaderName = ownCompanyResponse.leaderName
+  ownCompanyData.postNumber1 = ownCompanyResponse.postNumber1
+  ownCompanyData.postNumber2 = ownCompanyResponse.postNumber2
+  ownCompanyData.address = ownCompanyResponse.address
+  ownCompanyData.telNumber1 = ownCompanyResponse.telNumber1
+  ownCompanyData.telNumber2 = ownCompanyResponse.telNumber2
+  ownCompanyData.telNumber3 = ownCompanyResponse.telNumber3
+  var workTypeIdList = [];
+  for(var i = 0; i < ownCompanyResponse.workTypeIdList.length;i++){
+    var selectWorkType = {};
+    selectWorkType.workTypeName = getWorkTypeName(ownCompanyResponse.workTypeIdList[i], workTypeResponse);
+    selectWorkType.workTypeId = ownCompanyResponse.workTypeIdList[i];
+    workTypeIdList.push(selectWorkType);
+  }
+  ownCompanyData.workTypeIdList = workTypeIdList;
+  ownCompanyData.normalWorkStartHours = ownCompanyResponse.normalWorkStartTime.split(":")[0];
+  ownCompanyData.normalWorkStartMinutes = ownCompanyResponse.normalWorkStartTime.split(":")[1];
+  ownCompanyData.normalWorkFinishHours = ownCompanyResponse.normalWorkFinishTime.split(":")[0];
+  ownCompanyData.normalWorkFinishMinutes = ownCompanyResponse.normalWorkFinishTime.split(":")[1];
+  ownCompanyData.exceptionWorkStartHours = ownCompanyResponse.exceptionWorkStartTime.split(":")[0];
+  ownCompanyData.exceptionWorkStartMinutes = ownCompanyResponse.exceptionWorkStartTime.split(":")[1];
+  ownCompanyData.exceptionWorkFinishHours = ownCompanyResponse.exceptionWorkFinishTime.split(":")[0];
+  ownCompanyData.exceptionWorkFinishMinutes = ownCompanyResponse.exceptionWorkFinishTime.split(":")[1];
+  ownCompanyData.tardyTime = ownCompanyResponse.tardyTime
+  ownCompanyData.roundingTime = ownCompanyResponse.roundingTime
+  ownCompanyData.selectRoundingTime = ownCompanyResponse.selectRoundingTime
+  ownCompanyData.updownSelect = ownCompanyResponse.updownSelect
 
+  return ownCompanyData;
+}
+/**
+ * 工種IDをもとに工種名を取得します。
+ *
+ * @param {string} workTypeId 工種IDです。
+ * @param {object} workTypeResponse 工種のレスポンスデータです。
+ *
+ * @private
+ * @returns
+ */
+function getWorkTypeName(workTypeId, workTypeResponse) {
+  var worlTypeName = "";
+  for (var i = 0; i < workTypeResponse.length; i++) {
+    if (workTypeId === workTypeResponse[i].workTypeId) {
+      worlTypeName = workTypeResponse[i].workTypeName;
+    }
+  }
+  return worlTypeName;
+}
+/**
+ * レスポンスをもとに画面情報(工種セレクトボックス)を作成します。
+ *
+ * @param {obeject} response レスポンスです。
+ *
+ * @returns
+ *
+ */
+function createWorkTypePullDown (response) {
+  var workTypeResponse = response.data.workTypeResponse
+  var subCompanyPullDown = []
+  for (var j = 0; j < workTypeResponse.length; j++) {
+    var workType = {}
+    workType.workTypeId = workTypeResponse[j].workTypeId
+    workType.workTypeName = workTypeResponse[j].workTypeName
+    subCompanyPullDown.push(workType)
+  }
+  return subCompanyPullDown
+}
 </script>
 
 <style scoped>

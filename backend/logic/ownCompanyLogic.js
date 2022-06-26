@@ -27,7 +27,7 @@ class OwnCompanyLogic {
       //基本情報の入力チェックを行います。
       if (param.pageContents == 1) {
         //会社名チェック
-        checkCompanyName(errorMessageList, param.contactCompanyName);
+        checkContractorName(errorMessageList, param.contractorName);
         //設立チェック
         checkFoundation(errorMessageList, param.foundation);
         //代表者名チェック
@@ -45,7 +45,7 @@ class OwnCompanyLogic {
         //電話番号3チェック
         checkTelNumber3(errorMessageList, param.telNumber3);
         //工種チェック
-        checkSelectWorkTypeList(errorMessageList, param.selectWorkTypeList);
+        checkWorkTypeIdList(errorMessageList, param.workTypeIdList);
         //勤怠情報の入力チェックを行います。
       } else {
         //通常業務時間(開始)チェック
@@ -93,7 +93,7 @@ class OwnCompanyLogic {
      * @param {object} errorMessageList エラーメッセージリストです。
      * @param {string} value 入力内容です。
      */
-    function checkCompanyName(errorMessageList, value) {
+    function checkContractorName(errorMessageList, value) {
       //未入力チェックです。
       var errorMessage1 = commonLogic.checkEmpty(
         value,
@@ -478,7 +478,7 @@ class OwnCompanyLogic {
      * @param {object} errorMessageList エラーメッセージリストです。
      * @param {string} value 入力内容です。
      */
-    function checkSelectWorkTypeList(errorMessageList, value) {
+    function checkWorkTypeIdList(errorMessageList, value) {
       //未入力チェックです。
       var errorMessage1 = commonLogic.checkEmpty(value, colum.WORK_TYPE, true);
       if (!util.isEmpty(errorMessage1)) {
@@ -1032,6 +1032,61 @@ class OwnCompanyLogic {
     //     return;
     //   }
     // }
+  }
+  /**
+   * 自社設定の入力値の存在チェックします。
+   *
+   * @param {string} param 画面パラメータです。
+   * @param {string} workTypeResponse 工種情報です。
+   *
+   * @returns
+   */
+  checkExistsData(param, workTypeResponse) {
+    return new Promise(function (resolve, reject) {
+      var errorMessageList = [];
+      console.log(param);
+      //基本情報の入力値の存在チェックを行います。
+      if (param.pageContents == 1) {
+        //工種チェック
+        checkWorkTypeIdList(
+          errorMessageList,
+          param.workTypeIdList,
+          workTypeResponse
+        );
+      }
+      var data = {};
+      //エラーがある場合
+      if (errorMessageList.length !== 0) {
+        data = {
+          checkResult: false,
+          messageList: errorMessageList,
+        };
+        reject(data);
+      }
+      resolve();
+    });
+
+    /**
+     * 工種をチェックします。
+     *
+     * @param {object} errorMessageList エラーメッセージリストです。
+     * @param {string} value 入力内容です。
+     * @param {string} workTypeResponse 工種情報です。
+     */
+    function checkWorkTypeIdList(errorMessageList, value, workTypeResponse) {
+      for (var i = 0; i < value.length; i++) {
+        var errorMessage1 = commonLogic.checkExists(
+          value[i],
+          workTypeResponse,
+          colum.WORK_TYPE_ID
+        );
+        if (!util.isEmpty(errorMessage1)) {
+          errorMessageList.push(errorMessage1);
+          return;
+        }
+      }
+      return errorMessageList;
+    }
   }
 
   /**
