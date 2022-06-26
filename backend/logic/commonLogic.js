@@ -6,6 +6,7 @@ const constractor = require("../public/const");
 var format = constractor.Format;
 var type = constractor.Type;
 var errorMessage = constractor.ErrorMessage;
+var column = constractor.Colum;
 
 /**
  * Logicクラスの共通パーツです。
@@ -132,6 +133,24 @@ class CommonLogic {
         colum,
         minLength + "～" + maxLength
       );
+    }
+    return "";
+  }
+  /**
+   * 存在をチェックします。
+   *
+   * @param {string} value 入力内容です。
+   * @param {string} response DBの情報です。
+   * @param {string} colum カラム名です。
+   */
+  checkExists(value, response, colum) {
+    var check = true;
+    //工種IDのチェックです。
+    if (column.WORK_TYPE_ID == colum) {
+      check = response.find((res) => res.workTypeId == value);
+    }
+    if (!check) {
+      return util.stringFormat(errorMessage.IS_NOT_EXISTS, colum);
     }
     return "";
   }

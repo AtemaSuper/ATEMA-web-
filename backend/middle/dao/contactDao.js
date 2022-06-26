@@ -1,9 +1,12 @@
-"use strict"
+"use strict";
 
-var NCMB = require('ncmb');
-let NCMB_KEY = require('../../ncmb-key')
-var ncmb = new NCMB(NCMB_KEY.application_key, NCMB_KEY.client_key);
-
+const admin = require("firebase-admin");
+if (admin.apps.length === 0) {
+  const serviceAccount = require("../../atema-develop-firebase-adminsdk.json");
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
 
 /**
  * 契約テーブルのDaoクラスです。
@@ -11,84 +14,96 @@ var ncmb = new NCMB(NCMB_KEY.application_key, NCMB_KEY.client_key);
 class ContactDao {
   /**
    * 契約IDをもとに自社情報を取得します。
-   * 
-   * @param {string} contactId 契約IDです。 
-   * 
+   *
+   * @param {string} contractorId 契約IDです。
+   *
    * @returns
    */
-  async selectContactBycontactId(contactId) {
-    var Item = ncmb.DataStore('contactTable');
-    const responce = await Item.fetchById(contactId)
+  async selectContactAll(contractorId) {
+    const db = admin.firestore();
+    const contractorRef = db.collection("contractor").doc(contractorId);
+    // .where("deleteFlg", "==", false);
+
+    const responce = await contractorRef
+      .get()
       .then(function (items) {
-        return items
+        return items.data();
       })
       .catch(function (err) {
-        res.status(500)
-          .json(err);
+        return err;
       });
     return responce;
   }
 
   /**
    * 入力情報をもとに自社情報を保存します。
-   * 
-   * @param {object} param 
-   * @returns 
+   *
+   * @param {object} param
+   * @returns
    */
   async updateContact(param) {
+    const db = admin.firestore();
+    const contractorRef = db.collection("contractor").doc(param.contractorId);
+    // .where("deleteFlg", "==", false);
+
+    //日付を取得します。
+    var date = new Date();
+    var updateDate =
+      date.getFullYear() +
+      "-" +
+      (Number(date.getMonth()) + 1) +
+      "-" +
+      date.getDate();
+
     //基本情報で入力した内容を保存します。
     if (param.pageContents == 1) {
-      var Item = ncmb.DataStore('contactTable');
-      const responce = await Item.equalTo("objectId", param.objectId)
-        .fetch()
-        .then(function (results) {
-          results.set("ownCompanyName", param.ownCompanyName)
-            .set("foundationYear", param.foundationYear)
-            .set("foundationMonth", param.foundationMonth)
-            .set("foundationDay", param.foundationDay)
-            .set("leaderName", param.leaderName)
-            .set("postNumber1", param.postNumber1)
-            .set("postNumber2", param.postNumber2)
-            .set("address", param.address)
-            .set("telNumber1", param.telNumber1)
-            .set("telNumber2", param.telNumber2)
-            .set("telNumber3", param.telNumber3)
-            .set("selectWorkTypeList", param.selectWorkTypeList)
-          return results.update()
+      const responce = await contractorRef
+        .update({
+          contractorName: param.contractorName,
+          foundation: param.foundation,
+          leaderName: param.leaderName,
+          postNumber1: param.postNumber1,
+          postNumber2: param.postNumber2,
+          address: param.address,
+          telNumber1: param.telNumber1,
+          telNumber2: param.telNumber2,
+          telNumber3: param.telNumber3,
+          workTypeIdList: param.workTypeIdList,
+          updateDate: updateDate,
+          updateUserId: param.userId,
         })
         .then(function () {
           var data = {
             checkResult: true,
-            messageList: ['自社設定(基本情報)を保存しました。']
+            messageList: ["自社設定(基本情報)を保存しました。"],
           };
-          return data
+          return data;
         })
         .catch(function (err) {
           res.status(500).json(err);
         });
       return responce;
-    //勤怠情報で入力した内容を保存します。
+      //勤怠情報で入力した内容を保存します。
     } else {
-      var Item = ncmb.DataStore('contactTable');
-      const responce = await Item.equalTo("objectId", param.objectId)
-        .fetch()
-        .then(function (results) {
-          results.set("normalWorkStartTime", param.normalWorkStartTime)
-            .set("normalWorkFinishTime", param.normalWorkFinishTime)
-            .set("exceptionWorkStartTime", param.exceptionWorkStartTime)
-            .set("exceptionWorkFinishTime", param.exceptionWorkFinishTime)
-            .set("tardyTime", param.tardyTime)
-            .set("roundingTime", param.roundingTime)
-            .set("selectRoundingTime", param.selectRoundingTime)
-            .set("updownSelect", param.updownSelect)
-          return results.update()
+      const responce = await contractorRef
+        .update({
+          normalWorkStartTime: param.normalWorkStartTime,
+          normalWorkFinishTime: param.normalWorkFinishTime,
+          exceptionWorkStartTime: param.exceptionWorkStartTime,
+          exceptionWorkFinishTime: param.exceptionWorkFinishTime,
+          tardyTime: param.tardyTime,
+          roundingTime: param.roundingTime,
+          selectRoundingTime: param.selectRoundingTime,
+          updownSelect: param.updownSelect,
+          updateDate: updateDate,
+          updateUserId: param.userId,
         })
         .then(function () {
           var data = {
             checkResult: true,
-            messageList: ['自社設定(勤怠情報)を保存しました。']
+            messageList: ["自社設定(勤怠情報)を保存しました。"],
           };
-          return data
+          return data;
         })
         .catch(function (err) {
           res.status(500).json(err);
@@ -96,6 +111,6 @@ class ContactDao {
       return responce;
     }
   }
-};
+}
 
 module.exports = ContactDao;

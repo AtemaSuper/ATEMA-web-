@@ -81,8 +81,8 @@ export default {
   */
 
   // 初期表示処理
-  getOwnComapanyInfo(contactId) {
-    const item = { contactId: contactId };
+  getOwnComapanyInfo(contractorId) {
+    const item = { contractorId: contractorId };
     return Api().post("/ownCompany", item);
   },
   // 入力内容保存処理
