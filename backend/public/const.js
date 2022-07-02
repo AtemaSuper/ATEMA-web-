@@ -171,7 +171,7 @@ Colum.CLIENT_FIELD_NAME = "客先名";
 /** 客先ID */
 Colum.CLIENT_FIELD_ID = "客先ID";
 /** 工事名 */
-Colum.WORK_FIELD_NAME = "工事名";
+Colum.WORK_FIELD_NAME = "現場名";
 /** 現場ID */
 Colum.WORK_FIELD_ID = "現場ID";
 /** 工種名 */

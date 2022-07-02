@@ -113,7 +113,7 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-select  v-model="editItem.selectWork" label="(例)現場名A" :items="workFieldList" item-text="workName"
+                <v-select  v-model="editItem.selectWorkField" label="(例)現場名A" :items="workFieldList" item-text="workFieldName"
             item-value="value" return-object outlined required></v-select>
               </v-col>
             </v-row>
@@ -126,7 +126,7 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-text-field v-model="editItem.workFieldName" :rules="constructionRules" label="(例)工事件名１－ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                <v-text-field v-model="editItem.workFieldDetailName" :rules="constructionRules" label="(例)工事件名１－ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -185,6 +185,12 @@ export default {
   components: {
   },
   data: () => ({
+    // TODO ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
+    userId: '6tQPHzHQwlGErXeLSzt1',
+    // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
+    // ※複数社契約になった場合、セッションで契約IDを保持して、
+    // ※そのIDをもとに検索するように修正
+    contractorId: '00000001',
     workFieldDetailList: [],
     clientFieldList: [],
     workFieldList: [],
@@ -226,13 +232,13 @@ export default {
         },
         {
           text: '現場名',
-          value: 'workFieldName',
+          value: 'selectWorkField.workFieldName',
           align: 'center',
           width: '18%'
         },
         {
           text: '工事件名',
-          value: 'selectWork.workName',
+          value: 'workFieldDetailName',
           align: 'center',
           width: '18%'
         },
@@ -254,7 +260,7 @@ export default {
   methods: {
     // 初期表示処理です。
     async getWorkFieldInfo () {
-      let response = await Methods.getWorkFieldInfo()
+      let response = await Methods.getWorkFieldInfo(this.contractorId)
       // レスポンスから画面情報をセットする
       this.workFieldDetailList = createWorkFieldDetailList(response)
       this.clientFieldList = createClientFieldList(response)
@@ -277,7 +283,6 @@ export default {
       }else{
         // 入力項目に初期値を設定
         this.editItem = {
-          workFieldId: '',
           status: '0',
           contractStatus: '0'
         }
@@ -292,40 +297,66 @@ export default {
     },
     // 現場編集 保存処理
     async saveWorkFieldInfo () {
+      // 客先IDだけ渡します。
+      var clientFieldId = "";
+      if(this.editItem.selectClientField != null){
+        let selectClientField = JSON.parse(JSON.stringify(this.editItem.selectClientField))
+        clientFieldId = selectClientField.clientFieldId;
+      }
+      // 現場IDだけ渡します。
+      var workFieldId = "";
+      if(this.editItem.selectWorkField != null){
+        let selectWorkField = JSON.parse(JSON.stringify(this.editItem.selectWorkField))
+        workFieldId = selectWorkField.workFieldId;
+      }
       const param = {
-        workFieldId: this.editItem.workFieldId,
-        workFieldName: this.editItem.workFieldName,
+        contractorId: this.contractorId,
+        userId: this.userId,
+        workFieldDetailId: this.editItem.workFieldDetailId,
+        workFieldDetailName: this.editItem.workFieldDetailName,
         jobNo: this.editItem.jobNo,
-        clientFieldId: this.editItem.selectClientField.clientFieldId,
-        workId: this.editItem.selectWork.workId,
-        status: Number(this.editItem.status),
-        contractStatus: Number(this.editItem.contractStatus),
-        createUserId: '', // TODO ログインユーザのユーザIDをセットする(新規の時だけ)
-        updateUserId: '' // TODO ログインユーザのユーザIDをセットする
+        clientFieldId: clientFieldId,
+        workFieldId: workFieldId,
+        status: this.editItem.status,
+        contractStatus: this.editItem.contractStatus,
       }
       // 保存処理
-      let response = await Methods.saveWorkFieldInfo(param)
-      // レスポンスから画面情報をセットする
-      this.workFieldDetailList = createWorkFieldDetailList(response)
-      this.clientFieldList = createClientFieldList(response)
-      this.workFieldList = createWorkFieldList(response)
-      this.workFieldDialog = false
-      // 保存完了メッセージ表示
-      this.$emit('alertMethod', response);
+      try {
+        let response = await Methods.saveWorkFieldInfo(param)
+        // レスポンスから画面情報をセットする
+        this.workFieldDetailList = createWorkFieldDetailList(response)
+        this.clientFieldList = createClientFieldList(response)
+        this.workFieldList = createWorkFieldList(response)
+        this.workFieldDialog = false
+        // 保存完了メッセージ表示
+        this.$emit('alertMethod', response);
+      }catch (err){
+        let response = err.response;
+        // エラーメッセージ表示
+        this.$emit('alertMethod', response)
+      }
     },
     // 削除ボタン押下処理
     async onClickDelete (item) {
       const param = {
-        workFieldId: item.workFieldId
+        contractorId: this.contractorId,
+        userId: this.userId,
+        workFieldDetailId: item.workFieldDetailId
       }
       // 削除処理
-      let response = await Methods.deleteWorkFieldInfo(param)
-      // レスポンスから画面情報をセットする
-      this.workFieldDetailList = createWorkFieldDetailList(response)
-      this.clientFieldList = createClientFieldList(response)
-      this.workFieldList = createWorkFieldList(response)
-      // 削除完了メッセージ表示
-      this.$emit('alertMethod', response);
+      try {
+        let response = await Methods.deleteWorkFieldInfo(param)
+        // レスポンスから画面情報をセットする
+        this.workFieldDetailList = createWorkFieldDetailList(response)
+        this.clientFieldList = createClientFieldList(response)
+        this.workFieldList = createWorkFieldList(response)
+        // 削除完了メッセージ表示
+        this.$emit('alertMethod', response);
+      }catch (err){
+        let response = err.response;
+        // 削除完了メッセージ表示
+        this.$emit('alertMethod', response);
+      }
     }
   }
 }
@@ -342,20 +373,20 @@ export default {
  */
 function createWorkFieldDetailList (response) {
   var workFieldDetailResponse = response.data.workFieldDetailResponse
-  var clientFieldResponse = response.data.clientFieldResponse
   var workFieldResponse = response.data.workFieldResponse
+  var clientFieldResponse = response.data.clientFieldResponse
   // 工事一覧表示用に変換します。
   var workFieldDetailList = []
   for (var i = 0; i < workFieldDetailResponse.length; i++) {
     var workFieldDetail = {}
-    workFieldDetail.workFieldId = workFieldDetailResponse[i].objectId
-    workFieldDetail.workFieldName = workFieldDetailResponse[i].workFieldName
+    workFieldDetail.workFieldDetailId = workFieldDetailResponse[i].workFieldDetailId
+    workFieldDetail.workFieldDetailName = workFieldDetailResponse[i].workFieldDetailName
     workFieldDetail.jobNo = workFieldDetailResponse[i].jobNo
     // 選択中の工事件名を設定
-    workFieldDetail.selectWork = {
-      workId: workFieldDetailResponse[i].workId,
-      workName: getWorkName(
-        workFieldDetailResponse[i].workId,
+    workFieldDetail.selectWorkField = {
+      workFieldId: workFieldDetailResponse[i].workFieldId,
+      workFieldName: getworkFieldName(
+        workFieldDetailResponse[i].workFieldId,
         workFieldResponse
       )
     }
@@ -372,8 +403,6 @@ function createWorkFieldDetailList (response) {
       workFieldDetailResponse[i].status
     )
     workFieldDetail.contractStatus = String(workFieldDetailResponse[i].contractStatus)
-    workFieldDetail.createUserId = workFieldDetailResponse[i].createUserId
-    workFieldDetail.updateUserId = workFieldDetailResponse[i].updateUserId
     workFieldDetailList.push(workFieldDetail)
   }
 
@@ -392,7 +421,7 @@ function createClientFieldList (response) {
   var clientFieldList = []
   for (var j = 0; j < clientFieldResponse.length; j++) {
     var clientField = {}
-    clientField.clientFieldId = clientFieldResponse[j].objectId
+    clientField.clientFieldId = clientFieldResponse[j].clientFieldId
     clientField.clientFieldName = clientFieldResponse[j].clientFieldName
     clientFieldList.push(clientField)
   }
@@ -411,8 +440,8 @@ function createWorkFieldList (response) {
   var workFieldList = []
   for (var k = 0; k < workFieldResponse.length; k++) {
     var workField = {}
-    workField.workId = workFieldResponse[k].objectId
-    workField.workName = workFieldResponse[k].workName
+    workField.workFieldId = workFieldResponse[k].workFieldId
+    workField.workFieldName = workFieldResponse[k].workFieldName
     workFieldList.push(workField)
   }
   return workFieldList
@@ -429,29 +458,29 @@ function createWorkFieldList (response) {
 function getClientFieldName (clientFieldId, clientFieldResponse) {
   var clientFieldName = ''
   for (var i = 0; i < clientFieldResponse.length; i++) {
-    if (clientFieldId === clientFieldResponse[i].objectId) {
+    if (clientFieldId === clientFieldResponse[i].clientFieldId) {
       clientFieldName = clientFieldResponse[i].clientFieldName
     }
   }
   return clientFieldName
 }
 /**
- * 工事IDをもとに工事件名を取得します。
+ * 現場IDをもとに現場名を取得します。
  *
- * @param {string} workId 工種IDです。
- * @param {object} workFieldResponse 工種のレスポンスデータです。
+ * @param {string} workFieldId 現場IDです。
+ * @param {object} workFieldResponse 現場のレスポンスデータです。
  *
  * @private
  * @returns
  */
-function getWorkName (workId, workFieldResponse) {
-  var workName = ''
+function getworkFieldName (workFieldId, workFieldResponse) {
+  var workFieldName = ''
   for (var i = 0; i < workFieldResponse.length; i++) {
-    if (workId === workFieldResponse[i].objectId) {
-      workName = workFieldResponse[i].workName
+    if (workFieldId === workFieldResponse[i].workFieldId) {
+      workFieldName = workFieldResponse[i].workFieldName
     }
   }
-  return workName
+  return workFieldName
 }
 /**
  * ステータスをもとにステータス名を取得します。

@@ -94,8 +94,9 @@ export default {
     工事編集画面
   */
   // 初期表示処理
-  getWorkFieldInfo() {
-    return Api().post("/workField");
+  getWorkFieldInfo(contractorId) {
+    const item = { contractorId: contractorId };
+    return Api().post("/workField", item);
   },
   // 入力内容保存処理
   saveWorkFieldInfo(param) {
