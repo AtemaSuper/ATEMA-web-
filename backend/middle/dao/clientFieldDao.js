@@ -1,8 +1,12 @@
 "use strict";
 
-var NCMB = require("ncmb");
-let NCMB_KEY = require("../../ncmb-key");
-var ncmb = new NCMB(NCMB_KEY.application_key, NCMB_KEY.client_key);
+const admin = require("firebase-admin");
+if (admin.apps.length === 0) {
+  const serviceAccount = require("../../atema-develop-firebase-adminsdk.json");
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
 
 /**
  * 客先テーブルのDaoクラスです。
@@ -11,18 +15,29 @@ class ClientFieldDao {
   /**
    * 客先情報一覧を取得します。
    *
+   * @param {string} contractorId 契約IDです。
    *
    * @returns
    */
-  async selectClientFieldAll() {
-    var Item = ncmb.DataStore("clientFieldTable");
-    const responce = await Item.equalTo("deleteFlg", false)
-      .fetchAll()
+  async selectClientFieldAll(contractorId) {
+    const db = admin.firestore();
+    const clientFieldRef = db
+      .collection("clientField")
+      .doc(contractorId)
+      .collection("data")
+      .where("deleteFlg", "==", false);
+
+    const responce = await clientFieldRef
+      .get()
       .then(function (items) {
-        return items;
+        return items.docs.map((doc) => {
+          var data = doc.data();
+          data.clientFieldId = doc.id;
+          return data;
+        });
       })
       .catch(function (err) {
-        res.status(500).json(err);
+        return err;
       });
     return responce;
   }
@@ -33,20 +48,57 @@ class ClientFieldDao {
    * @returns
    */
   async saveClientField(param) {
-    var Item = ncmb.DataStore("clientFieldTable");
-    //clientFieldIdがある場合、更新します。
-    if (param.clientFieldId != "") {
-      const responce = await Item.equalTo("objectId", param.clientFieldId)
-        .equalTo("deleteFlg", false)
-        .fetch()
-        .then(function (results) {
-          results
-            .set("clientFieldName", param.clientFieldName)
-            .set("status", param.status)
-            .set("deleteFlg", false)
-            .set("createUserId", param.createUserId)
-            .set("updateUserId", param.updateUserId);
-          return results.update();
+    const db = admin.firestore();
+
+    //日付を取得します。
+    var date = new Date();
+    var updateDate =
+      date.getFullYear() +
+      "-" +
+      (Number(date.getMonth()) + 1) +
+      "-" +
+      date.getDate();
+
+    //新規の場合
+    if (param.clientFieldId == null) {
+      const clientFieldRef = db
+        .collection("clientField")
+        .doc(param.contractorId)
+        .collection("data");
+      const responce = await clientFieldRef
+        .add({
+          clientFieldName: param.clientFieldName,
+          status: param.status,
+          createDate: updateDate,
+          createUserId: param.userId,
+          updateDate: updateDate,
+          updateUserId: param.userId,
+          deleteFlg: false,
+        })
+        .then(function () {
+          var data = {
+            checkResult: true,
+            messageList: ["客先情報を保存しました。"],
+          };
+          return data;
+        })
+        .catch(function (err) {
+          return err;
+        });
+      return responce;
+      //更新の場合
+    } else {
+      const clientFieldRef = db
+        .collection("clientField")
+        .doc(param.contractorId)
+        .collection("data")
+        .doc(param.clientFieldId);
+      const responce = await clientFieldRef
+        .update({
+          clientFieldName: param.clientFieldName,
+          status: param.status,
+          updateDate: updateDate,
+          updateUserId: param.userId,
         })
         .then(function () {
           var data = {
@@ -59,28 +111,9 @@ class ClientFieldDao {
           res.status(500).json(err);
         });
       return responce;
-      //clientFieldIdがない場合、新規で保存します。
-    } else {
-      var item = new Item();
-      return await item
-        .set("clientFieldName", param.clientFieldName)
-        .set("status", param.status)
-        .set("deleteFlg", false)
-        .set("createUserId", param.createUserId)
-        .set("updateUserId", param.updateUserId)
-        .save()
-        .then(function (item) {
-          var data = {
-            checkResult: true,
-            messageList: ["客先情報を保存しました。"],
-          };
-          return data;
-        })
-        .catch(function (err) {
-          res.status(500).json(err);
-        });
     }
   }
+
   /**
    * 客先情報を削除します。
    * @param {object} param 削除情報です。
@@ -88,12 +121,27 @@ class ClientFieldDao {
    * @returns
    */
   async deleteClientField(param) {
-    var Item = ncmb.DataStore("clientFieldTable");
-    const responce = await Item.equalTo("objectId", param.clientFieldId)
-      .fetch()
-      .then(function (results) {
-        results.set("deleteFlg", true);
-        return results.update();
+    const db = admin.firestore();
+    const clientFieldRef = db
+      .collection("clientField")
+      .doc(param.contractorId)
+      .collection("data")
+      .doc(param.clientFieldId);
+
+    //日付を取得します。
+    var date = new Date();
+    var updateDate =
+      date.getFullYear() +
+      "-" +
+      (Number(date.getMonth()) + 1) +
+      "-" +
+      date.getDate();
+
+    const responce = await clientFieldRef
+      .update({
+        updateDate: updateDate,
+        updateUserId: param.userId,
+        deleteFlg: true,
       })
       .then(function () {
         var data = {

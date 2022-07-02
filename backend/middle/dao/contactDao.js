@@ -22,7 +22,6 @@ class ContactDao {
   async selectContactAll(contractorId) {
     const db = admin.firestore();
     const contractorRef = db.collection("contractor").doc(contractorId);
-    // .where("deleteFlg", "==", false);
 
     const responce = await contractorRef
       .get()
@@ -44,7 +43,6 @@ class ContactDao {
   async updateContact(param) {
     const db = admin.firestore();
     const contractorRef = db.collection("contractor").doc(param.contractorId);
-    // .where("deleteFlg", "==", false);
 
     //日付を取得します。
     var date = new Date();
@@ -80,7 +78,7 @@ class ContactDao {
           return data;
         })
         .catch(function (err) {
-          res.status(500).json(err);
+          return err;
         });
       return responce;
       //勤怠情報で入力した内容を保存します。
@@ -106,7 +104,7 @@ class ContactDao {
           return data;
         })
         .catch(function (err) {
-          res.status(500).json(err);
+          return err;
         });
       return responce;
     }

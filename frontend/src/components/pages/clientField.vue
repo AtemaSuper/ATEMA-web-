@@ -221,7 +221,7 @@
                       <v-chip color="red" dark>必須</v-chip></div>
                   </v-col>
                   <v-col>
-                    <v-text-field v-model="workFieldEditItem.workName" :rules="workFieldRules"  label="(例)現場名ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                    <v-text-field v-model="workFieldEditItem.workFieldName" :rules="workFieldRules"  label="(例)現場名ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -269,6 +269,12 @@ export default {
   components: {
   },
   data: () => ({
+    // TODO ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
+      userId: '6tQPHzHQwlGErXeLSzt1',
+    // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
+    // ※複数社契約になった場合、セッションで契約IDを保持して、
+    // ※そのIDをもとに検索するように修正
+    contractorId: '00000001',
     clientFieldList: [],
     workFieldList: [],
     selectClientFieldList: [],
@@ -283,7 +289,7 @@ export default {
     clientFieldDialogName: '客先編集',
     workFieldDialog: false,
     workFieldDialogName: '現場編集',
-    workName: '',
+    workFieldName: '',
     workFieldRules: [
       v => !!v || '客先名が未入力です',
       v => (!!v && v.length <= 100) || `文字数は100文字以内です`
@@ -334,7 +340,7 @@ export default {
         },
         {
           text: '現場名',
-          value: 'workName',
+          value: 'workFieldName',
           align: 'center',
           width: '50%'
         },
@@ -358,7 +364,7 @@ export default {
 
     // 初期表示処理です。
     async getClientFieldInfo () {
-      let response = await Methods.getClientFieldInfo()
+      let response = await Methods.getClientFieldInfo(this.contractorId)
       // レスポンスから画面情報をセットする
       this.clientFieldList = createClientFieldList(response)
       this.workFieldList = createWorkFieldList(response)
@@ -398,21 +404,49 @@ export default {
     // 客先編集 保存処理
     async saveClientField () {
       const param = {
+        contractorId: this.contractorId,
+        userId: this.userId,
         clientFieldId: this.clientFieldEditItem.clientFieldId,
         clientFieldName: this.clientFieldEditItem.clientFieldName,
-        status: Number(this.clientFieldEditItem.status),
-        createUserId: '', // TODO ログインユーザのユーザIDをセットする(新規の時だけ)
-          updateUserId: '' // TODO ログインユーザのユーザIDをセットする
+        status: this.clientFieldEditItem.status,
       }
-      // 保存処理
-      let response = await Methods.saveClientField(param)
-      // レスポンスから画面情報をセットする
-      this.clientFieldList = createClientFieldList(response)
-      this.workFieldList = createWorkFieldList(response)
-      this.selectClientFieldList = createSelectClientFieldList(response)
-      this.clientFieldDialog = false
-      // 保存完了メッセージ表示
+      try {
+        let response = await Methods.saveClientField(param)
+        // レスポンスから画面情報をセットする
+        this.clientFieldList = createClientFieldList(response)
+        this.workFieldList = createWorkFieldList(response)
+        this.selectClientFieldList = createSelectClientFieldList(response)
+        this.clientFieldDialog = false
+        // 保存完了メッセージ表示
+        this.$emit('alertMethod', response);
+      }catch (err){
+        let response = err.response;
+        // エラーメッセージ表示
+        this.$emit('alertMethod', response)
+      }
+    },
+    // 削除ボタン押下処理
+    async onClickDeleteClientField (item) {
+      const param = {
+        contractorId: this.contractorId,
+        userId: this.userId,
+        clientFieldId: item.clientFieldId
+      }
+      // 削除処理
+      try {
+        let response = await Methods.deleteClientField(param)
+        // レスポンスから画面情報をセットする
+        this.clientFieldList = createClientFieldList(response)
+        this.workFieldList = createWorkFieldList(response)
+        this.selectClientFieldList = createSelectClientFieldList(response)
+        this.clientFieldDialog = false
+        // 削除完了メッセージ表示
+        this.$emit('alertMethod', response);
+      }catch (err){
+        let response = err.response;
+        // 削除完了メッセージ表示
       this.$emit('alertMethod', response);
+      }
     },
         
     //* * 現場一覧 */ 
@@ -440,53 +474,60 @@ export default {
     },
     // 現場編集 保存処理
     async saveWorkField () {
+      var clientFieldId = "";
+      // 工種は工種IDだけ渡します。
+      if(this.workFieldEditItem.selectClientField != null){
+        let selectClientField = JSON.parse(JSON.stringify(this.workFieldEditItem.selectClientField))
+        clientFieldId = selectClientField.clientFieldId;
+      }
       const param = {
-        workId: this.workFieldEditItem.workId,
-        workName: this.workFieldEditItem.workName,
-        clientFieldId: this.workFieldEditItem.selectClientField.clientFieldId,
-        status: Number(this.workFieldEditItem.status),
-        createUserId: '', // TODO ログインユーザのユーザIDをセットする(新規の時だけ)
-          updateUserId: '' // TODO ログインユーザのユーザIDをセットする
+        contractorId: this.contractorId,
+        userId: this.userId,
+        workFieldId: this.workFieldEditItem.workFieldId,
+        workFieldName: this.workFieldEditItem.workFieldName,
+        clientFieldId:clientFieldId,
+        status: this.workFieldEditItem.status,
       }
       // 保存処理
-      let response = await Methods.saveWorkField(param)
-      // レスポンスから画面情報をセットする
-      this.clientFieldList = createClientFieldList(response)
-      this.workFieldList = createWorkFieldList(response)
-      this.selectClientFieldList = createSelectClientFieldList(response)
-      this.workFieldDialog = false
-      // 保存完了メッセージ表示
-      this.$emit('alertMethod', response);
-    },
-    // 削除ボタン押下処理
-    async onClickDeleteClientField (item) {
-      const param = {
-        clientFieldId: item.clientFieldId
+      try {
+        let response = await Methods.saveWorkField(param)
+        // レスポンスから画面情報をセットする
+        this.clientFieldList = createClientFieldList(response)
+        this.workFieldList = createWorkFieldList(response)
+        this.selectClientFieldList = createSelectClientFieldList(response)
+        this.workFieldDialog = false
+        // 保存完了メッセージ表示
+        this.$emit('alertMethod', response);
+      }catch (err){
+        let response = err.response;
+        // 削除完了メッセージ表示
+        this.$emit('alertMethod', response);
       }
-      // 削除処理
-      let response = await Methods.deleteClientField(param)
-      // レスポンスから画面情報をセットする
-      this.clientFieldList = createClientFieldList(response)
-      this.workFieldList = createWorkFieldList(response)
-      this.selectClientFieldList = createSelectClientFieldList(response)
-      this.clientFieldDialog = false
-      // 削除完了メッセージ表示
-      this.$emit('alertMethod', response);
     },
+    
     // 削除ボタン押下処理
     async onClickDeleteWorkField (item) {
       const param = {
-        workId: item.workId
+        contractorId: this.contractorId,
+        userId: this.userId,
+        workFieldId: item.workFieldId
       }
       // 削除処理
-      let response = await Methods.deleteWorkField(param)
-      // レスポンスから画面情報をセットする
-      this.clientFieldList = createClientFieldList(response)
-      this.workFieldList = createWorkFieldList(response)
-      this.selectClientFieldList = createSelectClientFieldList(response)
-      this.workFieldDialog = false
-      // 削除完了メッセージ表示
-      this.$emit('alertMethod', response);
+      try {
+        // 削除処理
+        let response = await Methods.deleteWorkField(param)
+        // レスポンスから画面情報をセットする
+        this.clientFieldList = createClientFieldList(response)
+        this.workFieldList = createWorkFieldList(response)
+        this.selectClientFieldList = createSelectClientFieldList(response)
+        this.workFieldDialog = false
+        // 削除完了メッセージ表示
+        this.$emit('alertMethod', response);
+      }catch (err){
+        let response = err.response;
+        // 削除完了メッセージ表示
+        this.$emit('alertMethod', response);
+      }
     }
   }
 }
@@ -506,7 +547,7 @@ function createClientFieldList (response) {
   var clientFieldList = []
   for (var i = 0; i < clientFieldResponse.length; i++) {
     var clientField = {}
-    clientField.clientFieldId = clientFieldResponse[i].objectId
+    clientField.clientFieldId = clientFieldResponse[i].clientFieldId
     clientField.clientFieldName = clientFieldResponse[i].clientFieldName
     clientField.status = String(clientFieldResponse[i].status)
     clientField.statusName = getStatusName(
@@ -530,8 +571,8 @@ function createWorkFieldList (response) {
   var workFieldList = []
   for (var j = 0; j < workFieldResponse.length; j++) {
     var workField = {}
-    workField.workId = workFieldResponse[j].objectId
-    workField.workName = workFieldResponse[j].workName
+    workField.workFieldId = workFieldResponse[j].workFieldId
+    workField.workFieldName = workFieldResponse[j].workFieldName
     // 選択中の客先名を設定
     workField.selectClientField = {
       clientFieldId: workFieldResponse[j].clientFieldId,
@@ -561,7 +602,7 @@ function createSelectClientFieldList (response) {
   var clientFieldList = []
   for (var j = 0; j < clientFieldResponse.length; j++) {
     var clientField = {}
-    clientField.clientFieldId = clientFieldResponse[j].objectId
+    clientField.clientFieldId = clientFieldResponse[j].clientFieldId
     clientField.clientFieldName = clientFieldResponse[j].clientFieldName
     clientFieldList.push(clientField)
   }
@@ -579,7 +620,7 @@ function createSelectClientFieldList (response) {
 function getClientFieldName (clientFieldId, clientFieldResponse) {
   var clientFieldName = ''
   for (var i = 0; i < clientFieldResponse.length; i++) {
-    if (clientFieldId === clientFieldResponse[i].objectId) {
+    if (clientFieldId === clientFieldResponse[i].clientFieldId) {
       clientFieldName = clientFieldResponse[i].clientFieldName
     }
   }
@@ -594,7 +635,7 @@ function getClientFieldName (clientFieldId, clientFieldResponse) {
  * @returns
  */
 function getStatusName (status) {
-  if (status === 0) {
+  if (status === '0') {
     return '未進行'
   } else {
     return '進行中'

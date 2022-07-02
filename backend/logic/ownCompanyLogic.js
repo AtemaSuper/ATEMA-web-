@@ -1115,7 +1115,7 @@ class OwnCompanyLogic {
    * @returns {string} システムエラーメッセージです。
    */
   createSytemErrorMessage() {
-    return util.stringFormat(successMessage.SYSTEM_ERROR);
+    return errorMessage.SYSTEM_ERROR;
   }
 }
 

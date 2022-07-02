@@ -109,8 +109,9 @@ export default {
     客先・現場編集画面
   */
   // 初期表示処理
-  getClientFieldInfo() {
-    return Api().post("/clientField");
+  getClientFieldInfo(contractorId) {
+    const item = { contractorId: contractorId };
+    return Api().post("/clientField", item);
   },
   // 入力内容保存処理(客先)
   saveClientField(param) {
