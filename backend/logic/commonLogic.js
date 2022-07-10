@@ -157,7 +157,29 @@ class CommonLogic {
     if (column.WORK_FIELD_ID == colum) {
       check = response.find((res) => res.workFieldId == value);
     }
+    //協力会社IDのチェックです。
+    if (column.SUB_COMPANY_ID == colum) {
+      check = response.find((res) => res.subCompanyId == value);
+    }
     if (!check) {
+      return util.stringFormat(errorMessage.IS_NOT_EXISTS, colum);
+    }
+    return "";
+  }
+  /**
+   * 重複をチェックします。
+   *
+   * @param {string} value 入力内容です。
+   * @param {string} response DBの情報です。
+   * @param {string} colum カラム名です。
+   */
+  checkDuplicate(value, response, colum) {
+    var check = true;
+    //ログインIDのチェックです。
+    if (column.LOGIN_ID == colum) {
+      check = response.find((res) => res.workTypeId == value);
+    }
+    if (check) {
       return util.stringFormat(errorMessage.IS_NOT_EXISTS, colum);
     }
     return "";

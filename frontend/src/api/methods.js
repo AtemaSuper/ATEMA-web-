@@ -157,8 +157,9 @@ export default {
     協力会社管理画面
   */
   // 初期表示処理
-  getSubCompanyInfo() {
-    return Api().post("/subCompanyAll");
+  getSubCompanyInfo(contractorId) {
+    const item = { contractorId: contractorId };
+    return Api().post("/subCompanyAll", item);
   },
   // 入力内容保存処理(協力会社)
   saveSubCompany(param) {
