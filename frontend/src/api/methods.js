@@ -134,8 +134,9 @@ export default {
     自社員管理画面
   */
   // 初期表示処理
-  getEmployeeInfo() {
-    return Api().post("/ownWorkerAll");
+  getEmployeeInfo(contractorId) {
+    const item = { contractorId: contractorId };
+    return Api().post("/ownWorkerAll", item);
   },
   // 入力内容保存処理(自社員)
   saveEmployee(param) {

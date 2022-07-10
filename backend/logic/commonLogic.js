@@ -161,6 +161,10 @@ class CommonLogic {
     if (column.SUB_COMPANY_ID == colum) {
       check = response.find((res) => res.subCompanyId == value);
     }
+    //役職IDのチェックです。
+    if (column.POST_ID == colum) {
+      check = response.find((res) => res.postId == value);
+    }
     if (!check) {
       return util.stringFormat(errorMessage.IS_NOT_EXISTS, colum);
     }

@@ -6,6 +6,7 @@ const Util = require("../public/util");
 var util = new Util();
 const constractor = require("../public/const");
 var successMessage = constractor.SuccessMessage;
+var errorMessage = constractor.ErrorMessage;
 var colum = constractor.Colum;
 var type = constractor.Type;
 var format = constractor.Format;
@@ -21,28 +22,18 @@ class OwnWorkerAllLogic {
    *
    * @returns
    */
-  checkInputData(param) {
+  checkEmployeeInputData(param) {
     return new Promise(function (resolve, reject) {
       var errorMessageList = [];
       var data = {};
-      //社員IDチェック
-      checkEmployeeId(errorMessageList, param.employeeId);
-      //契約IDチェック
-      checkContractorId(errorMessageList, param.contractorId);
       //ログインIDチェック
       checkLoginId(errorMessageList, param.loginId);
       //パスワードチェック
       checkPassword(errorMessageList, param.password);
       //社員名(姓)チェック
-      checkEmployeeFirstName(errorMessageList, param.employeeFirstName);
+      checkEmployeeFirstname(errorMessageList, param.employeeFirstname);
       //社員名(名)チェック
-      checkEmployeeLastName(errorMessageList, param.employeeLastName);
-      //会社IDチェック
-      checkCompanyId(errorMessageList, param.companyId);
-      //役職IDチェック
-      checkPostId(errorMessageList, param.postId);
-      //出退勤IDチェック
-      checkAttendanceId(errorMessageList, param.attendanceId);
+      checkEmployeeLastname(errorMessageList, param.employeeLastname);
       //スタッフコードチェック
       checkStaffCode(errorMessageList, param.staffCode);
       //誕生日チェック
@@ -62,9 +53,7 @@ class OwnWorkerAllLogic {
       //雇用形態チェック
       checkEmployment(errorMessageList, param.employment);
       //取得資格チェック
-      checkLicenseName(errorMessageList, param.licenseName);
-      //資格取得日チェック
-      checkLicenseGetDate(errorMessageList, param.licenseGetDate);
+      checkLicense(errorMessageList, param.license);
       //エラーがある場合
       if (errorMessageList.length !== 0) {
         data = {
@@ -76,83 +65,83 @@ class OwnWorkerAllLogic {
       resolve();
     });
 
-    /**
-     * 社員IDをチェックします。
-     *
-     * @param {object} errorMessageList エラーメッセージリストです。
-     * @param {string} value 入力内容です。
-     */
-    function checkEmployeeId(errorMessageList, value) {
-      //未入力チェックです。
-      var errorMessage1 = commonLogic.checkEmpty(
-        value,
-        colum.EMPLOYEE_ID,
-        true
-      );
-      if (!util.isEmpty(errorMessage1)) {
-        errorMessageList.push(errorMessage1);
-        return;
-      }
-      //型チェックです。
-      var errorMessage2 = commonLogic.checkType(
-        value,
-        colum.EMPLOYEE_ID,
-        type.STRING
-      );
-      if (!util.isEmpty(errorMessage2)) {
-        errorMessageList.push(errorMessage2);
-        return;
-      }
-      //半角文字チェックです。
-      var errorMessage3 = commonLogic.chehckFormat(
-        value,
-        colum.EMPLOYEE_ID,
-        format.HALF
-      );
-      if (!util.isEmpty(errorMessage3)) {
-        errorMessageList.push(errorMessage3);
-        return;
-      }
-    }
+    // /**
+    //  * 社員IDをチェックします。
+    //  *
+    //  * @param {object} errorMessageList エラーメッセージリストです。
+    //  * @param {string} value 入力内容です。
+    //  */
+    // function checkEmployeeId(errorMessageList, value) {
+    //   //未入力チェックです。
+    //   var errorMessage1 = commonLogic.checkEmpty(
+    //     value,
+    //     colum.EMPLOYEE_ID,
+    //     true
+    //   );
+    //   if (!util.isEmpty(errorMessage1)) {
+    //     errorMessageList.push(errorMessage1);
+    //     return;
+    //   }
+    //   //型チェックです。
+    //   var errorMessage2 = commonLogic.checkType(
+    //     value,
+    //     colum.EMPLOYEE_ID,
+    //     type.STRING
+    //   );
+    //   if (!util.isEmpty(errorMessage2)) {
+    //     errorMessageList.push(errorMessage2);
+    //     return;
+    //   }
+    //   //半角文字チェックです。
+    //   var errorMessage3 = commonLogic.chehckFormat(
+    //     value,
+    //     colum.EMPLOYEE_ID,
+    //     format.HALF
+    //   );
+    //   if (!util.isEmpty(errorMessage3)) {
+    //     errorMessageList.push(errorMessage3);
+    //     return;
+    //   }
+    // }
 
-    /**
-     * 契約IDをチェックします。
-     *
-     * @param {object} errorMessageList エラーメッセージリストです。
-     * @param {string} value 入力内容です。
-     */
-    function checkContractorId(errorMessageList, value) {
-      //未入力チェックです。
-      var errorMessage1 = commonLogic.checkEmpty(
-        value,
-        colum.CONTRACTOR_ID,
-        true
-      );
-      if (!util.isEmpty(errorMessage1)) {
-        errorMessageList.push(errorMessage1);
-        return;
-      }
-      //型チェックです。
-      var errorMessage2 = commonLogic.checkType(
-        value,
-        colum.CONTRACTOR_ID,
-        type.STRING
-      );
-      if (!util.isEmpty(errorMessage2)) {
-        errorMessageList.push(errorMessage2);
-        return;
-      }
-      //半角文字チェックです。
-      var errorMessage3 = commonLogic.chehckFormat(
-        value,
-        colum.CONTRACTOR_ID,
-        format.HALF
-      );
-      if (!util.isEmpty(errorMessage3)) {
-        errorMessageList.push(errorMessage3);
-        return;
-      }
-    }
+    // /**
+    //  * 契約IDをチェックします。
+    //  *
+    //  * @param {object} errorMessageList エラーメッセージリストです。
+    //  * @param {string} value 入力内容です。
+    //  */
+    // function checkContractorId(errorMessageList, value) {
+    //   //未入力チェックです。
+    //   var errorMessage1 = commonLogic.checkEmpty(
+    //     value,
+    //     colum.CONTRACTOR_ID,
+    //     true
+    //   );
+    //   if (!util.isEmpty(errorMessage1)) {
+    //     errorMessageList.push(errorMessage1);
+    //     return;
+    //   }
+    //   //型チェックです。
+    //   var errorMessage2 = commonLogic.checkType(
+    //     value,
+    //     colum.CONTRACTOR_ID,
+    //     type.STRING
+    //   );
+    //   if (!util.isEmpty(errorMessage2)) {
+    //     errorMessageList.push(errorMessage2);
+    //     return;
+    //   }
+    //   //半角文字チェックです。
+    //   var errorMessage3 = commonLogic.chehckFormat(
+    //     value,
+    //     colum.CONTRACTOR_ID,
+    //     format.HALF
+    //   );
+    //   if (!util.isEmpty(errorMessage3)) {
+    //     errorMessageList.push(errorMessage3);
+    //     return;
+    //   }
+    // }
 
     /**
      * ログインIDをチェックします。
@@ -242,7 +231,7 @@ class OwnWorkerAllLogic {
      * @param {object} errorMessageList エラーメッセージリストです。
      * @param {string} value 入力内容です。
      */
-    function checkEmployeeFirstName(errorMessageList, value) {
+    function checkEmployeeFirstname(errorMessageList, value) {
       //未入力チェックです。
       var errorMessage1 = commonLogic.checkEmpty(
         value,
@@ -281,7 +270,7 @@ class OwnWorkerAllLogic {
      * @param {object} errorMessageList エラーメッセージリストです。
      * @param {string} value 入力内容です。
      */
-    function checkEmployeeLastName(errorMessageList, value) {
+    function checkEmployeeLastname(errorMessageList, value) {
       //未入力チェックです。
       var errorMessage1 = commonLogic.checkEmpty(
         value,
@@ -314,114 +303,114 @@ class OwnWorkerAllLogic {
       }
     }
 
-    /**
-     * 会社IDをチェックします。
-     *
-     * @param {object} errorMessageList エラーメッセージリストです。
-     * @param {string} value 入力内容です。
-     */
-    function checkCompanyId(errorMessageList, value) {
-      //未入力チェックです。
-      var errorMessage1 = commonLogic.checkEmpty(value, colum.COMPANY_ID, true);
-      if (!util.isEmpty(errorMessage1)) {
-        errorMessageList.push(errorMessage1);
-        return;
-      }
-      //型チェックです。
-      var errorMessage2 = commonLogic.checkType(
-        value,
-        colum.COMPANY_ID,
-        type.STRING
-      );
-      if (!util.isEmpty(errorMessage2)) {
-        errorMessageList.push(errorMessage2);
-        return;
-      }
-      //半角文字チェックです。
-      var errorMessage3 = commonLogic.chehckFormat(
-        value,
-        colum.COMPANY_ID,
-        format.HALF
-      );
-      if (!util.isEmpty(errorMessage3)) {
-        errorMessageList.push(errorMessage3);
-        return;
-      }
-    }
+    // /**
+    //  * 会社IDをチェックします。
+    //  *
+    //  * @param {object} errorMessageList エラーメッセージリストです。
+    //  * @param {string} value 入力内容です。
+    //  */
+    // function checkCompanyId(errorMessageList, value) {
+    //   //未入力チェックです。
+    //   var errorMessage1 = commonLogic.checkEmpty(value, colum.COMPANY_ID, true);
+    //   if (!util.isEmpty(errorMessage1)) {
+    //     errorMessageList.push(errorMessage1);
+    //     return;
+    //   }
+    //   //型チェックです。
+    //   var errorMessage2 = commonLogic.checkType(
+    //     value,
+    //     colum.COMPANY_ID,
+    //     type.STRING
+    //   );
+    //   if (!util.isEmpty(errorMessage2)) {
+    //     errorMessageList.push(errorMessage2);
+    //     return;
+    //   }
+    //   //半角文字チェックです。
+    //   var errorMessage3 = commonLogic.chehckFormat(
+    //     value,
+    //     colum.COMPANY_ID,
+    //     format.HALF
+    //   );
+    //   if (!util.isEmpty(errorMessage3)) {
+    //     errorMessageList.push(errorMessage3);
+    //     return;
+    //   }
+    // }
 
-    /**
-     * 役職IDをチェックします。
-     *
-     * @param {object} errorMessageList エラーメッセージリストです。
-     * @param {string} value 入力内容です。
-     */
-    function checkPostId(errorMessageList, value) {
-      //未入力チェックです。
-      var errorMessage1 = commonLogic.checkEmpty(value, colum.POST_ID, true);
-      if (!util.isEmpty(errorMessage1)) {
-        errorMessageList.push(errorMessage1);
-        return;
-      }
-      //型チェックです。
-      var errorMessage2 = commonLogic.checkType(
-        value,
-        colum.POST_ID,
-        type.STRING
-      );
-      if (!util.isEmpty(errorMessage2)) {
-        errorMessageList.push(errorMessage2);
-        return;
-      }
-      //半角文字チェックです。
-      var errorMessage3 = commonLogic.chehckFormat(
-        value,
-        colum.POST_ID,
-        format.HALF
-      );
-      if (!util.isEmpty(errorMessage3)) {
-        errorMessageList.push(errorMessage3);
-        return;
-      }
-    }
+    // /**
+    //  * 役職IDをチェックします。
+    //  *
+    //  * @param {object} errorMessageList エラーメッセージリストです。
+    //  * @param {string} value 入力内容です。
+    //  */
+    // function checkPostId(errorMessageList, value) {
+    //   //未入力チェックです。
+    //   var errorMessage1 = commonLogic.checkEmpty(value, colum.POST_ID, true);
+    //   if (!util.isEmpty(errorMessage1)) {
+    //     errorMessageList.push(errorMessage1);
+    //     return;
+    //   }
+    //   //型チェックです。
+    //   var errorMessage2 = commonLogic.checkType(
+    //     value,
+    //     colum.POST_ID,
+    //     type.STRING
+    //   );
+    //   if (!util.isEmpty(errorMessage2)) {
+    //     errorMessageList.push(errorMessage2);
+    //     return;
+    //   }
+    //   //半角文字チェックです。
+    //   var errorMessage3 = commonLogic.chehckFormat(
+    //     value,
+    //     colum.POST_ID,
+    //     format.HALF
+    //   );
+    //   if (!util.isEmpty(errorMessage3)) {
+    //     errorMessageList.push(errorMessage3);
+    //     return;
+    //   }
+    // }
 
-    /**
-     * 出退勤IDをチェックします。
-     *
-     * @param {object} errorMessageList エラーメッセージリストです。
-     * @param {string} value 入力内容です。
-     */
-    function checkAttendanceId(errorMessageList, value) {
-      //未入力チェックです。
-      var errorMessage1 = commonLogic.checkEmpty(
-        value,
-        colum.ATTENDANCE_ID,
-        true
-      );
-      if (!util.isEmpty(errorMessage1)) {
-        errorMessageList.push(errorMessage1);
-        return;
-      }
-      //型チェックです。
-      var errorMessage2 = commonLogic.checkType(
-        value,
-        colum.ATTENDANCE_ID,
-        type.STRING
-      );
-      if (!util.isEmpty(errorMessage2)) {
-        errorMessageList.push(errorMessage2);
-        return;
-      }
-      //半角文字チェックです。
-      var errorMessage3 = commonLogic.chehckFormat(
-        value,
-        colum.ATTENDANCE_ID,
-        format.HALF
-      );
-      if (!util.isEmpty(errorMessage3)) {
-        errorMessageList.push(errorMessage3);
-        return;
-      }
-    }
+    // /**
+    //  * 出退勤IDをチェックします。
+    //  *
+    //  * @param {object} errorMessageList エラーメッセージリストです。
+    //  * @param {string} value 入力内容です。
+    //  */
+    // function checkAttendanceId(errorMessageList, value) {
+    //   //未入力チェックです。
+    //   var errorMessage1 = commonLogic.checkEmpty(
+    //     value,
+    //     colum.ATTENDANCE_ID,
+    //     true
+    //   );
+    //   if (!util.isEmpty(errorMessage1)) {
+    //     errorMessageList.push(errorMessage1);
+    //     return;
+    //   }
+    //   //型チェックです。
+    //   var errorMessage2 = commonLogic.checkType(
+    //     value,
+    //     colum.ATTENDANCE_ID,
+    //     type.STRING
+    //   );
+    //   if (!util.isEmpty(errorMessage2)) {
+    //     errorMessageList.push(errorMessage2);
+    //     return;
+    //   }
+    //   //半角文字チェックです。
+    //   var errorMessage3 = commonLogic.chehckFormat(
+    //     value,
+    //     colum.ATTENDANCE_ID,
+    //     format.HALF
+    //   );
+    //   if (!util.isEmpty(errorMessage3)) {
+    //     errorMessageList.push(errorMessage3);
+    //     return;
+    //   }
+    // }
 
     /**
      * スタッフコードをチェックします。
@@ -722,34 +711,27 @@ class OwnWorkerAllLogic {
      * @param {string} value 入力内容です。
      */
     function checkEntryEndDate(errorMessageList, value) {
-      //未入力チェックです。
-      var errorMessage1 = commonLogic.checkEmpty(
-        value,
-        colum.ENTRY_END_DATE,
-        true
-      );
-      if (!util.isEmpty(errorMessage1)) {
-        errorMessageList.push(errorMessage1);
-        return;
-      }
-      //型チェックです。
-      var errorMessage2 = commonLogic.checkType(
-        value,
-        colum.ENTRY_END_DATE,
-        type.STRING
-      );
-      if (!util.isEmpty(errorMessage2)) {
-        errorMessageList.push(errorMessage2);
-        return;
-      }
-      //日付チェックです。
-      var errorMessage3 = commonLogic.checkDateFormat(
-        value,
-        colum.ENTRY_END_DATE
-      );
-      if (!util.isEmpty(errorMessage3)) {
-        errorMessageList.push(errorMessage3);
-        return;
+      //入力時のみチェックします。
+      if (!util.isEmpty(value)) {
+        //型チェックです。
+        var errorMessage1 = commonLogic.checkType(
+          value,
+          colum.ENTRY_END_DATE,
+          type.STRING
+        );
+        if (!util.isEmpty(errorMessage1)) {
+          errorMessageList.push(errorMessage1);
+          return;
+        }
+        //日付チェックです。
+        var errorMessage2 = commonLogic.checkDateFormat(
+          value,
+          colum.ENTRY_END_DATE
+        );
+        if (!util.isEmpty(errorMessage2)) {
+          errorMessageList.push(errorMessage2);
+          return;
+        }
       }
     }
 
@@ -805,7 +787,7 @@ class OwnWorkerAllLogic {
      * @param {object} errorMessageList エラーメッセージリストです。
      * @param {string} value 入力内容です。
      */
-    function checkLicenseName(errorMessageList, value) {
+    function checkLicense(errorMessageList, value) {
       //未入力チェックです。
       var errorMessage1 = commonLogic.checkEmpty(
         value,
@@ -837,18 +819,180 @@ class OwnWorkerAllLogic {
         return;
       }
     }
+  }
+
+  /**
+   * 自社員管理の入力値の存在チェックします。
+   *
+   * @param {string} param 画面パラメータです。
+   * @param {string} postCheckResponse 役職情報です。
+   *
+   * @returns
+   */
+  checkEmployeeExistsData(param, postCheckResponse) {
+    return new Promise(function (resolve, reject) {
+      var errorMessageList = [];
+      //役職チェック
+      checkPostIdList(errorMessageList, param.postId, postCheckResponse);
+      var data = {};
+      //エラーがある場合
+      if (errorMessageList.length !== 0) {
+        data = {
+          checkResult: false,
+          messageList: errorMessageList,
+        };
+        reject(data);
+      }
+      resolve();
+    });
 
     /**
-     * 資格取得日をチェックします。
+     * 役職をチェックします。
+     *
+     * @param {object} errorMessageList エラーメッセージリストです。
+     * @param {string} value 入力内容です。
+     * @param {string} postCheckResponse 役職情報です。
+     */
+    function checkPostIdList(errorMessageList, value, postCheckResponse) {
+      var errorMessage1 = commonLogic.checkExists(
+        value,
+        postCheckResponse,
+        colum.POST_ID
+      );
+      if (!util.isEmpty(errorMessage1)) {
+        errorMessageList.push(errorMessage1);
+        return;
+      }
+      return errorMessageList;
+    }
+  }
+
+  /**
+   * 協力会社員の入力値の存在チェックします。
+   *
+   * @param {string} param 画面パラメータです。
+   * @param {string} subEmployeeResponse 協力会社員情報です。
+   *
+   * @returns
+   */
+  checkEmployeeExistsData(param, employeeResponse) {
+    return new Promise(function (resolve, reject) {
+      var errorMessageList = [];
+      //ログインIDチェック
+      checkLoginId(errorMessageList, param.loginId, employeeResponse);
+      var data = {};
+      //エラーがある場合
+      if (errorMessageList.length !== 0) {
+        data = {
+          checkResult: false,
+          messageList: errorMessageList,
+        };
+        reject(data);
+      }
+      resolve();
+    });
+
+    /**
+     * ログインIDをチェックします。
+     *
+     * @param {object} errorMessageList エラーメッセージリストです。
+     * @param {string} value 入力内容です。
+     * @param {string} employeeResponse 協力会社員情報です。
+     */
+    function checkLoginId(errorMessageList, value, employeeResponse) {
+      var errorMessage1 = commonLogic.checkDuplicate(
+        value,
+        employeeResponse,
+        colum.LOGIN_ID
+      );
+      if (!util.isEmpty(errorMessage1)) {
+        errorMessageList.push(errorMessage1);
+        return;
+      }
+      return errorMessageList;
+    }
+  }
+
+  /**
+   * 役職編集の入力情報をチェックします。
+   *
+   * @param {string} param 画面パラメータです。
+   *
+   * @returns
+   */
+  checPostInputData(param) {
+    return new Promise(function (resolve, reject) {
+      var errorMessageList = [];
+      var data = {};
+      //役職名チェック
+      checkPostName(errorMessageList, param.postName);
+      //出退勤管理権限チェック
+      checkaAtendanceAuth(errorMessageList, param.attendanceAuth);
+      //自社員管理権限チェック
+      checkOwnWokerManageAuth(errorMessageList, param.ownWokerManageAuth);
+      //協力会社管理権限チェック
+      checkSubCompanyManageAuth(errorMessageList, param.subCompanyManageAuth);
+      //自社設定権限チェック
+      checkOwnCompanyManageAuth(errorMessageList, param.ownCompanyManageAuth);
+      //支払い設定権限チェック
+      checkPayPlanAuth(errorMessageList, param.payPlanAuth);
+      //エラーがある場合
+      if (errorMessageList.length !== 0) {
+        data = {
+          checkResult: false,
+          messageList: errorMessageList,
+        };
+        reject(data);
+      }
+      resolve();
+    });
+
+    /**
+     * 役職名をチェックします。
      *
      * @param {object} errorMessageList エラーメッセージリストです。
      * @param {string} value 入力内容です。
      */
-    function checkLicenseGetDate(errorMessageList, value) {
+    function checkPostName(errorMessageList, value) {
+      //未入力チェックです。
+      var errorMessage1 = commonLogic.checkEmpty(value, colum.POST_NAME, true);
+      if (!util.isEmpty(errorMessage1)) {
+        errorMessageList.push(errorMessage1);
+        return;
+      }
+      //型チェックです。
+      var errorMessage2 = commonLogic.checkType(
+        value,
+        colum.POST_NAME,
+        type.STRING
+      );
+      if (!util.isEmpty(errorMessage2)) {
+        errorMessageList.push(errorMessage2);
+        return;
+      }
+      //最大文字数チェックです。
+      var errorMessage3 = commonLogic.checkMaxLength(
+        value,
+        colum.POST_NAME,
+        100
+      );
+      if (!util.isEmpty(errorMessage3)) {
+        errorMessageList.push(errorMessage3);
+        return;
+      }
+    }
+
+    /**
+     * 出退勤管理権限をチェックします。
+     *
+     * @param {object} errorMessageList エラーメッセージリストです。
+     * @param {string} value 入力内容です。
+     */
+    function checkaAtendanceAuth(errorMessageList, value) {
       //未入力チェックです。
       var errorMessage1 = commonLogic.checkEmpty(
         value,
-        colum.LICENSE_GET_DATE,
+        colum.ATTENDANCE_AUTH,
         true
       );
       if (!util.isEmpty(errorMessage1)) {
@@ -858,21 +1002,232 @@ class OwnWorkerAllLogic {
       //型チェックです。
       var errorMessage2 = commonLogic.checkType(
         value,
-        colum.LICENSE_GET_DATE,
-        type.OBJECT
+        colum.ATTENDANCE_AUTH,
+        type.STRING
       );
       if (!util.isEmpty(errorMessage2)) {
         errorMessageList.push(errorMessage2);
         return;
       }
-      //最大文字数チェックです。
-      var errorMessage3 = commonLogic.checkMaxLength(
+      //半角数字チェックです。
+      var errorMessage3 = commonLogic.chehckFormat(
         value,
-        colum.LICENSE_GET_DATE,
-        5
+        colum.ATTENDANCE_AUTH,
+        format.HALF_WITH_NUMBER
       );
       if (!util.isEmpty(errorMessage3)) {
         errorMessageList.push(errorMessage3);
+        return;
+      }
+      //入力範囲チェックです。
+      var errorMessage4 = commonLogic.checkInputRange(
+        value,
+        colum.ATTENDANCE_AUTH,
+        0,
+        3
+      );
+      if (!util.isEmpty(errorMessage4)) {
+        errorMessageList.push(errorMessage4);
+        return;
+      }
+    }
+
+    /**
+     * 自社員管理権限をチェックします。
+     *
+     * @param {object} errorMessageList エラーメッセージリストです。
+     * @param {string} value 入力内容です。
+     */
+    function checkOwnWokerManageAuth(errorMessageList, value) {
+      //未入力チェックです。
+      var errorMessage1 = commonLogic.checkEmpty(
+        value,
+        colum.OWNWORKER_MANAGE_AUTH,
+        true
+      );
+      if (!util.isEmpty(errorMessage1)) {
+        errorMessageList.push(errorMessage1);
+        return;
+      }
+      //型チェックです。
+      var errorMessage2 = commonLogic.checkType(
+        value,
+        colum.OWNWORKER_MANAGE_AUTH,
+        type.STRING
+      );
+      if (!util.isEmpty(errorMessage2)) {
+        errorMessageList.push(errorMessage2);
+        return;
+      }
+      //半角数字チェックです。
+      var errorMessage3 = commonLogic.chehckFormat(
+        value,
+        colum.OWNWORKER_MANAGE_AUTH,
+        format.HALF_WITH_NUMBER
+      );
+      if (!util.isEmpty(errorMessage3)) {
+        errorMessageList.push(errorMessage3);
+        return;
+      }
+      //入力範囲チェックです。
+      var errorMessage4 = commonLogic.checkInputRange(
+        value,
+        colum.OWNWORKER_MANAGE_AUTH,
+        0,
+        3
+      );
+      if (!util.isEmpty(errorMessage4)) {
+        errorMessageList.push(errorMessage4);
+        return;
+      }
+    }
+
+    /**
+     * 協力会社管理権限をチェックします。
+     *
+     * @param {object} errorMessageList エラーメッセージリストです。
+     * @param {string} value 入力内容です。
+     */
+    function checkSubCompanyManageAuth(errorMessageList, value) {
+      //未入力チェックです。
+      var errorMessage1 = commonLogic.checkEmpty(
+        value,
+        colum.SUB_COMPANY_MANAGE_AUTH,
+        true
+      );
+      if (!util.isEmpty(errorMessage1)) {
+        errorMessageList.push(errorMessage1);
+        return;
+      }
+      //型チェックです。
+      var errorMessage2 = commonLogic.checkType(
+        value,
+        colum.SUB_COMPANY_MANAGE_AUTH,
+        type.STRING
+      );
+      if (!util.isEmpty(errorMessage2)) {
+        errorMessageList.push(errorMessage2);
+        return;
+      }
+      //半角数字チェックです。
+      var errorMessage3 = commonLogic.chehckFormat(
+        value,
+        colum.SUB_COMPANY_MANAGE_AUTH,
+        format.HALF_WITH_NUMBER
+      );
+      if (!util.isEmpty(errorMessage3)) {
+        errorMessageList.push(errorMessage3);
+        return;
+      }
+      //入力範囲チェックです。
+      var errorMessage4 = commonLogic.checkInputRange(
+        value,
+        colum.SUB_COMPANY_MANAGE_AUTH,
+        0,
+        3
+      );
+      if (!util.isEmpty(errorMessage4)) {
+        errorMessageList.push(errorMessage4);
+        return;
+      }
+    }
+
+    /**
+     * 自社設定権限をチェックします。
+     *
+     * @param {object} errorMessageList エラーメッセージリストです。
+     * @param {string} value 入力内容です。
+     */
+    function checkOwnCompanyManageAuth(errorMessageList, value) {
+      //未入力チェックです。
+      var errorMessage1 = commonLogic.checkEmpty(
+        value,
+        colum.OWN_COMPANY_MANAGE_AUTH,
+        true
+      );
+      if (!util.isEmpty(errorMessage1)) {
+        errorMessageList.push(errorMessage1);
+        return;
+      }
+      //型チェックです。
+      var errorMessage2 = commonLogic.checkType(
+        value,
+        colum.OWN_COMPANY_MANAGE_AUTH,
+        type.STRING
+      );
+      if (!util.isEmpty(errorMessage2)) {
+        errorMessageList.push(errorMessage2);
+        return;
+      }
+      //半角数字チェックです。
+      var errorMessage3 = commonLogic.chehckFormat(
+        value,
+        colum.OWN_COMPANY_MANAGE_AUTH,
+        format.HALF_WITH_NUMBER
+      );
+      if (!util.isEmpty(errorMessage3)) {
+        errorMessageList.push(errorMessage3);
+        return;
+      }
+      //入力範囲チェックです。
+      var errorMessage4 = commonLogic.checkInputRange(
+        value,
+        colum.OWN_COMPANY_MANAGE_AUTH,
+        0,
+        3
+      );
+      if (!util.isEmpty(errorMessage4)) {
+        errorMessageList.push(errorMessage4);
+        return;
+      }
+    }
+
+    /**
+     * 支払い設定権限をチェックします。
+     *
+     * @param {object} errorMessageList エラーメッセージリストです。
+     * @param {string} value 入力内容です。
+     */
+    function checkPayPlanAuth(errorMessageList, value) {
+      //未入力チェックです。
+      var errorMessage1 = commonLogic.checkEmpty(
+        value,
+        colum.PAY_PLAN_AUTH,
+        true
+      );
+      if (!util.isEmpty(errorMessage1)) {
+        errorMessageList.push(errorMessage1);
+        return;
+      }
+      //型チェックです。
+      var errorMessage2 = commonLogic.checkType(
+        value,
+        colum.PAY_PLAN_AUTH,
+        type.STRING
+      );
+      if (!util.isEmpty(errorMessage2)) {
+        errorMessageList.push(errorMessage2);
+        return;
+      }
+      //半角数字チェックです。
+      var errorMessage3 = commonLogic.chehckFormat(
+        value,
+        colum.PAY_PLAN_AUTH,
+        format.HALF_WITH_NUMBER
+      );
+      if (!util.isEmpty(errorMessage3)) {
+        errorMessageList.push(errorMessage3);
+        return;
+      }
+      //入力範囲チェックです。
+      var errorMessage4 = commonLogic.checkInputRange(
+        value,
+        colum.PAY_PLAN_AUTH,
+        0,
+        3
+      );
+      if (!util.isEmpty(errorMessage4)) {
+        errorMessageList.push(errorMessage4);
         return;
       }
     }
@@ -893,7 +1248,7 @@ class OwnWorkerAllLogic {
    * @returns {string} システムエラーメッセージです。
    */
   createSytemErrorMessage() {
-    return util.stringFormat(successMessage.SYSTEM_ERROR);
+    return errorMessage.SYSTEM_ERROR;
   }
 }
 
