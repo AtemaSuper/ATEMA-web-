@@ -4,7 +4,8 @@
       <!-- ログイン画面、パスワードリセット画面 -->
       <div
         v-if="
-          this.$route.path == '/login' || this.$route.path == '/passwordReset'
+          this.$route.path.match('/login') ||
+            this.$route.path.match('/passwordReset')
         "
       >
         <router-view />
@@ -13,14 +14,16 @@
       <div
         class="page-main"
         v-if="
-          this.$route.path != '/login' || this.$route.path != '/passwordReset'
+          !this.$route.path.match('/login') &&
+            !this.$route.path.match('/passwordReset')
         "
       >
-        <v-overlay 
-          :value="responseData.showAlert"
-          opacity="opacity"
-        >
-          <component :is="alertComponent" v-bind:responseData="responseData" class="alert-component">
+        <v-overlay :value="responseData.showAlert" opacity="opacity">
+          <component
+            :is="alertComponent"
+            v-bind:responseData="responseData"
+            class="alert-component"
+          >
           </component>
         </v-overlay>
         <component :is="headerComponent"></component>
@@ -42,7 +45,10 @@
           <v-col cols="1"> </v-col>
           <v-col>
             <v-card class="page-contents">
-              <router-view v-bind:showContents="contentsId" @alertMethod="updateResponseData" />
+              <router-view
+                v-bind:showContents="contentsId"
+                @alertMethod="updateResponseData"
+              />
             </v-card>
           </v-col>
           <v-col cols="1"></v-col>
@@ -70,9 +76,9 @@ export default {
       responseData: {
         showAlert: false,
         type: "success",
-        messageList: [],
+        messageList: []
       }
-    }
+    };
   },
   computed: {
     // ヘッダー表示切替(true 表示)
@@ -169,19 +175,19 @@ export default {
     },
     alertComponent() {
       return Alert;
-    },
+    }
   },
   methods: {
     updateContentsId(contentsId) {
       this.contentsId = contentsId;
     },
-    updateResponseData (response) {
+    updateResponseData(response) {
       this.responseData = {
         showAlert: true,
-        type: response.data.checkResult ? 'success' : 'error',
-        messageList: response.data.messageList,
+        type: response.data.checkResult ? "success" : "error",
+        messageList: response.data.messageList
         // TODO メッセージの数分メッセージを表示するように修正
-      }
+      };
     }
   }
 };
@@ -220,6 +226,6 @@ export default {
   font-weight: 700;
 }
 .alert-component {
-  z-index : 999;
+  z-index: 999;
 }
 </style>

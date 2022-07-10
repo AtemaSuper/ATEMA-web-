@@ -30,6 +30,10 @@ export default {
     return Api().put("/attendanceManage/list/update", item);
   },
 
+  auth() {
+    return Api().post("/auth");
+  },
+
   testPost() {
     const item = { text: "Success!" };
     return Api().post("/test", item);
