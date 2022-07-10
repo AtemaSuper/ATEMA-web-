@@ -110,7 +110,7 @@ app.post("/saveSubCompany", async function (req, res) {
         //サーバー側でのシステムエラーです。
       } else {
         err.checkResult = false;
-        err.messageList = subCompanyLogic.createSytemErrorMessage();
+        err.messageList.push(subCompanyLogic.createSytemErrorMessage());
         res.status(500).json(err);
       }
     });
@@ -186,7 +186,7 @@ app.post("/saveSubEmployee", async function (req, res) {
         //サーバー側でのシステムエラーです。
       } else {
         err.checkResult = false;
-        err.messageList = subCompanyLogic.createSytemErrorMessage();
+        err.messageList.push(subCompanyLogic.createSytemErrorMessage());
         res.status(500).json(err);
       }
     });
@@ -238,7 +238,7 @@ app.post("/deleteSubCompany", async function (req, res) {
         //サーバー側でのシステムエラーです。
       } else {
         err.checkResult = false;
-        err.messageList = subCompanyLogic.createSytemErrorMessage();
+        err.messageList.push(subCompanyLogic.createSytemErrorMessage());
         res.status(500).json(err);
       }
     });
@@ -290,7 +290,7 @@ app.post("/deleteSubEmployee", async function (req, res) {
         //サーバー側でのシステムエラーです。
       } else {
         err.checkResult = false;
-        err.messageList = subCompanyLogic.createSytemErrorMessage();
+        err.messageList.push(subCompanyLogic.createSytemErrorMessage());
         res.status(500).json(err);
       }
     });

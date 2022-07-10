@@ -134,7 +134,7 @@
               <v-edit-dialog
                 :return-value.sync="item.status"
                 large
-                @save="setItem(item.status)"
+                @save="changeStatus(item)"
               >
                 <v-chip :color="getColor(item.status)" label outlined>
                   <!-- statusの真偽判定-->
@@ -177,6 +177,13 @@ export default {
   components: {
   },
   data: () => ({
+    // TODO ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
+    userId: '6tQPHzHQwlGErXeLSzt1',
+    // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
+    // ※複数社契約になった場合、セッションで契約IDを保持して、
+    // ※そのIDをもとに検索するように修正
+    contractorId: '00000001',
+    //* * 自社員一覧 */ 
     alertList: [],
     //  values for our select.
     statusList: [
@@ -214,7 +221,7 @@ export default {
         },
         {
           text: 'タイトル',
-          value: 'title',
+          value: 'titleName',
           align: 'center',
           width: '10%'
         },
@@ -237,7 +244,7 @@ export default {
   methods: {
        // 初期表示処理です。
     async getEmployeeInfo () {
-      let response = await Methods.getAlertInfo()
+      let response = await Methods.getAlertInfo(this.contractorId)
       // レスポンスから画面情報をセットする
       this.alertList = createAlertList(response)
     },
@@ -281,11 +288,25 @@ export default {
       return status ? 'green' : 'red'
     },
     /** データ変更処理 */
-    setItem (item) {
-      /** ToDo vuex 必要ないかも？ */
-      /** 2-Vuex attendanceListで定義したActionメソッドをここで呼び出し 変更箇所の引数あり */
-      /** 1-NCMBのデータ更新処理呼び出し express側定義 axioメソッド */
-      console.log(item)
+    async changeStatus (item) {
+      const param = {
+        contractorId: this.contractorId,
+        userId: this.userId,
+        alertId: item.alertId,
+        status: item.status
+      }
+      try {
+          // 保存処理
+          let response = await Methods.saveStatus(param)
+          // レスポンスから画面情報をセットする
+          this.alertList = createAlertList(response)
+          // 保存完了メッセージ表示
+          this.$emit('alertMethod', response);
+        }catch (err){
+          let response = err.response;
+          // エラーメッセージ表示
+          this.$emit('alertMethod', response)
+        }
     }
   }
 }
@@ -307,8 +328,8 @@ function createAlertList (response) {
   var alertList = []
   for (var i = 0; i < alertResponse.length; i++) {
     var alert = {}
-    alert.alertId = alertResponse[i].objectId
-    alert.title = alertResponse[i].title
+    alert.alertId = alertResponse[i].alertId
+    alert.titleName = alertResponse[i].titleName
     alert.employeeId = alertResponse[i].employeeId
     alert.status = alertResponse[i].status
     alert.sendDetail = alertResponse[i].sendDetail
@@ -333,7 +354,7 @@ function createAlertList (response) {
 function getEmployeeName (senderId, employeeResponse) {
   var employeeName = ''
   for (var j = 0; j < employeeResponse.length; j++) {
-    if (senderId === employeeResponse[j].objectId) {
+    if (senderId === employeeResponse[j].employeeId) {
       employeeName = employeeResponse[j].employeeFirstname + employeeResponse[j].employeeLastname
     }
   }
