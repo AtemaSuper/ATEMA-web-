@@ -397,13 +397,13 @@
                 </v-col>
                 <v-col>
                   <div v-if="!subCompanyEditFlag" class="dialog-label">
-                    <div v-for="(item, index) in subCompanyEditItem.selectWorkTypeList" :key="index">
+                    <div v-for="(item, index) in subCompanyEditItem.workTypeIdList" :key="index">
                         {{item.workTypeName}}
                     </div>
                   </div>
                   <div v-if="subCompanyEditFlag">
                     <v-select
-                      v-model="subCompanyEditItem.selectWorkTypeList[0]"
+                      v-model="subCompanyEditItem.workTypeIdList[0]"
                       item-text="workTypeName"
                       item-value="value"
                       return-object
@@ -413,8 +413,8 @@
                       name="workType"
                     ></v-select>
                     <v-select
-                      v-if="subCompanyEditItem.selectWorkTypeList.length >= 2"
-                      v-model="subCompanyEditItem.selectWorkTypeList[1]"
+                      v-if="subCompanyEditItem.workTypeIdList.length >= 2"
+                      v-model="subCompanyEditItem.workTypeIdList[1]"
                       item-text="workTypeName"
                       item-value="value"
                       return-object
@@ -424,8 +424,8 @@
                       name="workType"
                     ></v-select>
                     <v-select
-                      v-if="subCompanyEditItem.selectWorkTypeList.length >= 3"
-                      v-model="subCompanyEditItem.selectWorkTypeList[2]"
+                      v-if="subCompanyEditItem.workTypeIdList.length >= 3"
+                      v-model="subCompanyEditItem.workTypeIdList[2]"
                       item-text="workTypeName"
                       item-value="value"
                       return-object
@@ -435,8 +435,8 @@
                       name="workType"
                     ></v-select>
                     <v-select
-                      v-if="subCompanyEditItem.selectWorkTypeList.length >= 4"
-                      v-model="subCompanyEditItem.selectWorkTypeList[3]"
+                      v-if="subCompanyEditItem.workTypeIdList.length >= 4"
+                      v-model="subCompanyEditItem.workTypeIdList[3]"
                       item-text="workTypeName"
                       item-value="value"
                       return-object
@@ -446,8 +446,8 @@
                       name="workType"
                     ></v-select>
                     <v-select
-                      v-if="subCompanyEditItem.selectWorkTypeList.length >= 5"
-                      v-model="subCompanyEditItem.selectWorkTypeList[4]"
+                      v-if="subCompanyEditItem.workTypeIdList.length >= 5"
+                      v-model="subCompanyEditItem.workTypeIdList[4]"
                       item-text="workTypeName"
                       item-value="value"
                       return-object
@@ -463,7 +463,7 @@
                 <v-col cols="9"></v-col>
                 <v-col cols="1">
                   <v-btn
-                    v-if="subCompanyEditItem.selectWorkTypeList.length <= 4"
+                    v-if="subCompanyEditItem.workTypeIdList.length <= 4"
                     color="#ff6669"
                     class="white--text"
                     fab
@@ -474,7 +474,7 @@
                 </v-col>
                 <v-col cols="1">
                   <v-btn
-                    v-if="subCompanyEditItem.selectWorkTypeList.length != 1"
+                    v-if="subCompanyEditItem.workTypeIdList.length != 1"
                     color="#00ffd0"
                     elevation="3"
                     outlined
@@ -891,6 +891,12 @@ dayjs.locale(ja);
 export default {
   name: 'subCompanyAll',
   data: () => ({
+    // TODO ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
+    userId: '6tQPHzHQwlGErXeLSzt1',
+    // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
+    // ※複数社契約になった場合、セッションで契約IDを保持して、
+    // ※そのIDをもとに検索するように修正
+    contractorId: '00000001',
     //* * 協力会社一覧 */ 
     subCompanyList: [],
     workTypePullDown: [],
@@ -1041,7 +1047,7 @@ export default {
 
     // 初期表示処理です。
     async getSubCompanyInfo () {
-      let response = await Methods.getSubCompanyInfo()
+      let response = await Methods.getSubCompanyInfo(this.contractorId)
       // レスポンスから画面情報をセットする
       this.subCompanyList = createSubCompanyList(response)
       this.subEmployeeList = createSubEmployeeList(response)
@@ -1076,7 +1082,7 @@ export default {
         // 入力項目に初期値を設定
         this.subCompanyEditItem = {
           subCompanyId : '',
-          selectWorkTypeList: [{}],
+          workTypeIdList: [{}],
         }
         this.subCompanyDialogName = '協力会社追加'
         // 新規の場合は、入力画面のみ表示
@@ -1088,16 +1094,21 @@ export default {
     },
     // 工種プラスボタン押下時の処理です。
     onTouchWorkTypePlusBtn () {
-      this.subCompanyEditItem.selectWorkTypeList.push({})
+      this.subCompanyEditItem.workTypeIdList.push({})
     },
     // 工種削除ボタン押下時の処理です。
     onTouchWorkTypeDeleteBtn () {
-      this.subCompanyEditItem.selectWorkTypeList.pop()
+      this.subCompanyEditItem.workTypeIdList.pop()
     },
     // 協力会社編集ダイアログの編集・保存ボタン処理です。
     async onClickSubCompanyEditBtn () {
       if(this.subCompanyEditFlag){
+        // 工種は工種IDだけ渡します。
+        let selectworkTypeId = JSON.parse(JSON.stringify(this.subCompanyEditItem.workTypeIdList))
+        let workTypeIdList = selectworkTypeId.map(item => item.workTypeId);
         const param = {
+          contractorId: this.contractorId,
+          userId: this.userId,
           subCompanyId: this.subCompanyEditItem.subCompanyId,
           subCompanyName: this.subCompanyEditItem.subCompanyName,
           foundation: this.subCompanyEditItem.foundation,
@@ -1108,22 +1119,26 @@ export default {
           telNumber1: this.subCompanyEditItem.telNumber1,
           telNumber2: this.subCompanyEditItem.telNumber2,
           telNumber3: this.subCompanyEditItem.telNumber3,
-          selectWorkTypeList: this.subCompanyEditItem.selectWorkTypeList,
+          workTypeIdList: workTypeIdList,
           note: this.subCompanyEditItem.note,
-          createUserId: '', // TODO ログインユーザのユーザIDをセットする(新規の時だけ)
-          updateUserId: '' // TODO ログインユーザのユーザIDをセットする
         }
-        // 保存処理
-        let response = await Methods.saveSubCompany(param)
-        // レスポンスから画面情報をセットする
-        this.subCompanyList = createSubCompanyList(response)
-        this.subEmployeeList = createSubEmployeeList(response)
-        this.workTypePullDown = createWorkTypePullDown(response)
-        this.subCompanyPullDown = createSubCompanyPullDown(response)
-        this.subCompanyEditFlag = false
-        this.subCompanyDialog = false
-        // 保存完了メッセージ表示
-        this.$emit('alertMethod', response);
+        try {
+          // 保存処理
+          let response = await Methods.saveSubCompany(param)
+          // レスポンスから画面情報をセットする
+          this.subCompanyList = createSubCompanyList(response)
+          this.subEmployeeList = createSubEmployeeList(response)
+          this.workTypePullDown = createWorkTypePullDown(response)
+          this.subCompanyPullDown = createSubCompanyPullDown(response)
+          this.subCompanyEditFlag = false
+          this.subCompanyDialog = false
+          // 保存完了メッセージ表示
+          this.$emit('alertMethod', response);
+        }catch (err){
+          let response = err.response;
+          // エラーメッセージ表示
+          this.$emit('alertMethod', response)
+        }
       }else{
         this.subCompanyEditBtnName = '保存';
         this.subCompanyCancelBtnName = '戻る';
@@ -1152,19 +1167,27 @@ export default {
     // 削除ボタン押下処理(自社員)
     async onClickDeleteSubCompany () {
       const param = {
+        contractorId: this.contractorId,
+        userId: this.userId,
         subCompanyId: this.deleteSubcompanyItem.subCompanyId
       }
-      // 削除処理
-      let response = await Methods.deleteSubCompany(param)
-      // レスポンスから画面情報をセットする
-      this.subCompanyList = createSubCompanyList(response)
-      this.subEmployeeList = createSubEmployeeList(response)
-      this.workTypePullDown = createWorkTypePullDown(response)
-      this.subCompanyPullDown = createSubCompanyPullDown(response)
-      // 削除確認ダイアログを閉じる
-      this.subCompanyDeleteConfirmDialog = false;
-      // 削除完了メッセージ表示
-      this.$emit('alertMethod', response);
+      try {
+        // 削除処理
+        let response = await Methods.deleteSubCompany(param)
+        // レスポンスから画面情報をセットする
+        this.subCompanyList = createSubCompanyList(response)
+        this.subEmployeeList = createSubEmployeeList(response)
+        this.workTypePullDown = createWorkTypePullDown(response)
+        this.subCompanyPullDown = createSubCompanyPullDown(response)
+        // 削除確認ダイアログを閉じる
+        this.subCompanyDeleteConfirmDialog = false;
+        // 削除完了メッセージ表示
+        this.$emit('alertMethod', response);
+      }catch (err){
+        let response = err.response;
+        // 削除完了メッセージ表示
+        this.$emit('alertMethod', response);
+      }
     },
 
     //* * 協力会社員一覧 */ 
@@ -1184,8 +1207,6 @@ export default {
         this.subEmployeeEditItem = {
           employeeId : '',
           license: [""],
-          employment: 0,
-          employmentName: '正規'
         }
         this.subEmployeeDialogName = '協力会社員追加'
         // 新規の場合は、入力画面のみ表示
@@ -1197,9 +1218,18 @@ export default {
     },
     // 協力会社員編集ダイアログの編集・保存ボタン処理です。
     async onClickSubEmployeeEditBtn () {
+      var subCompanyId = "";
+      // 工種は工種IDだけ渡します。
+      if(this.subEmployeeEditItem.selectSubCompanyList != null){
+        let selectSubCompanyId = JSON.parse(JSON.stringify(this.subEmployeeEditItem.selectSubCompanyList))
+        subCompanyId = selectSubCompanyId.subCompanyId;
+      }
+      console.log(subCompanyId)
       if(this.subEmployeeEditFlag){
         const param = {
-          subCompanyId: this.subEmployeeEditItem.selectSubCompanyList.subCompanyId,
+          contractorId: this.contractorId,
+          userId: this.userId,
+          companyId: subCompanyId,
           employeeId: this.subEmployeeEditItem.employeeId,
           employeeFirstname: this.subEmployeeEditItem.employeeFirstname,
           employeeLastname: this.subEmployeeEditItem.employeeLastname,
@@ -1213,20 +1243,24 @@ export default {
           telNumber2: this.subEmployeeEditItem.telNumber2,
           telNumber3: this.subEmployeeEditItem.telNumber3,
           license: this.subEmployeeEditItem.license,
-          createUserId: '', // TODO ログインユーザのユーザIDをセットする(新規の時だけ)
-          updateUserId: '' // TODO ログインユーザのユーザIDをセットする
         }
         // 保存処理
-        let response = await Methods.saveSubEmployee(param)
-        // レスポンスから画面情報をセットする
-        this.subCompanyList = createSubCompanyList(response)
-        this.subEmployeeList = createSubEmployeeList(response)
-        this.workTypePullDown = createWorkTypePullDown(response)
-        this.subCompanyPullDown = createSubCompanyPullDown(response)
-        this.subEmployeeEditFlag = false
-        this.subEmployeeDialog = false
-        // 保存完了メッセージ表示
-        this.$emit('alertMethod', response);
+        try {
+          let response = await Methods.saveSubEmployee(param)
+          // レスポンスから画面情報をセットする
+          this.subCompanyList = createSubCompanyList(response)
+          this.subEmployeeList = createSubEmployeeList(response)
+          this.workTypePullDown = createWorkTypePullDown(response)
+          this.subCompanyPullDown = createSubCompanyPullDown(response)
+          this.subEmployeeEditFlag = false
+          this.subEmployeeDialog = false
+          // 保存完了メッセージ表示
+          this.$emit('alertMethod', response);
+        }catch (err){
+          let response = err.response;
+          // 削除完了メッセージ表示
+          this.$emit('alertMethod', response);
+        }
       }else{
         this.subEmployeeEditBtnName = '保存';
         this.subEmployeeCancelBtnName = '戻る';
@@ -1255,19 +1289,27 @@ export default {
     // 削除ボタン押下処理(自社員)
     async onClickDeleteSubEmployee () {
       const param = {
+        contractorId: this.contractorId,
+        userId: this.userId,
         employeeId: this.deleteSubEmployeeItem.employeeId
       }
       // 削除処理
-      let response = await Methods.deleteSubEmployee(param)
-     // レスポンスから画面情報をセットする
-      this.subCompanyList = createSubCompanyList(response)
-      this.subEmployeeList = createSubEmployeeList(response)
-      this.workTypePullDown = createWorkTypePullDown(response)
-      this.subCompanyPullDown = createSubCompanyPullDown(response)
-      // 削除確認ダイアログを閉じる
-      this.subEmployeeDeleteConfirmDialog = false;
-      // 削除完了メッセージ表示
-      this.$emit('alertMethod', response);
+      try {
+        let response = await Methods.deleteSubEmployee(param)
+        // レスポンスから画面情報をセットする
+        this.subCompanyList = createSubCompanyList(response)
+        this.subEmployeeList = createSubEmployeeList(response)
+        this.workTypePullDown = createWorkTypePullDown(response)
+        this.subCompanyPullDown = createSubCompanyPullDown(response)
+        // 削除確認ダイアログを閉じる
+        this.subEmployeeDeleteConfirmDialog = false;
+        // 削除完了メッセージ表示
+        this.$emit('alertMethod', response);
+      }catch (err){
+        let response = err.response;
+        // 削除完了メッセージ表示
+        this.$emit('alertMethod', response);
+      }
     },
     // 保有資格プラスボタン押下時の処理です。
     onTouchLicensePlusBtn () {
@@ -1301,7 +1343,7 @@ function createSubCompanyList (response) {
   var subCompanyList = []
   for (var i = 0; i < subCompanyResponse.length; i++) {
     var subCompany = {}
-    subCompany.subCompanyId = subCompanyResponse[i].objectId
+    subCompany.subCompanyId = subCompanyResponse[i].subCompanyId
     subCompany.subCompanyName = subCompanyResponse[i].subCompanyName
     subCompany.foundation = subCompanyResponse[i].foundation
     subCompany.leaderName = subCompanyResponse[i].leaderName
@@ -1312,21 +1354,19 @@ function createSubCompanyList (response) {
     subCompany.telNumber2 = subCompanyResponse[i].telNumber2
     subCompany.telNumber3 = subCompanyResponse[i].telNumber3
     // 選択中の工種を選択
-    var selectWorkTypeList = [];
+    var workTypeIdList = [];
     var workTypeName = "";
-    for (var j = 0; j < subCompanyResponse[i].selectWorkTypeList.length; j++) {
+    for (var j = 0; j < subCompanyResponse[i].workTypeIdList.length; j++) {
         var selectWorkType = {};
-        var selectWorkTypeId = subCompanyResponse[i].selectWorkTypeList[j];
-        selectWorkType.workTypeId = selectWorkTypeId;
+        var selectWorkTypeId = subCompanyResponse[i].workTypeIdList[j];
         selectWorkType.workTypeName = getWorkTypeName(selectWorkTypeId, workTypeResponse);
-        selectWorkTypeList.push(selectWorkType);
+        selectWorkType.workTypeId = subCompanyResponse[i].workTypeIdList[j];
+        workTypeIdList.push(selectWorkType);
         workTypeName = workTypeName === "" ? selectWorkType.workTypeName :  workTypeName + "、" + selectWorkType.workTypeName
     }
-    subCompany.selectWorkTypeList = selectWorkTypeList
+    subCompany.workTypeIdList = workTypeIdList
     subCompany.workTypeName = workTypeName
     subCompany.note = subCompanyResponse[i].note
-    subCompany.createUserId = subCompanyResponse[i].createUserId
-    subCompany.updateUserId = subCompanyResponse[i].updateUserId
     subCompanyList.push(subCompany)
   }
   return subCompanyList
@@ -1346,15 +1386,15 @@ function createSubEmployeeList (response) {
   var subEmployeeList = []
   for (var i = 0; i < subEmployeeResponse.length; i++) {
     var subEmployee = {}
-    subEmployee.employeeId = subEmployeeResponse[i].objectId
+    subEmployee.employeeId = subEmployeeResponse[i].employeeId
     subEmployee.loginId = subEmployeeResponse[i].loginId
     subEmployee.password = subEmployeeResponse[i].password
-    subEmployee.subCompanyId = subEmployeeResponse[i].subCompanyId
-    subEmployee.subCompanyName = getCompanyName(subEmployeeResponse[i].subCompanyId, subCompanyResponse);
+    subEmployee.companyId = subEmployeeResponse[i].companyId
+    subEmployee.subCompanyName = getCompanyName(subEmployeeResponse[i].companyId, subCompanyResponse);
     // 選択中の協力会社を設定
     subEmployee.selectSubCompanyList = {
-      subCompanyId: subCompanyResponse[i].subCompanyId,
-      subCompanyName: getCompanyName(subCompanyResponse[i].subCompanyId, subCompanyResponse)
+      subCompanyId: subEmployeeResponse[i].companyId,
+      subCompanyName: getCompanyName(subEmployeeResponse[i].companyId, subCompanyResponse)
     }
     subEmployee.employeeName = subEmployeeResponse[i].employeeFirstname + subEmployeeResponse[i].employeeLastname
     subEmployee.employeeFirstname = subEmployeeResponse[i].employeeFirstname
@@ -1384,7 +1424,7 @@ function createWorkTypePullDown (response) {
   var subCompanyPullDown = []
   for (var j = 0; j < workTypeResponse.length; j++) {
     var workType = {}
-    workType.workTypeId = workTypeResponse[j].objectId
+    workType.workTypeId = workTypeResponse[j].workTypeId
     workType.workTypeName = workTypeResponse[j].workTypeName
     subCompanyPullDown.push(workType)
   }
@@ -1403,7 +1443,7 @@ function createSubCompanyPullDown (response) {
   var subCompanyPullDown = []
   for (var k = 0; k < subCompanyResponse.length; k++) {
     var company = {}
-    company.subCompanyId = subCompanyResponse[k].objectId
+    company.subCompanyId = subCompanyResponse[k].subCompanyId
     company.subCompanyName = subCompanyResponse[k].subCompanyName
     subCompanyPullDown.push(company)
   }
@@ -1421,7 +1461,7 @@ function createSubCompanyPullDown (response) {
 function getWorkTypeName(workTypeId, workTypeResponse) {
   var worlTypeName = "";
   for (var i = 0; i < workTypeResponse.length;i++) {
-    if (workTypeId === workTypeResponse[i].objectId) {
+    if (workTypeId === workTypeResponse[i].workTypeId) {
       worlTypeName = workTypeResponse[i].workTypeName;
     }
   }

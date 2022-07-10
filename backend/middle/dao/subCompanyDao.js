@@ -1,8 +1,12 @@
 "use strict";
 
-var NCMB = require("ncmb");
-let NCMB_KEY = require("../../ncmb-key");
-var ncmb = new NCMB(NCMB_KEY.application_key, NCMB_KEY.client_key);
+const admin = require("firebase-admin");
+if (admin.apps.length === 0) {
+  const serviceAccount = require("../../atema-develop-firebase-adminsdk.json");
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
 
 /**
  * 協力会社テーブルのDaoクラスです。
@@ -11,19 +15,29 @@ class SubCompanyDao {
   /**
    * 協力会社一覧を取得します。
    *
-   * @param {string} loginId
+   * @param {string} contractorId 契約IDです。
    *
    * @returns
    */
-  async selectSubCompanyAll(req, res) {
-    var Item = ncmb.DataStore("subCompanyTable");
-    const responce = await Item.equalTo("deleteFlg", false)
-      .fetchAll()
+  async selectSubCompanyAll(contractorId) {
+    const db = admin.firestore();
+    const subCompanyRef = db
+      .collection("subCompany")
+      .doc(contractorId)
+      .collection("data")
+      .where("deleteFlg", "==", false);
+
+    const responce = await subCompanyRef
+      .get()
       .then(function (items) {
-        return items;
+        return items.docs.map((doc) => {
+          var data = doc.data();
+          data.subCompanyId = doc.id;
+          return data;
+        });
       })
       .catch(function (err) {
-        res.status(500).json(err);
+        return err;
       });
     return responce;
   }
@@ -34,29 +48,76 @@ class SubCompanyDao {
    * @returns
    */
   async saveSubCompany(param) {
-    var Item = ncmb.DataStore("subCompanyTable");
-    //subCompanyIdがある場合、更新します。
-    if (param.subCompanyId != "") {
-      const responce = await Item.equalTo("objectId", param.subCompanyId)
-        .equalTo("deleteFlg", false)
-        .fetch()
-        .then(function (results) {
-          results
-            .set("subCompanyName", param.subCompanyName)
-            .set("foundation", param.foundation)
-            .set("leaderName", param.leaderName)
-            .set("postNumber1", param.postNumber1)
-            .set("postNumber2", param.postNumber2)
-            .set("address", param.address)
-            .set("telNumber1", param.telNumber1)
-            .set("telNumber2", param.telNumber2)
-            .set("telNumber3", param.telNumber3)
-            .set("selectWorkTypeList", param.selectWorkTypeList)
-            .set("note", param.note)
-            .set("deleteFlg", false)
-            .set("createUserId", param.createUserId)
-            .set("updateUserId", param.updateUserId);
-          return results.update();
+    const db = admin.firestore();
+
+    //日付を取得します。
+    var date = new Date();
+    var updateDate =
+      date.getFullYear() +
+      "-" +
+      (Number(date.getMonth()) + 1) +
+      "-" +
+      date.getDate();
+
+    //新規の場合
+    if (param.subCompanyId == "") {
+      var note = param.note == null ? "" : param.note;
+      const subCompanyRef = db
+        .collection("subCompany")
+        .doc(param.contractorId)
+        .collection("data");
+      const responce = await subCompanyRef
+        .add({
+          subCompanyName: param.subCompanyName,
+          foundation: param.foundation,
+          leaderName: param.leaderName,
+          postNumber1: param.postNumber1,
+          postNumber2: param.postNumber2,
+          address: param.address,
+          telNumber1: param.telNumber1,
+          telNumber2: param.telNumber2,
+          telNumber3: param.telNumber3,
+          workTypeIdList: param.workTypeIdList,
+          note: note,
+          createDate: updateDate,
+          createUserId: param.userId,
+          updateDate: updateDate,
+          updateUserId: param.userId,
+          deleteFlg: false,
+        })
+        .then(function () {
+          var data = {
+            checkResult: true,
+            messageList: ["協力会社情報を保存しました。"],
+          };
+          return data;
+        })
+        .catch(function (err) {
+          return err;
+        });
+      return responce;
+      //更新の場合
+    } else {
+      const subCompanyRef = db
+        .collection("subCompany")
+        .doc(param.contractorId)
+        .collection("data")
+        .doc(param.subCompanyId);
+      const responce = await subCompanyRef
+        .update({
+          subCompanyName: param.subCompanyName,
+          foundation: param.foundation,
+          leaderName: param.leaderName,
+          postNumber1: param.postNumber1,
+          postNumber2: param.postNumber2,
+          address: param.address,
+          telNumber1: param.telNumber1,
+          telNumber2: param.telNumber2,
+          telNumber3: param.telNumber3,
+          workTypeIdList: param.workTypeIdList,
+          note: param.note,
+          updateDate: updateDate,
+          updateUserId: param.userId,
         })
         .then(function () {
           var data = {
@@ -69,35 +130,6 @@ class SubCompanyDao {
           res.status(500).json(err);
         });
       return responce;
-      //subCompanyIdがない場合、新規で保存します。
-    } else {
-      var item = new Item();
-      return await item
-        .set("subCompanyName", param.subCompanyName)
-        .set("foundation", param.foundation)
-        .set("leaderName", param.leaderName)
-        .set("postNumber1", param.postNumber1)
-        .set("postNumber2", param.postNumber2)
-        .set("address", param.address)
-        .set("telNumber1", param.telNumber1)
-        .set("telNumber2", param.telNumber2)
-        .set("telNumber3", param.telNumber3)
-        .set("selectWorkTypeList", param.selectWorkTypeList)
-        .set("note", param.note)
-        .set("deleteFlg", false)
-        .set("createUserId", param.createUserId)
-        .set("updateUserId", param.updateUserId)
-        .save()
-        .then(function (item) {
-          var data = {
-            checkResult: true,
-            messageList: ["協力会社情報を保存しました。"],
-          };
-          return data;
-        })
-        .catch(function (err) {
-          res.status(500).json(err);
-        });
     }
   }
   /**
@@ -107,12 +139,26 @@ class SubCompanyDao {
    * @returns
    */
   async deleteSubCompany(param) {
-    var Item = ncmb.DataStore("subCompanyTable");
-    const responce = await Item.equalTo("objectId", param.subCompanyId)
-      .fetch()
-      .then(function (results) {
-        results.set("deleteFlg", true);
-        return results.update();
+    const db = admin.firestore();
+    const subCompanyRef = db
+      .collection("subCompany")
+      .doc(param.contractorId)
+      .collection("data")
+      .doc(param.subCompanyId);
+    //日付を取得します。
+    var date = new Date();
+    var updateDate =
+      date.getFullYear() +
+      "-" +
+      (Number(date.getMonth()) + 1) +
+      "-" +
+      date.getDate();
+
+    const responce = await subCompanyRef
+      .update({
+        updateDate: updateDate,
+        updateUserId: param.userId,
+        deleteFlg: true,
       })
       .then(function () {
         var data = {
