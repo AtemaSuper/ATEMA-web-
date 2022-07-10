@@ -7,6 +7,7 @@ const test = require("./middle/test");
 const user = require("./middle/user");
 const ncmb = require("./middle/ncmb");
 const attendanceManageController = require("./controller/attendanceManageController");
+const authenticationController = require("./controller/authenticationController");
 const clientFieldController = require("./controller/clientFieldController");
 const contactBoxController = require("./controller/contactBoxController");
 const loginController = require("./controller/loginController");
@@ -42,6 +43,8 @@ app.use("/serviceTest", loginController);
 app.use("/test", test);
 app.use("/user", user);
 app.use("/ncmb", ncmb);
+
+app.all("/*", authenticationController);
 
 /**app.post('/test', function(req, res) {
   res.send({
