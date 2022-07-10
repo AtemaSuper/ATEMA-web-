@@ -1,8 +1,12 @@
 "use strict";
 
-var NCMB = require("ncmb");
-let NCMB_KEY = require("../../ncmb-key");
-var ncmb = new NCMB(NCMB_KEY.application_key, NCMB_KEY.client_key);
+const admin = require("firebase-admin");
+if (admin.apps.length === 0) {
+  const serviceAccount = require("../../atema-develop-firebase-adminsdk.json");
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
 
 /**
  * 現場詳細テーブルのDaoクラスです。
@@ -11,40 +15,57 @@ class WorkFieldDetailDao {
   /**
    * 現場詳細情報一覧を取得します。
    *
+   * @param {string} contractorId 契約IDです。
    *
    * @returns
    */
-  async selectWorkFieldDetailAll() {
-    var Item = ncmb.DataStore("workFieldDetailTable");
-    const responce = await Item.equalTo("deleteFlg", false)
-      .fetchAll()
+  async selectWorkFieldDetailAll(contractorId) {
+    const db = admin.firestore();
+    const workFieldDetailRef = db
+      .collection("workFieldDetail")
+      .doc(contractorId)
+      .collection("data")
+      .where("deleteFlg", "==", false);
+
+    const responce = await workFieldDetailRef
+      .get()
       .then(function (items) {
-        return items;
+        return items.docs.map((doc) => {
+          var data = doc.data();
+          data.workFieldDetailId = doc.id;
+          return data;
+        });
       })
       .catch(function (err) {
-        res.status(500).json(err);
+        return err;
       });
     return responce;
   }
   /**
-   * 指定されたobjectIdに対する現場詳細情報一覧を取得します。
-   * @param {string} objectId 取得したいobjectIdです。
+   * 現場詳細情報を取得します。
+   * @param {object} param 入力情報です。
    *
    * @returns
    */
-  async findWorkFieldDetail(objectId) {
-    var Item = ncmb.DataStore("workFieldDetailTable");
-    const responce = await Item.equalTo("objectId", objectId)
-      .fetch()
-      .then(function (results) {
-        var data = {
-          checkResult: true,
-          messageList: ["現場詳細情報一覧を取得しました。"],
-        };
-        return results;
+  async findWorkFieldDetail(param) {
+    const db = admin.firestore();
+    const workFieldDetailRef = db
+      .collection("workFieldDetail")
+      .doc(contractorId)
+      .collection("data")
+      .doc(param.workFieldDetailId);
+
+    const responce = await workFieldDetailRef
+      .get()
+      .then(function (items) {
+        return items.docs.map((doc) => {
+          var data = doc.data();
+          data.workFieldDetailId = doc.id;
+          return data;
+        });
       })
       .catch(function (err) {
-        res.status(500).json(err);
+        return err;
       });
     return responce;
   }
@@ -55,29 +76,70 @@ class WorkFieldDetailDao {
    * @returns
    */
   async saveWorkFieldDetail(param) {
-    var Item = ncmb.DataStore("workFieldDetailTable");
-    //workFieldIdがある場合、更新します。
-    if (param.workFieldId != "") {
-      const responce = await Item.equalTo("objectId", param.workFieldId)
-        .equalTo("deleteFlg", false)
-        .fetch()
-        .then(function (results) {
-          results
-            .set("jobNo", param.jobNo)
-            .set("clientFieldId", param.clientFieldId)
-            .set("workFieldName", param.workFieldName)
-            .set("workId", param.workId)
-            .set("status", param.status)
-            .set("contractStatus", param.contractStatus)
-            .set("deleteFlg", false)
-            .set("createUserId", param.createUserId)
-            .set("updateUserId", param.updateUserId);
-          return results.update();
+    const db = admin.firestore();
+
+    //日付を取得します。
+    var date = new Date();
+    var updateDate =
+      date.getFullYear() +
+      "-" +
+      (Number(date.getMonth()) + 1) +
+      "-" +
+      date.getDate();
+
+    //新規の場合
+    if (param.workFieldDetailId == null) {
+      const workFieldDetailRef = db
+        .collection("workFieldDetail")
+        .doc(param.contractorId)
+        .collection("data");
+      const responce = await workFieldDetailRef
+        .add({
+          jobNo: param.jobNo,
+          workFieldDetailName: param.workFieldDetailName,
+          workFieldId: param.workFieldId,
+          clientFieldId: param.clientFieldId,
+          status: param.status,
+          contractStatus: param.contractStatus,
+          createDate: updateDate,
+          createUserId: param.userId,
+          updateDate: updateDate,
+          updateUserId: param.userId,
+          deleteFlg: false,
         })
         .then(function () {
           var data = {
             checkResult: true,
-            messageList: ["工事情報を保存しました。"],
+            messageList: ["現場詳細情報を保存しました。"],
+          };
+          return data;
+        })
+        .catch(function (err) {
+          return err;
+        });
+      return responce;
+      //更新の場合
+    } else {
+      const workFieldDetailRef = db
+        .collection("workFieldDetail")
+        .doc(param.contractorId)
+        .collection("data")
+        .doc(param.workFieldDetailId);
+      const responce = await workFieldDetailRef
+        .update({
+          jobNo: param.jobNo,
+          workFieldName: param.workFieldName,
+          workFieldId: param.workFieldId,
+          clientFieldId: param.clientFieldId,
+          status: param.status,
+          contractStatus: param.contractStatus,
+          updateDate: updateDate,
+          updateUserId: param.userId,
+        })
+        .then(function () {
+          var data = {
+            checkResult: true,
+            messageList: ["現場詳細情報を保存しました。"],
           };
           return data;
         })
@@ -85,30 +147,6 @@ class WorkFieldDetailDao {
           res.status(500).json(err);
         });
       return responce;
-      //workFieldIdがない場合、新規で保存します。
-    } else {
-      var item = new Item();
-      return await item
-        .set("jobNo", param.jobNo)
-        .set("clientFieldId", param.clientFieldId)
-        .set("workFieldName", param.workFieldName)
-        .set("workId", param.workId)
-        .set("status", param.status)
-        .set("contractStatus", param.contractStatus)
-        .set("deleteFlg", false)
-        .set("createUserId", param.createUserId)
-        .set("updateUserId", param.updateUserId)
-        .save()
-        .then(function (item) {
-          var data = {
-            checkResult: true,
-            messageList: ["工事情報を保存しました。"],
-          };
-          return data;
-        })
-        .catch(function (err) {
-          res.status(500).json(err);
-        });
     }
   }
   /**
@@ -118,17 +156,31 @@ class WorkFieldDetailDao {
    * @returns
    */
   async deleteWorkFieldDetail(param) {
-    var Item = ncmb.DataStore("workFieldDetailTable");
-    const responce = await Item.equalTo("objectId", param.workFieldId)
-      .fetch()
-      .then(function (results) {
-        results.set("deleteFlg", true);
-        return results.update();
+    const db = admin.firestore();
+    const workFieldDetailRef = db
+      .collection("workFieldDetail")
+      .doc(param.contractorId)
+      .collection("data")
+      .doc(param.workFieldDetailId);
+    //日付を取得します。
+    var date = new Date();
+    var updateDate =
+      date.getFullYear() +
+      "-" +
+      (Number(date.getMonth()) + 1) +
+      "-" +
+      date.getDate();
+
+    const responce = await workFieldDetailRef
+      .update({
+        updateDate: updateDate,
+        updateUserId: param.userId,
+        deleteFlg: true,
       })
       .then(function () {
         var data = {
           checkResult: true,
-          messageList: ["工事情報を削除しました。"],
+          messageList: ["現場詳細情報を削除しました。"],
         };
         return data;
       })

@@ -153,6 +153,10 @@ class CommonLogic {
     if (column.CLIENT_FIELD_ID == colum) {
       check = response.find((res) => res.clientFieldId == value);
     }
+    //現場IDのチェックです。
+    if (column.WORK_FIELD_ID == colum) {
+      check = response.find((res) => res.workFieldId == value);
+    }
     if (!check) {
       return util.stringFormat(errorMessage.IS_NOT_EXISTS, colum);
     }
