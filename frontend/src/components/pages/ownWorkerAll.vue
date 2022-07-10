@@ -825,6 +825,12 @@ export default {
   components: {
   },
   data: () => ({
+     // TODO ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
+    userId: '6tQPHzHQwlGErXeLSzt1',
+    // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
+    // ※複数社契約になった場合、セッションで契約IDを保持して、
+    // ※そのIDをもとに検索するように修正
+    contractorId: '00000001',
     //* * 自社員一覧 */ 
     employeeList: [],
     postList: [],
@@ -847,7 +853,7 @@ export default {
     birthdayMenu: false,
     entryFirstMenu: false,
     entryEndMenu: false,
-    postPermissionList: [{value: 2, label: '✕'}, {value: 1, label: '閲覧のみ'}, {value: 0, label: '全て'}],
+    postPermissionList: [{value: "2", label: '✕'}, {value: "1", label: '閲覧のみ'}, {value: "0", label: '全て'}],
     // 入力チェック
     firstnameRules: [
       v => !!v || '姓が未入力です',
@@ -971,7 +977,7 @@ export default {
 
     // 初期表示処理です。
     async getEmployeeInfo () {
-      let response = await Methods.getEmployeeInfo()
+      let response = await Methods.getEmployeeInfo(this.contractorId)
       // レスポンスから画面情報をセットする
       this.employeeList = createEmployeeList(response)
       this.postList = createPostList(response)
@@ -999,7 +1005,7 @@ export default {
         this.employeeEditItem = {
           employeeId : '',
           license: [""],
-          employment: 0,
+          employment: "0",
           employmentName: '正規'
         }
         this.employeeDialogName = '自社員追加'
@@ -1013,14 +1019,21 @@ export default {
     // 自社員ダイアログの編集・保存ボタン処理です。
     async onClickEmployeeEditBtn () {
       if(this.employeeEditFlag){
+        var postId = "";
+        // 工種は工種IDだけ渡します。
+        if(this.employeeEditItem.selectPost != null){
+          let selectPost = JSON.parse(JSON.stringify(this.employeeEditItem.selectPost))
+          postId = selectPost.postId;
+        }
         const param = {
+          contractorId: this.contractorId,
+          userId: this.userId,
           employeeId: this.employeeEditItem.employeeId,
           loginId: this.employeeEditItem.loginId,
           password: this.employeeEditItem.password,
           employeeFirstname: this.employeeEditItem.employeeFirstname,
           employeeLastname: this.employeeEditItem.employeeLastname,
-          postId: this.employeeEditItem.selectPost.postId,
-          companyName: this.employeeEditItem.companyName,
+          postId: postId,
           staffCode: this.employeeEditItem.staffCode,
           birthday: this.employeeEditItem.birthday,
           address: this.employeeEditItem.address,
@@ -1032,20 +1045,23 @@ export default {
           entryEndDate: this.employeeEditItem.entryEndDate,
           employment: this.employeeEditItem.employment,
           license: this.employeeEditItem.license,
-          createUserId: '', // TODO ログインユーザのユーザIDをセットする(新規の時だけ)
-          updateUserId: '' // TODO ログインユーザのユーザIDをセットする
         }
-        // 保存処理
-        let response = await Methods.saveEmployee(param)
-        // レスポンスから画面情報をセットする
-        this.employeeList = createEmployeeList(response)
-        this.postList = createPostList(response)
-        this.selectPostList = createSelectPostList(response)
-        this.employeeEditFlag = false
-        this.employeeDialog = false
-        // 保存完了メッセージ表示
-        this.$emit('alertMethod', response);
-        // console.log(response)
+        try {
+          // 保存処理
+          let response = await Methods.saveEmployee(param)
+          // レスポンスから画面情報をセットする
+          this.employeeList = createEmployeeList(response)
+          this.postList = createPostList(response)
+          this.selectPostList = createSelectPostList(response)
+          this.employeeEditFlag = false
+          this.employeeDialog = false
+          // 保存完了メッセージ表示
+          this.$emit('alertMethod', response);
+        }catch (err){
+          let response = err.response;
+          // エラーメッセージ表示
+          this.$emit('alertMethod', response)
+        }
       }else{
         this.employeeEditBtnName = '保存';
         this.employeeCancelBtnName = '戻る';
@@ -1082,17 +1098,25 @@ export default {
     // 削除ボタン押下処理(自社員)
     async onClickDeleteEmployee () {
       const param = {
+        contractorId: this.contractorId,
+        userId: this.userId,
         employeeId: this.deleteEmployeeItem.employeeId
       }
-      // 削除処理
-      let response = await Methods.deleteEmployee(param)
-      // レスポンスから画面情報をセットする
-      this.employeeList = createEmployeeList(response)
-      this.postList = createPostList(response)
-      this.selectPostList = createSelectPostList(response)
-      this.employeeDeleteConfirmDialog = false;
-      // 削除完了メッセージ表示
-      this.$emit('alertMethod', response);
+      try {
+        // 削除処理
+        let response = await Methods.deleteEmployee(param)
+        // レスポンスから画面情報をセットする
+        this.employeeList = createEmployeeList(response)
+        this.postList = createPostList(response)
+        this.selectPostList = createSelectPostList(response)
+        this.employeeDeleteConfirmDialog = false;
+        // 削除完了メッセージ表示
+        this.$emit('alertMethod', response);
+      }catch (err){
+        let response = err.response;
+        // 削除完了メッセージ表示
+        this.$emit('alertMethod', response);
+      }
     },
     // 自社員の検索処理です。
     filterOnlyCapsText (value, search, item) {
@@ -1127,6 +1151,8 @@ export default {
     // 役職ダイアログの編集・保存ボタン処理です。
     async onClickPostEditBtn () {
       const param = {
+        contractorId: this.contractorId,
+        userId: this.userId,
         postId: this.postEditItem.postId,
         postName: this.postEditItem.postName,
         attendanceAuth: this.postEditItem.attendanceAuth,
@@ -1134,18 +1160,22 @@ export default {
         subCompanyManageAuth: this.postEditItem.subCompanyManageAuth,
         ownCompanyManageAuth: this.postEditItem.ownCompanyManageAuth,
         payPlanAuth: this.postEditItem.payPlanAuth,
-        createUserId: '', // TODO ログインユーザのユーザIDをセットする(新規の時だけ)
-          updateUserId: '' // TODO ログインユーザのユーザIDをセットする
       }
-      // 保存処理
-      let response = await Methods.savePost(param)
-      // レスポンスから画面情報をセットする
-      this.employeeList = createEmployeeList(response)
-      this.postList = createPostList(response)
-      this.selectPostList = createSelectPostList(response)
-      this.postDialog = false
-      // 保存完了メッセージ表示
-      this.$emit('alertMethod', response);
+      try {
+        // 保存処理
+        let response = await Methods.savePost(param)
+        // レスポンスから画面情報をセットする
+        this.employeeList = createEmployeeList(response)
+        this.postList = createPostList(response)
+        this.selectPostList = createSelectPostList(response)
+        this.postDialog = false
+        // 保存完了メッセージ表示
+        this.$emit('alertMethod', response);
+      }catch (err){
+        let response = err.response;
+        // 削除完了メッセージ表示
+        this.$emit('alertMethod', response);
+      }
     },
     // 役職ダイアログの閉じる・戻るボタン処理です。
     onClickPostCancelBtn () {
@@ -1169,6 +1199,8 @@ export default {
     // 削除ボタン押下処理(役職)
     async onClickDeletePost () {
       const param = {
+        contractorId: this.contractorId,
+        userId: this.userId,
         postId: this.deletePostItem.postId
       }
       // 削除処理
@@ -1201,13 +1233,13 @@ function createEmployeeList (response) {
   var employeeList = []
   for (var i = 0; i < employeeResponse.length; i++) {
     var employee = {}
-    employee.employeeId = employeeResponse[i].objectId
+    employee.employeeId = employeeResponse[i].employeeId
     employee.loginId = employeeResponse[i].loginId
     employee.password = employeeResponse[i].password
     employee.employeeName = employeeResponse[i].employeeFirstname + employeeResponse[i].employeeLastname
     employee.employeeFirstname = employeeResponse[i].employeeFirstname
     employee.employeeLastname = employeeResponse[i].employeeLastname
-    employee.companyName = "テスト会社" // TODO 方針未定
+    employee.companyName = "テスト会社" // TODO ログイン情報で取得
     // 選択中の役職を設定
     employee.selectPost = {
       postId: employeeResponse[i].postId,
@@ -1249,7 +1281,7 @@ function createPostList (response) {
   var postList = []
   for (var i = 0; i < postResponse.length; i++) {
     var post = {}
-    post.postId = postResponse[i].objectId
+    post.postId = postResponse[i].postId
     post.postName = postResponse[i].postName
     post.attendanceAuth = postResponse[i].attendanceAuth
     post.ownWokerManageAuth = postResponse[i].ownWokerManageAuth
@@ -1281,7 +1313,7 @@ function createSelectPostList (response) {
   var postList = []
   for (var j = 0; j < postResponse.length; j++) {
     var post = {}
-    post.postId = postResponse[j].objectId
+    post.postId = postResponse[j].postId
     post.postName = postResponse[j].postName
     postList.push(post)
   }
@@ -1299,7 +1331,7 @@ function createSelectPostList (response) {
 function getPostName (postId, postResponse) {
   var postName = ''
   for (var k = 0; k < postResponse.length; k++) {
-    if (postId === postResponse[k].objectId) {
+    if (postId === postResponse[k].postId) {
       postName = postResponse[k].postName
     }
   }
@@ -1314,9 +1346,9 @@ function getPostName (postId, postResponse) {
  * @returns
  */
 function getAutnName (auth) {
-  if (auth === 0) {
+  if (auth === "0") {
     return '全て'
-  } else if(auth === 1){
+  } else if(auth === "1"){
     return '閲覧のみ'
   }else{
     return '×'
@@ -1331,13 +1363,13 @@ function getAutnName (auth) {
  * @returns
  */
 function getEmploymentName (employment) {
-  if (employment === 0) {
+  if (employment === "0") {
     return '正規'
-  } else if(employment === 1){
+  } else if(employment === "1"){
     return '非正規'
-  } else if(employment === 2){
+  } else if(employment === "2"){
     return '委託'
-  } else if(employment === 3){
+  } else if(employment === "3"){
     return '派遣'
   }else{
     return ''

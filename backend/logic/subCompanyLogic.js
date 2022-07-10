@@ -6,6 +6,7 @@ const Util = require("../public/util");
 var util = new Util();
 const constractor = require("../public/const");
 var successMessage = constractor.SuccessMessage;
+var errorMessage = constractor.ErrorMessage;
 var colum = constractor.Colum;
 var type = constractor.Type;
 var format = constractor.Format;
@@ -1496,7 +1497,7 @@ class SUbCompanyLogic {
    * @returns {string} システムエラーメッセージです。
    */
   createSytemErrorMessage() {
-    return successMessage.SYSTEM_ERROR;
+    return errorMessage.SYSTEM_ERROR;
   }
 }
 
