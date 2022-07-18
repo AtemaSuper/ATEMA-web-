@@ -75,40 +75,52 @@
 </template>
 
 <script>
+// eslint-disable-next-line no-unused-vars
+import { firebaseApp } from "../../plugins/firebaseConfig";
+import { getAuth, signOut } from "@firebase/auth";
+import firebaseUtils from "./../../store/modules/firebaseUtils";
+const auth = getAuth();
 
 export default {
-  data () {
+  data() {
     return {
       dialog: false,
       // ログインユーザ情報
       userInfo: {
-        companyName: 'ABC事業',
-        companyId: '2021001',
-        userName: '山田太郎',
-        postName: '社長'
+        companyName: "ABC事業",
+        companyId: "2021001",
+        userName: "山田太郎",
+        postName: "社長"
       }
-    }
+    };
   },
-  components: {
-  },
-  conputed: {
-  },
+  components: {},
+  conputed: {},
   methods: {
     // ページ遷移処理
-    transition (path) {
-      this.$router.push(path)
+    transition(path) {
+      this.$router.push(path);
     },
     // ログアウト処理
-    logout () {
-      this.dialog = false
-      // TODO ログイン情報を破棄する
-      this.transition('/login')
+    logout() {
+      this.dialog = false;
+      signOut(auth)
+        .then(() => {
+          // Sign-out successful.
+          firebaseUtils.onAuthStoreStateChanged();
+          this.transition("/login");
+        })
+        .catch(error => {
+          console.log(error);
+          // An error happened.
+          alert("signOut_faild", error);
+        });
     }
   }
   // mounted: {
   //   // TODO ユーザ情報を受けとる
   // }
-}
+};
 </script>
 
 <style scoped>
