@@ -165,6 +165,10 @@ class CommonLogic {
     if (column.POST_ID == colum) {
       check = response.find((res) => res.postId == value);
     }
+    //jobNoのチェックです。
+    if (column.JOB_NO == colum) {
+      check = response.find((res) => res.jobNo == value);
+    }
     if (!check) {
       return util.stringFormat(errorMessage.IS_NOT_EXISTS, colum);
     }
