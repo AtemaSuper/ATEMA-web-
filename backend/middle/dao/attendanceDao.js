@@ -1,9 +1,12 @@
 "use strict";
 
-var NCMB = require("ncmb");
-const { ContentsConflictError } = require("ncmb/lib/errors");
-let NCMB_KEY = require("../../ncmb-key");
-var ncmb = new NCMB(NCMB_KEY.application_key, NCMB_KEY.client_key);
+const admin = require("firebase-admin");
+if (admin.apps.length === 0) {
+  const serviceAccount = require("../../atema-develop-firebase-adminsdk.json");
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
 
 /**
  * 出退勤テーブルのDaoクラスです。
@@ -16,79 +19,138 @@ class AttendanceDao {
    *
    * @returns
    */
-  async fetchAll() {
-    var Item = ncmb.DataStore("attendanceTable");
-    const response = await Item.fetchAll()
-      .then(function (results) {
-        return results;
+  async fetchAll(contractorId) {
+    //日付を取得します。
+    var date = new Date();
+    var todayDate =
+      date.getFullYear() +
+      "-" +
+      (Number(date.getMonth()) + 1) +
+      "-" +
+      date.getDate();
+    var test = "2022-07-01";
+
+    const db = admin.firestore();
+    const attendanceRef = db
+      .collection("attendance")
+      .doc(contractorId)
+      .collection(test)
+      .where("deleteFlg", "==", false);
+
+    const responce = await attendanceRef
+      .get()
+      .then(function (items) {
+        return items.docs.map((doc) => {
+          var data = doc.data();
+          data.employeeId = doc.id;
+          return data;
+        });
       })
       .catch(function (err) {
         return err;
       });
-    return response;
+    return responce;
   }
   /**
    * 指定された日時範囲に対する勤怠情報一覧を取得します。
    *
+   * @param {string} contractorId 契約IDです。
    * @param {Array} specifiedDateRangeOfStart 開始日時の範囲
    * @param {Array} specifiedDateRangeOfEnd 終了日時の範囲
    * @returns
    */
-  async find(specifiedDateRangeOfStart, specifiedDateRangeOfEnd) {
-    var Item = ncmb.DataStore("attendanceTable");
-    const response = await Item.greaterThanOrEqualTo("start", {
-      __type: "Date",
-      iso: specifiedDateRangeOfStart[0],
-    })
-      .lessThanOrEqualTo("start", {
-        __type: "Date",
-        iso: specifiedDateRangeOfStart[1],
-      })
-      .greaterThanOrEqualTo("end", {
-        __type: "Date",
-        iso: specifiedDateRangeOfEnd[0],
-      })
-      .lessThanOrEqualTo("end", {
-        __type: "Date",
-        iso: specifiedDateRangeOfEnd[1],
-      })
-      .fetchAll()
-      .then(function (results) {
-        return results;
+  async find(contractorId, specifiedDateRangeOfStart, specifiedDateRangeOfEnd) {
+    //TODO 日付範囲で検索
+    var test = "2022-07-01";
+    const db = admin.firestore();
+    const attendanceRef = db
+      .collection("attendance")
+      .doc(contractorId)
+      .collection(test)
+      .where("deleteFlg", "==", false);
+
+    const responce = await attendanceRef
+      .get()
+      .then(function (items) {
+        return items.docs.map((doc) => {
+          var data = doc.data();
+          data.employeeId = doc.id;
+          return data;
+        });
       })
       .catch(function (err) {
         return err;
       });
-    return response;
+    return responce;
+
+    // var Item = ncmb.DataStore("attendanceTable");
+    // const response = await Item.greaterThanOrEqualTo("start", {
+    //   __type: "Date",
+    //   iso: specifiedDateRangeOfStart[0],
+    // })
+    //   .lessThanOrEqualTo("start", {
+    //     __type: "Date",
+    //     iso: specifiedDateRangeOfStart[1],
+    //   })
+    //   .greaterThanOrEqualTo("end", {
+    //     __type: "Date",
+    //     iso: specifiedDateRangeOfEnd[0],
+    //   })
+    //   .lessThanOrEqualTo("end", {
+    //     __type: "Date",
+    //     iso: specifiedDateRangeOfEnd[1],
+    //   })
+    //   .fetchAll()
+    //   .then(function (results) {
+    //     return results;
+    //   })
+    //   .catch(function (err) {
+    //     return err;
+    //   });
+    // return response;
   }
   /**
    * 指定された条件に対してレコードを更新します。(カラム指定一つまで)
    *
-   * @param {string} objectId 更新したいobjectId
+   * @param {string} contractorId 更新したいcontractorId
+   * @param {string} employeeId 更新したいemployeeId
    * @param {string} clumn 更新したいclumn
    * @param {any} items 更新したいアイテム（テーブル定義に基づいた型指定）
    * @returns
    */
-  async singleUpdate(objectId, clumn, items) {
-    var Item = ncmb.DataStore("attendanceTable");
-    const response = await Item.equalTo("objectId", objectId)
-      .equalTo("deleteFlg", false)
-      .fetch()
-      .then(function (results) {
-        results.set(clumn, items);
-        return results.update();
-      })
-      .then(function (results) {
+  async singleUpdate(contractorId, employeeId, clumn, items) {
+    const db = admin.firestore();
+    //TODO 日付範囲で検索
+    var test = "2022-07-01";
+    // //日付を取得します。
+    // var date = new Date();
+    // var updateDate =
+    //   date.getFullYear() +
+    //   "-" +
+    //   (Number(date.getMonth()) + 1) +
+    //   "-" +
+    //   date.getDate();
+
+    const attendanceRef = db
+      .collection("attendance")
+      .doc(contractorId)
+      .collection(test)
+      .doc(employeeId);
+    var updateKey = clumn;
+    var updateItem = { [updateKey]: items };
+    const responce = await attendanceRef
+      .update(updateItem)
+      .then(function () {
         var data = {
           checkResult: true,
           messageList: ["勤怠情報を更新しました。"],
         };
-        return results;
+        return data;
       })
       .catch(function (err) {
-        return err;
+        res.status(500).json(err);
       });
-    return response;
+    return responce;
   }
 
   /**

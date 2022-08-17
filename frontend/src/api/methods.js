@@ -13,21 +13,44 @@ export default {
   */
 
   // 初期表示処理
-  findAttendanceListAsync(specifiedDateRangeFrom, specifiedDateRangeTo) {
+  findAttendanceListAsync(
+    contractorId,
+    specifiedDateRangeFrom,
+    specifiedDateRangeTo
+  ) {
     const item = {
-      specifiedDateRangeTo: specifiedDateRangeTo,
-      specifiedDateRangeFrom: specifiedDateRangeFrom
+      contractorId: contractorId,
+      specifiedDateRangeFrom: specifiedDateRangeFrom,
+      specifiedDateRangeTo: specifiedDateRangeTo
     };
     return Api().post("/attendanceManage/list", item);
   },
   // 更新
-  updateAttendanceListAsync(objectId, clumns, items) {
+  updateAttendanceListAsync(contractorId, employeeId, clumns, items) {
     const item = {
-      objectId: objectId,
+      contractorId: contractorId,
+      employeeId: employeeId,
       clumns: clumns,
       items: items
     };
     return Api().put("/attendanceManage/list/update", item);
+  },
+  // 更新
+  updateJobNo(
+    contractorId,
+    employeeId,
+    fieldEditTab,
+    jobNo,
+    workFieldDetailId
+  ) {
+    const item = {
+      contractorId: contractorId,
+      employeeId: employeeId,
+      fieldEditTab: fieldEditTab,
+      jobNo: jobNo,
+      workFieldDetailId: workFieldDetailId
+    };
+    return Api().put("/attendanceManage/list/updateJobNo", item);
   },
 
   auth() {
