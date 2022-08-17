@@ -91,7 +91,7 @@ app.post("/save", async function (req, res) {
         //サーバー側でのシステムエラーです。
       } else {
         err.checkResult = false;
-        err.messageList = ownCompanyLogic.createSytemErrorMessage();
+        err.messageList.push(ownCompanyLogic.createSytemErrorMessage());
         res.status(500).json(err);
       }
     });

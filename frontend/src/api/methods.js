@@ -186,7 +186,12 @@ export default {
     通知管理画面
   */
   // 初期表示処理
-  getAlertInfo() {
-    return Api().post("/contactBox");
+  getAlertInfo(contractorId) {
+    const item = { contractorId: contractorId };
+    return Api().post("/contactBox", item);
+  },
+  // 入力内容保存処理
+  saveStatus(param) {
+    return Api().post("/contactBox/saveStatus", param);
   }
 };

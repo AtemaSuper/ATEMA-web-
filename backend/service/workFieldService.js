@@ -116,7 +116,7 @@ app.post("/save", async function (req, res) {
         //サーバー側でのシステムエラーです。
       } else {
         err.checkResult = false;
-        err.messageList = workFieldLogic.createSytemErrorMessage();
+        err.messageList.push(workFieldLogic.createSytemErrorMessage());
         res.status(500).json(err);
       }
     });
@@ -168,7 +168,7 @@ app.post("/delete", async function (req, res) {
         //サーバー側でのシステムエラーです。
       } else {
         err.checkResult = false;
-        err.messageList = workFieldLogic.createSytemErrorMessage();
+        err.messageList.push(workFieldLogic.createSytemErrorMessage());
         res.status(500).json(err);
       }
     });

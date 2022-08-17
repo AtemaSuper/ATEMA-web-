@@ -110,7 +110,7 @@ app.post("/saveEmployee", async function (req, res) {
         //サーバー側でのシステムエラーです。
       } else {
         err.checkResult = false;
-        err.messageList = ownWorkerAllLogic.createSytemErrorMessage();
+        err.messageList.push(ownWorkerAllLogic.createSytemErrorMessage());
         res.status(500).json(err);
       }
     });
@@ -158,7 +158,7 @@ app.post("/savePost", async function (req, res) {
         //サーバー側でのシステムエラーです。
       } else {
         err.checkResult = false;
-        err.messageList = ownWorkerAllLogic.createSytemErrorMessage();
+        err.messageList.push(ownWorkerAllLogic.createSytemErrorMessage());
         res.status(500).json(err);
       }
     });
@@ -202,7 +202,7 @@ app.post("/deleteEmployee", async function (req, res) {
         //サーバー側でのシステムエラーです。
       } else {
         err.checkResult = false;
-        err.messageList = ownWorkerAllLogic.createSytemErrorMessage();
+        err.messageList.push(ownWorkerAllLogic.createSytemErrorMessage());
         res.status(500).json(err);
       }
     });
@@ -246,7 +246,7 @@ app.post("/deletePost", async function (req, res) {
         //サーバー側でのシステムエラーです。
       } else {
         err.checkResult = false;
-        err.messageList = ownWorkerAllLogic.createSytemErrorMessage();
+        err.messageList.push(ownWorkerAllLogic.createSytemErrorMessage());
         res.status(500).json(err);
       }
     });
