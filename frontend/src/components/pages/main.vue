@@ -121,7 +121,7 @@
                                 <v-text-field
                                   outlined
                                   dense
-                                  v-model="inputJobNo"
+                                  v-model="selectJob.jobNo"
                                   placeholder="例）21-0001"
                                   maxlength="7"
                                   clearable
@@ -149,15 +149,12 @@
                                 <v-spacer></v-spacer>
                                 <v-col cols="12" md="6">
                                   <v-select
-                                    v-model="selectCompany"
+                                    v-model="selectJob.selectClientField"
                                     label="(例)株式会社ABC"
-                                    :items="[
-                                      '株式会社A',
-                                      '株式会社B',
-                                      '株式会社C',
-                                      '株式会社D'
-                                    ]"
-                                    outlined
+                                    :items="clientFieldList"
+                                    item-text="clientFieldName"
+                                    item-value="value" 
+                                    return-object outlined required
                                     dense
                                     color="info"
                                   ></v-select>
@@ -170,15 +167,12 @@
                                 <v-spacer></v-spacer>
                                 <v-col cols="12" md="6">
                                   <v-select
-                                    v-model="selectField"
+                                    v-model="selectJob.selectWorkField"
                                     label="(例)株式会社ABC"
-                                    :items="[
-                                      '株式会社A',
-                                      '株式会社B',
-                                      '株式会社C',
-                                      '株式会社D'
-                                    ]"
-                                    outlined
+                                    :items="workFieldList"
+                                    item-text="workFieldName"
+                                    item-value="value" 
+                                    return-object outlined required
                                     dense
                                     color="info"
                                   ></v-select>
@@ -191,15 +185,12 @@
                                 <v-spacer></v-spacer>
                                 <v-col cols="12" md="6">
                                   <v-select
-                                    v-model="selectWorkField"
+                                    v-model="selectJob.selectWorkFieldDetail"
                                     label="(例)株式会社ABC"
-                                    :items="[
-                                      '株式会社A',
-                                      '株式会社B',
-                                      '株式会社C',
-                                      '株式会社D'
-                                    ]"
-                                    outlined
+                                    :items="workFieldDetailList"
+                                    item-text="workFieldDetailName"
+                                    item-value="value" 
+                                    return-object outlined required
                                     dense
                                     color="info"
                                   ></v-select>
@@ -258,6 +249,8 @@
 </template>
 
 <script>
+/** 外部コンポーネントの呼び出し */
+import Methods from '@/api/methods'
 import dayjs from "dayjs";
 import ja from "dayjs/locale/ja";
 
@@ -276,6 +269,18 @@ export default {
     }
   },
   data: () => ({
+    // TODO ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
+    userId: '6tQPHzHQwlGErXeLSzt1',
+    // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
+    // ※複数社契約になった場合、セッションで契約IDを保持して、
+    // ※そのIDをもとに検索するように修正
+    contractorId: '00000001',
+    clientFieldList: [],
+    workFieldList: [],
+    workFieldDetailList: [],
+    workFieldResponse: {},
+    workFieldDetailResrponse: {},
+    selectJob: {},
     newsList: [
       "【機能改善】自社員管理機能が新しくなりました。",
       "【年末年始について】年末年始営業情報についてこちらをはご参照ください。",
@@ -334,10 +339,20 @@ export default {
           return "";
       }
     },
-    nextCheck(item) {
+    async nextCheck(item) {
       if (item.type === "page") {
         this.pagePush(item.value);
-      } else this.isShowAttendanceEditDialog = true;
+      } else {
+        this.isShowAttendanceEditDialog = true;
+        let response = await Methods.getAttendance(this.contractorId, this.userId);
+        // レスポンスから画面情報をセットする
+        this.clientFieldList = this.createClientFieldList(response);
+        this.workFieldResponse = response.data.workFieldResponse
+        this.workFieldDetailResponse = response.data.workFieldDetailResponse
+        this.workFieldList = this.createWorkFieldList();
+        this.workFieldDetailList = this.createWorkFieldDetailLiist();
+        this.selectJob = response.data.selectJob;
+      }
     },
     pagePush(pageName) {
       this.$router.push(pageName);
@@ -354,7 +369,87 @@ export default {
     },
     closeAttendanceEditDialog() {
       this.isShowAttendanceEditDialog = false;
-    }
+    },
+     /** 客先名セレクトボックス作成処理 */
+    createClientFieldList (response) {
+      var clientFieldResponse = response.data.clientFieldResponse
+      var clientFieldList = []
+      for (var j = 0; j < clientFieldResponse.length; j++) {
+        var clientField = {}
+        clientField.clientFieldId = clientFieldResponse[j].clientFieldId
+        clientField.clientFieldName = clientFieldResponse[j].clientFieldName
+        clientFieldList.push(clientField)
+      }
+      return clientFieldList
+    },
+    /** 現場セレクトボックス作成処理 */
+    createWorkFieldList () {
+      var workFieldList = [];
+      var clientFieldId = "";
+      if(this.selectJob.selectClientField != null){
+        let selectClientField = JSON.parse(JSON.stringify(this.selectJob.selectClientField))
+        clientFieldId = selectClientField.clientFieldId;
+      }
+      for (var i = 0; i < this.workFieldResponse.length; i++) {
+        // 選択した客先に紐づく現場のみ表示します。
+        if(clientFieldId === this.workFieldResponse[i].clientFieldId){
+          var workField = {}
+          workField.workFieldId = this.workFieldResponse[i].workFieldId
+          workField.workFieldName = this.workFieldResponse[i].workFieldName
+          workFieldList.push(workField)
+        }
+      }
+      return workFieldList;
+    },
+    /** 現場詳細セレクトボックス作成処理 */
+    createWorkFieldDetailLiist () {
+      var workFieldDetailList = [];
+      var workFieldId = "";
+      if(this.selectJob.selectWorkField != null){
+        let selectWorkField = JSON.parse(JSON.stringify(this.selectJob.selectWorkField))
+        workFieldId = selectWorkField.workFieldId;
+      }
+      for (var i = 0; i < this.workFieldDetailResponse.length; i++) {
+        // 選択した客先に紐づく現場のみ表示します。
+        if(workFieldId === this.workFieldDetailResponse[i].workFieldId){
+          var workFieldDetail = {}
+          workFieldDetail.workFieldDetailId = this.workFieldDetailResponse[i].workFieldDetailId
+          workFieldDetail.workFieldDetailName = this.workFieldDetailResponse[i].workFieldDetailName
+          workFieldDetailList.push(workFieldDetail)
+        }
+      }
+      return workFieldDetailList
+    },
+    /** 客先セレクトボックス押下処理 */
+    selectCleintField() {
+      // 現場セレクトボックスを作成します。
+      this.workFieldList = this.createWorkFieldList();
+      // this.detailEdit = {
+      //   "employeeId": this.detailEdit.employeeId,
+      //   "jobNo":"",
+      //   "selectClientField":this.detailEdit.selectClientField,
+      //   "selectWorkField":"",
+      //   "selectWorkFieldDetail":"",
+      //   "clientFieldName":this.detailEdit.clientFieldName,
+      //   "workFieldName":"",
+      //   "workFieldDetailName":"",
+      // };
+    },
+    /** 現場セレクトボックス押下処理 */
+    selectWorkField() {
+      // 現場詳細セレクトボックスを作成します。
+      this.workFieldDetailList = this.createWorkFieldDetailLiist();
+      // this.detailEdit = {
+      //   "employeeId": this.detailEdit.employeeId,
+      //   "jobNo":"",
+      //   "selectClientField":this.detailEdit.selectClientField,
+      //   "selectWorkField":this.detailEdit.selectWorkField,
+      //   "selectWorkFieldDetail":"",
+      //   "clientFieldName":this.detailEdit.clientFieldName,
+      //   "workFieldName":this.detailEdit.workFieldName,
+      //   "workFieldDetailName":"",
+      // };
+    },
   }
 };
 </script>

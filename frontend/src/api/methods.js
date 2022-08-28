@@ -216,5 +216,21 @@ export default {
   // 入力内容保存処理
   saveStatus(param) {
     return Api().post("/contactBox/saveStatus", param);
+  },
+  /*
+    トップ画面（勤怠入力）
+  */
+  // 勤怠入力ダイアログ初期表示処理
+  getAttendance(contractorId, employeeId) {
+    const item = { contractorId: contractorId, employeeId: employeeId };
+    return Api().post("/main/showAttendanceDialog", item);
+  },
+  // 勤怠先入力チェック処理
+  checkAttendance(param) {
+    return Api().post("/main/check", param);
+  },
+  // 勤怠先入力保存処理
+  saveAttendance(param) {
+    return Api().post("/main/save", param);
   }
 };
