@@ -183,65 +183,9 @@ class MainLogic {
       //勤怠入力情報の入力値の存在チェックを行います。
       //社員IDチェック
       checkEmployeeId(errorMessageList, param.employeeId, employeeResponse);
-      var data = {};
-      //エラーがある場合
-      if (errorMessageList.length !== 0) {
-        data = {
-          checkResult: false,
-          messageList: errorMessageList,
-        };
-        reject(data);
-      }
-      resolve();
-    });
-
-    /**
-     * 社員IDをチェックします。
-     *
-     * @param {object} errorMessageList エラーメッセージリストです。
-     * @param {string} value 入力内容です。
-     * @param {string} employeeResponse 客先情報です。
-     */
-    function checkEmployeeId(errorMessageList, value, employeeResponse) {
-      var errorMessage1 = commonLogic.checkExists(
-        value,
-        employeeResponse,
-        colum.EMPLOYEE_ID
-      );
-      if (!util.isEmpty(errorMessage1)) {
-        errorMessageList.push(errorMessage1);
-        return;
-      }
-      return errorMessageList;
-    }
-  }
-
-  /**
-   * 現場詳細の入力値(現場情報)の存在チェックします。
-   *
-   * @param {string} param 画面パラメータです。
-   * @param {string} employeeResponse 社員情報です。
-   * @param {string} workFieldDetailResponse 現場詳細情報です。
-   *
-   * @returns
-   */
-  checkExistsJobNo(param, employeeResponse, workFieldDetailResponse) {
-    return new Promise(function (resolve, reject) {
-      var errorMessageList = [];
-      //勤怠入力情報の入力値の存在チェックを行います。
-      //社員IDチェック
-      checkEmployeeId(errorMessageList, param.employeeId, employeeResponse);
-      if (param.fieldEditTab === 0) {
-        //jobNoチェック
-        checkJobNo(errorMessageList, param.jobNo, workFieldDetailResponse);
-      } else {
-        //現場詳細チェック
-        checkWorkFieldDetailId(
-          errorMessageList,
-          param.workFieldDetailId,
-          workFieldDetailResponse
-        );
-      }
+      //jobNoチェック
+      var selectJob = param.selectJob;
+      checkJobNo(errorMessageList, selectJob.jobNo, workFieldDetailResponse);
       var data = {};
       //エラーがある場合
       if (errorMessageList.length !== 0) {
@@ -293,31 +237,110 @@ class MainLogic {
       }
       return errorMessageList;
     }
-
-    /**
-     * 現場詳細IDをチェックします。
-     *
-     * @param {object} errorMessageList エラーメッセージリストです。
-     * @param {string} value 入力内容です。
-     * @param {string} workFieldDetailResponse 現場詳細情報です。
-     */
-    function checkWorkFieldDetailId(
-      errorMessageList,
-      value,
-      workFieldDetailResponse
-    ) {
-      var errorMessage1 = commonLogic.checkExists(
-        value,
-        workFieldDetailResponse,
-        colum.WORK_FIELD_DETAIL_ID
-      );
-      if (!util.isEmpty(errorMessage1)) {
-        errorMessageList.push(errorMessage1);
-        return;
-      }
-      return errorMessageList;
-    }
   }
+
+  // /**
+  //  * 現場詳細の入力値(現場情報)の存在チェックします。
+  //  *
+  //  * @param {string} param 画面パラメータです。
+  //  * @param {string} employeeResponse 社員情報です。
+  //  * @param {string} workFieldDetailResponse 現場詳細情報です。
+  //  *
+  //  * @returns
+  //  */
+  // checkExistsJobNo(param, employeeResponse, workFieldDetailResponse) {
+  //   return new Promise(function (resolve, reject) {
+  //     var errorMessageList = [];
+  //     //勤怠入力情報の入力値の存在チェックを行います。
+  //     //社員IDチェック
+  //     checkEmployeeId(errorMessageList, param.employeeId, employeeResponse);
+  //     if (param.fieldEditTab === 0) {
+  //       //jobNoチェック
+  //       checkJobNo(errorMessageList, param.jobNo, workFieldDetailResponse);
+  //     } else {
+  //       //現場詳細チェック
+  //       checkWorkFieldDetailId(
+  //         errorMessageList,
+  //         param.workFieldDetailId,
+  //         workFieldDetailResponse
+  //       );
+  //     }
+  //     var data = {};
+  //     //エラーがある場合
+  //     if (errorMessageList.length !== 0) {
+  //       data = {
+  //         checkResult: false,
+  //         messageList: errorMessageList,
+  //       };
+  //       reject(data);
+  //     }
+  //     resolve();
+  //   });
+
+  //   /**
+  //    * 社員IDをチェックします。
+  //    *
+  //    * @param {object} errorMessageList エラーメッセージリストです。
+  //    * @param {string} value 入力内容です。
+  //    * @param {string} employeeResponse 客先情報です。
+  //    */
+  //   function checkEmployeeId(errorMessageList, value, employeeResponse) {
+  //     var errorMessage1 = commonLogic.checkExists(
+  //       value,
+  //       employeeResponse,
+  //       colum.EMPLOYEE_ID
+  //     );
+  //     if (!util.isEmpty(errorMessage1)) {
+  //       errorMessageList.push(errorMessage1);
+  //       return;
+  //     }
+  //     return errorMessageList;
+  //   }
+
+  //   /**
+  //    * jobNoをチェックします。
+  //    *
+  //    * @param {object} errorMessageList エラーメッセージリストです。
+  //    * @param {string} value 入力内容です。
+  //    * @param {string} workFieldDetailResponse 現場詳細情報です。
+  //    */
+  //   function checkJobNo(errorMessageList, value, workFieldDetailResponse) {
+  //     var errorMessage1 = commonLogic.checkExists(
+  //       value,
+  //       workFieldDetailResponse,
+  //       colum.JOB_NO
+  //     );
+  //     if (!util.isEmpty(errorMessage1)) {
+  //       errorMessageList.push(errorMessage1);
+  //       return;
+  //     }
+  //     return errorMessageList;
+  //   }
+
+  //   /**
+  //    * 現場詳細IDをチェックします。
+  //    *
+  //    * @param {object} errorMessageList エラーメッセージリストです。
+  //    * @param {string} value 入力内容です。
+  //    * @param {string} workFieldDetailResponse 現場詳細情報です。
+  //    */
+  //   function checkWorkFieldDetailId(
+  //     errorMessageList,
+  //     value,
+  //     workFieldDetailResponse
+  //   ) {
+  //     var errorMessage1 = commonLogic.checkExists(
+  //       value,
+  //       workFieldDetailResponse,
+  //       colum.WORK_FIELD_DETAIL_ID
+  //     );
+  //     if (!util.isEmpty(errorMessage1)) {
+  //       errorMessageList.push(errorMessage1);
+  //       return;
+  //     }
+  //     return errorMessageList;
+  //   }
+  // }
 
   /**
    * サクセスメッセージを作成します。

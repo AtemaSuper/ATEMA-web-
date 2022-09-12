@@ -133,7 +133,7 @@
                           </v-card>
                           <v-row justify="center">
                             <v-checkbox
-                              v-model="isCheckBox"
+                              v-model="selectJob.isSaveFlag"
                               label="入力内容を保存しますか？"
                               color="info"
                             ></v-checkbox>
@@ -150,6 +150,7 @@
                                 <v-col cols="12" md="6">
                                   <v-select
                                     v-model="selectJob.selectClientField"
+                                    v-on:change="selectCleintField"
                                     label="(例)株式会社ABC"
                                     :items="clientFieldList"
                                     item-text="clientFieldName"
@@ -169,6 +170,7 @@
                                   <v-select
                                     v-model="selectJob.selectWorkField"
                                     label="(例)株式会社ABC"
+                                    v-on:change="selectWorkField"
                                     :items="workFieldList"
                                     item-text="workFieldName"
                                     item-value="value" 
@@ -198,9 +200,16 @@
                               </v-row>
                             </v-card-text>
                           </v-card>
+                          <v-row justify="center">
+                            <v-checkbox
+                              v-model="selectJob.isSaveFlag"
+                              label="入力内容を保存しますか？"
+                              color="info"
+                            ></v-checkbox>
+                          </v-row>
                         </v-tab-item>
                       </v-tabs>
-                      <v-btn color="info mt-2" @click="stepperCount = 2">
+                      <v-btn color="info mt-2" @click="checkAttendance()">
                         次へ
                       </v-btn>
                     </v-stepper-content>
@@ -213,7 +222,26 @@
                         <v-col cols="12" md="6">
                           <v-select
                             v-model="selectStatus"
-                            :items="statusItems"
+                            :items="statusList"
+                            item-value="value"
+                            return-object
+                            outlined
+                            dense
+                            color="info"
+                          ></v-select>
+                        </v-col>
+                      </v-row>
+                      <v-row align="center">
+                        <v-col md="3">
+                          <p>勤怠パターン</p>
+                        </v-col>
+                        <v-spacer></v-spacer>
+                        <v-col cols="12" md="6">
+                          <v-select
+                            v-model="selecAtttendancePattern"
+                            :items="attendancePatternList"
+                            item-value="value"
+                            return-object
                             outlined
                             dense
                             color="info"
@@ -227,13 +255,13 @@
                         <v-spacer></v-spacer>
                         <v-col cols="12" md="6">
                           <v-textarea
-                            v-model="inputNoteContents"
+                            v-model="noteContents"
                             outlined
                             color="info"
                           ></v-textarea>
                         </v-col>
                       </v-row>
-                      <v-btn color="info" @click="stepperCount = 1">
+                      <v-btn color="info" @click="saveAttendance()">
                         勤怠を登録
                       </v-btn>
                     </v-stepper-content>
@@ -270,7 +298,7 @@ export default {
   },
   data: () => ({
     // TODO ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
-    userId: '6tQPHzHQwlGErXeLSzt1',
+    userId: '020J5ruy8WEnQF1anhfT',
     // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
     // ※複数社契約になった場合、セッションで契約IDを保持して、
     // ※そのIDをもとに検索するように修正
@@ -294,28 +322,20 @@ export default {
       { type: "page", value: "ownWorkerAll", permission: true },
       { type: "dialog", value: "editAttendance", permission: true }
     ],
-    statusItems: [
-      { text: "出勤", value: 0 },
-      { text: "休憩", value: 1 },
-      { text: "戻り", value: 0 },
-      { text: "退勤", value: 2 },
-      { text: "早退", value: 4 },
-      { text: "早出", value: 5 },
-      { text: "遅出", value: 6 },
-      { text: "深夜", value: 7 },
-      { text: "欠勤", value: 8 }
-    ],
     displayDate: "",
     displayTime: "",
     stepperCount: 1,
     inputJobNo: "",
     inputNoteContents: "",
-    isCheckBox: true,
     fieldEditTab: 0,
     selectCompany: "",
     selectField: "",
     selectWorkField: "",
-    selectStatus: "",
+    selectStatus: {},
+    selecAtttendancePattern: {},
+    statusList: [],
+    attendancePatternList: [],
+    noteContents: "",
     isShowAttendanceEditDialog: false
   }),
   methods: {
@@ -339,9 +359,11 @@ export default {
           return "";
       }
     },
+    /** コンテンツボタン押下時処理 */
     async nextCheck(item) {
       if (item.type === "page") {
         this.pagePush(item.value);
+        // 勤怠入力ダイアログ表示処理
       } else {
         this.isShowAttendanceEditDialog = true;
         let response = await Methods.getAttendance(this.contractorId, this.userId);
@@ -349,13 +371,60 @@ export default {
         this.clientFieldList = this.createClientFieldList(response);
         this.workFieldResponse = response.data.workFieldResponse
         this.workFieldDetailResponse = response.data.workFieldDetailResponse
+        this.selectJob = response.data.selectJob;
         this.workFieldList = this.createWorkFieldList();
         this.workFieldDetailList = this.createWorkFieldDetailLiist();
-        this.selectJob = response.data.selectJob;
       }
     },
     pagePush(pageName) {
       this.$router.push(pageName);
+    },
+    /** 勤怠入力：次へ押下時処理 */
+    async checkAttendance() {
+      const param = {
+        contractorId: this.contractorId,
+        employeeId: this.userId,
+        selectJob: this.selectJob,
+      }
+      try {
+        let response = await Methods.checkAttendance(param)
+        // レスポンスから画面情報をセットする
+        this.selectStatus = response.data.selectStatus
+        this.selecAtttendancePattern = response.data.selecAtttendancePattern
+        this.statusList = response.data.statusList
+        this.attendancePatternList = response.data.attendancePatternList
+        this.noteContents = response.data.noteContents
+        this.stepperCount = 2;
+        // 保存完了メッセージ表示
+        // this.$emit('alertMethod', response)
+      }catch (err){
+        let response = err.response;
+        // エラーメッセージ表示
+        this.$emit('alertMethod', response)
+      }
+    },
+    /** 勤怠入力：勤怠を登録押下時処理 */
+    async saveAttendance() {
+      const now = dayjs();
+      const param = {
+        contractorId: this.contractorId,
+        employeeId: this.userId,
+        saveTime: now.format("HH：mm"),
+        selectJob: this.selectJob,
+        selectStatus: this.selectStatus,
+        selecAtttendancePattern: this.selecAtttendancePattern,
+        noteContents: this.noteContents,
+      }
+      try {
+        let response = await Methods.saveAttendance(param)
+        console.log(response);
+        this.stepperCount = 1;
+        this.isShowAttendanceEditDialog = false;
+      }catch (err){
+        let response = err.response;
+        // エラーメッセージ表示
+        this.$emit('alertMethod', response)
+      }
     },
     getToDay() {
       const now = dayjs();
@@ -368,6 +437,7 @@ export default {
       }, 100);
     },
     closeAttendanceEditDialog() {
+      this.stepperCount = 1;
       this.isShowAttendanceEditDialog = false;
     },
      /** 客先名セレクトボックス作成処理 */

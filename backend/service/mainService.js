@@ -25,11 +25,15 @@ var employeeDao = new EmployeeDao();
 
 var attendanceManageResponse = [];
 var clientFieldResponse = [];
-var contractorResponse = [];
+var contactResponse = [];
 var employeeResponse = [];
 var workFieldResponse = [];
 var workFieldDetailResponse = [];
 var selectJob = {};
+var selecAtttendancePattern = {};
+var attendancePatternList = [];
+var checkResult = false;
+var messageList = [];
 
 var setWorkFieldDetail = {
   jobNo: String,
@@ -40,6 +44,7 @@ var setWorkFieldDetail = {
   selectClientField: Object,
   selectWorkField: Object,
   selectWorkFieldDetail: Object,
+  isSaveFlag: Boolean,
 };
 
 var selectClientField = {
@@ -53,126 +58,18 @@ var selectWorkField = {
 var selectWorkFieldDetail = {
   workFieldDetailId: String,
   workFieldDetailName: String,
+  jobNo: String,
 };
 
-const attendanceManageFecthAll = function (contractorId) {
-  return new Promise(function (resolve, reject) {
-    attendanceManageDao
-      .fetchAll(contractorId)
-      .then(function (items) {
-        attendanceManageResponse = items;
-        resolve(items);
-      })
-      .catch(function (err) {
-        console.log(err, reject);
-      });
-  });
+var attendancePattern = {
+  patternId: String,
+  workStartTime: String,
+  workFinishTime: String,
+  workingHours: String,
 };
 
-const attendanceManageFind = function (
-  contractorId,
-  specifiedDateRangeFrom,
-  specifiedDateRangeTo
-) {
-  return new Promise(function (resolve, reject) {
-    attendanceManageDao
-      .find(contractorId, specifiedDateRangeFrom, specifiedDateRangeTo)
-      .then(function (items) {
-        attendanceManageResponse = items;
-        resolve(items);
-      })
-      .catch(function (err) {
-        console.log(err, reject);
-      });
-  });
-};
-
-const attendanceManageUpdate = function (
-  contractorId,
-  employeId,
-  clumns,
-  items
-) {
-  return new Promise(function (resolve, reject) {
-    attendanceManageDao
-      .singleUpdate(contractorId, employeId, clumns, items)
-      .then(function (data) {
-        checkResult = data.checkResult;
-        messageList = data.messageList;
-        resolve();
-      })
-      .catch(function (err) {
-        console.log(err, reject);
-      });
-  });
-};
-
-const attendanceManageUpdateJobNo = function (param, workFieldDetailResponse) {
-  return new Promise(function (resolve, reject) {
-    var workFieldDetailId = "";
-    if (param.fieldEditTab === 0) {
-      workFieldDetailId = getWorkFieldDetailId(
-        param.jobNo,
-        workFieldDetailResponse
-      );
-    } else {
-      workFieldDetailId = param.workFieldDetailId;
-    }
-    attendanceManageDao
-      .singleUpdate(
-        param.contractorId,
-        param.employeeId,
-        "workFieldDetailId",
-        workFieldDetailId
-      )
-      .then(function (data) {
-        checkResult = data.checkResult;
-        messageList = data.messageList;
-        resolve();
-      })
-      .catch(function (err) {
-        console.log(err, reject);
-      });
-  });
-
-  /**
-   * JobNoをもとにworkFieldDetailIdを取得します。
-   *
-   * @param {String} jobNo
-   * @param {Object} workFieldDetailResponse
-   */
-  function getWorkFieldDetailId(jobNo, workFieldDetailResponse) {
-    var workFieldDetailId = "";
-    for (var i = 0; i < workFieldDetailResponse.length; i++) {
-      if (jobNo === workFieldDetailResponse[i].jobNo) {
-        workFieldDetailId = workFieldDetailResponse[i].workFieldDetailId;
-        break;
-      }
-    }
-    return workFieldDetailId;
-  }
-};
 /**
- * 契約IDをもとに自社情報を取得します。
- *
- * @param {string} contractorId 契約IDです。
- * @returns
- */
-const ownCompanyFecthAll = function (contractorId) {
-  return new Promise(function (resolve, reject) {
-    contactDao
-      .selectContactAll(contractorId)
-      .then(function (items) {
-        contractorResponse = items;
-        resolve(items);
-      })
-      .catch(function (err) {
-        console.log(err, reject);
-      });
-  });
-};
-/**
- * 契約IDをもとに社員情報を取得します。
+ * 契約ID、社員IDをもとに社員情報を取得します。
  *
  * @param {string} contractorId 契約IDです。
  * @param {string} employeeId 社員IDです。
@@ -185,6 +82,44 @@ const selectEmployee = function (contractorId, employeeId) {
       .selectEmployee(contractorId, employeeId)
       .then(function (items) {
         employeeResponse = items;
+        resolve(items);
+      })
+      .catch(function (err) {
+        console.log(err, reject);
+      });
+  });
+};
+/**
+ * 契約IDをもとに社員情報を取得します。
+ *
+ * @param {string} contractorId 契約IDです。
+ * @returns
+ */
+const employeeFecthAll = function (contractorId) {
+  return new Promise(function (resolve, reject) {
+    employeeDao
+      .selectfetchAll(contractorId)
+      .then(function (items) {
+        employeeResponse = items;
+        resolve(items);
+      })
+      .catch(function (err) {
+        console.log(err, reject);
+      });
+  });
+};
+/**
+ * 契約IDをもとに契約情報を取得します。
+ *
+ * @param {string} contractorId 契約IDです。
+ * @returns
+ */
+const contactFecthAll = function (contractorId) {
+  return new Promise(function (resolve, reject) {
+    contactDao
+      .selectContactAll(contractorId)
+      .then(function (items) {
+        contactResponse = items;
         resolve(items);
       })
       .catch(function (err) {
@@ -277,19 +212,14 @@ const formatWorkFieldDetail = function () {
     }
   }
 };
-
+/**
+ * 選択している現場詳細情報をフォーマットします。
+ *
+ */
 const setSelectJob = function () {
   for (var i = 0; i < workFieldDetailResponse.length; i++) {
     if (employeeResponse.jobNo == workFieldDetailResponse[i].jobNo) {
       setWorkFieldDetail.jobNo = workFieldDetailResponse[i].jobNo;
-      setWorkFieldDetail.clientFieldName =
-        workFieldDetailResponse[i].clientFieldName;
-      setWorkFieldDetail.workFieldName =
-        workFieldDetailResponse[i].workFieldName;
-      setWorkFieldDetail.workFieldDetailName =
-        workFieldDetailResponse[i].workFieldDetailName;
-      setWorkFieldDetail.contractStatus =
-        workFieldDetailResponse[i].contractStatus;
       setWorkFieldDetail.selectClientField = {
         clientFieldName: workFieldDetailResponse[i].clientFieldName,
         clientFieldId: workFieldDetailResponse[i].clientFieldId,
@@ -301,11 +231,161 @@ const setSelectJob = function () {
       setWorkFieldDetail.selectWorkFieldDetail = {
         workFieldDetailName: workFieldDetailResponse[i].workFieldDetailName,
         workFieldDetailId: workFieldDetailResponse[i].workFieldDetailId,
+        jobNo: workFieldDetailResponse[i].jobNo,
       };
-      selectJob = setWorkFieldDetail;
+      setWorkFieldDetail.isSaveFlag = true;
       break;
     }
   }
+  if (selectJob === {}) {
+    selectJob.jobNo = "";
+    setWorkFieldDetail.selectClientField = {};
+    setWorkFieldDetail.selectWorkField = {};
+    setWorkFieldDetail.selectWorkFieldDetail = {};
+    setWorkFieldDetail.isSaveFlag = false;
+  }
+  selectJob = setWorkFieldDetail;
+};
+/**
+ * 契約ID、社員IDをもとに勤怠情報を取得します。
+ *
+ * @param {string} contractorId 契約IDです。
+ * @param {string} employeeId 社員IDです。
+ *
+ * @returns
+ */
+const attendanceManageFind = function (contractorId, employeeId) {
+  return new Promise(function (resolve, reject) {
+    attendanceManageDao
+      .findToToday(contractorId, employeeId)
+      .then(function (items) {
+        attendanceManageResponse = items;
+        resolve(items);
+      })
+      .catch(function (err) {
+        console.log(err, reject);
+      });
+  });
+};
+/**
+ * 勤怠情報を保存します。
+ *
+ * @param {string} param 画面パラメータです。
+ *
+ * @returns
+ */
+const attendanceManageUpdate = function (param) {
+  return new Promise(function (resolve, reject) {
+    var selecAtttendancePattern = param.selecAtttendancePattern;
+    var selectStatus = param.selectStatus;
+    var updateKey = getUpdateKey(selectStatus.value);
+    var updateItem = {
+      attendancePatternId: selecAtttendancePattern.patternId,
+      status: selectStatus.value,
+      noteContents: param.noteContents,
+      [updateKey]: param.saveTime,
+    };
+
+    attendanceManageDao
+      .saveAttendance(param.contractorId, param.employeeId, updateItem)
+      .then(function (data) {
+        checkResult = data.checkResult;
+        messageList = data.messageList;
+        resolve();
+      })
+      .catch(function (err) {
+        console.log(err, reject);
+      });
+  });
+  function getUpdateKey(selectStatus) {
+    switch (selectStatus) {
+      case "0":
+        return "start";
+      case "1":
+        return "restStart";
+      case "2":
+        return "restEnd";
+      case "3":
+        return "end";
+      default:
+        return "start";
+    }
+  }
+};
+/**
+ * 勤怠ステータスを取得します。
+ *
+ */
+const getAttendancePattern = function () {
+  attendancePatternList = [];
+  for (var i in contactResponse.attendancePattern) {
+    if (!contactResponse.attendancePattern[i].deleteFlg) {
+      var attendancePattern = {
+        patternId: contactResponse.attendancePattern[i].patternId,
+        text:
+          contactResponse.attendancePattern[i].workStartTime +
+          "～" +
+          contactResponse.attendancePattern[i].workFinishTime,
+        workStartTime: contactResponse.attendancePattern[i].workStartTime,
+        workFinishTime: contactResponse.attendancePattern[i].workFinishTime,
+        workingHours: contactResponse.attendancePattern[i].workingHours,
+      };
+      attendancePatternList.push(attendancePattern);
+    }
+  }
+};
+/**
+ * 勤怠ステータスを取得します。
+ *
+ * @param {string} attenDancePatternId
+ */
+const getSelectAttendancePattern = function (attenDancePatternId) {
+  selecAtttendancePattern = {};
+  for (var i in attendancePatternList) {
+    if (attendancePatternList[i].patternId === attenDancePatternId) {
+      selecAtttendancePattern = attendancePatternList[i];
+    }
+  }
+};
+/**
+ * 勤怠ステータスを取得します。
+ *
+ * @param {*} selectStatus
+ */
+const getSelectStatus = function (status) {
+  switch (status) {
+    case "0":
+      return { text: "出勤", value: "0" };
+    case "1":
+      return { text: "休憩", value: "1" };
+    case "2":
+      return { text: "戻り", value: "2" };
+    case "3":
+      return { text: "退勤", value: "3" };
+    default:
+      return { text: "出勤", value: "0" };
+  }
+};
+/**
+ * 勤怠ステータスのリストを取得します。
+ * 以前のステータスで入力させたくないので、不要なステータスを削除します。
+ *
+ * @param {*} statusValue
+ */
+const getStatusList = function (statusValue) {
+  var statusList = [];
+  var tmpStatusList = [
+    { text: "出勤", value: "0" },
+    { text: "休憩", value: "1" },
+    { text: "戻り", value: "2" },
+    { text: "退勤", value: "3" },
+  ];
+  if (!statusValue == "0") {
+    for (var i = statusValue; i <= 3; i++) {
+      statusList.push(tmpStatusList[i]);
+    }
+  }
+  return statusList;
 };
 /**
  * トップ画面のService
@@ -328,20 +408,11 @@ app.post("/showAttendanceDialog", async function (req, res) {
     .then(async function (result) {
       formatWorkFieldDetail();
       setSelectJob();
-      //日付を取得します。
-      var date = new Date();
-      var todayDate =
-        date.getFullYear() +
-        "-" +
-        (Number(date.getMonth()) + 1) +
-        "-" +
-        date.getDate();
       var data = {
         clientFieldResponse: clientFieldResponse,
         workFieldResponse: workFieldResponse,
         workFieldDetailResponse: workFieldDetailResponse,
         selectJob: selectJob,
-        todayDate: "2022-07-01",
       };
       res.status(200).json(data);
     })
@@ -355,34 +426,87 @@ app.post("/showAttendanceDialog", async function (req, res) {
 app.post("/check", async function (req, res) {
   const promises = [];
 
-  promises.push(mainLogic.checkInputData(req.body));
-  promises.push(ownCompanyFecthAll(req.body.contractorId));
+  promises.push(mainLogic.checkInputData(req.body.selectJob));
   promises.push(workFieldDetailFecthAll(req.body.contractorId));
   promises.push(employeeFecthAll(req.body.contractorId));
-  promises.push(
-    mainLogic.checkExistsData(
-      req.body,
-      employeeResponse,
-      workFieldDetailResponse
-    )
-  );
-  promises.push(workFieldFecthAll(req.body.contractorId));
-  promises.push(clientFieldFecthAll(req.body.contractorId));
-  promises.push(clientFieldFecthAll(req.body.contractorId));
-
+  promises.push(contactFecthAll(req.body.contractorId));
   Promise.all(promises)
-    .then(function (items) {
-      //日付を取得します。
-      var date = new Date();
-      var todayDate =
-        date.getFullYear() +
-        "-" +
-        (Number(date.getMonth()) + 1) +
-        "-" +
-        date.getDate();
+    .then(async function () {
+      //promiseallだとresponseが空になっちゃうので、別に実行
+      return await mainLogic.checkExistsData(
+        req.body,
+        employeeResponse,
+        workFieldDetailResponse
+      );
+    })
+    .then(async function () {
+      return await attendanceManageFind(
+        req.body.contractorId,
+        req.body.employeeId
+      );
+    })
+    .then(async function () {
+      getAttendancePattern();
+      getSelectAttendancePattern(attendanceManageResponse.attendancePatternId);
+      var selectStatus = {};
+      // 取得できない場合は、まだ出勤していないので「0：出勤」を設定
+      if (attendanceManageResponse === undefined) {
+        selectStatus = { text: "出勤", value: "0" };
+      } else {
+        selectStatus = getSelectStatus(attendanceManageResponse.status);
+      }
+      var statusList = getStatusList(selectStatus.value);
       var data = {
-        attendanceManageResponse: attendanceManageResponse,
-        todayDate: "2022-07-01",
+        selectStatus: selectStatus,
+        selecAtttendancePattern: selecAtttendancePattern,
+        statusList: statusList,
+        attendancePatternList: attendancePatternList,
+        contactResponse: contactResponse,
+        noteContents: attendanceManageResponse.noteContents,
+      };
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      console.log(err);
+      //サーバー側での入力値チェックエラーです。
+      if (err.messageList) {
+        res.status(400).json(err);
+        //サーバー側でのシステムエラーです。
+      } else {
+        err.checkResult = false;
+        err.messageList = clientFieldLogic.createSytemErrorMessage();
+        res.status(500).json(err);
+      }
+    });
+});
+//勤怠先入力情報の保存処理をします。
+app.post("/save", async function (req, res) {
+  const promises = [];
+
+  promises.push(mainLogic.checkInputData(req.body.selectJob));
+  promises.push(workFieldDetailFecthAll(req.body.contractorId));
+  promises.push(employeeFecthAll(req.body.contractorId));
+  Promise.all(promises)
+    .then(async function () {
+      //promiseallだとresponseが空になっちゃうので、別に実行
+      return await mainLogic.checkExistsData(
+        req.body,
+        employeeResponse,
+        workFieldDetailResponse
+      );
+    })
+    .then(async function () {
+      return await attendanceManageFind(
+        req.body.contractorId,
+        req.body.employeeId
+      );
+    })
+    .then(async function () {
+      return await attendanceManageUpdate(req.body);
+    })
+    .then(async function () {
+      //返却用のdata
+      var data = {
         checkResult: checkResult,
         messageList: messageList,
       };
@@ -401,67 +525,5 @@ app.post("/check", async function (req, res) {
       }
     });
 });
-//勤怠先入力情報の保存処理をします。
-app.post("/save", async function (req, res) {});
-
-// app.get("/findclientField", async function (req, res) {
-//   await clientField
-//     .selectClientFieldAll()
-//     .then(async function (result) {
-//       res.status(200).json(result);
-//     })
-//     .catch((err) => {
-//       res.status(500).json(err);
-//     });
-// });
-
-// app.get("/findWorkField", async function (req, res) {
-//   await workField
-//     .findWorkField(req.body.objectId)
-//     .then(async function (result) {
-//       res.status(200).json(result);
-//     })
-//     .catch((err) => {
-//       res.status(500).json(err);
-//     });
-// });
-
-// app.get("/findWorkFieldDetail", async function (req, res) {
-//   await workFieldDetail
-//     .findWorkFieldDetail(req.body.objectId)
-//     .then(async function (result) {
-//       res.status(200).json(result);
-//     })
-//     .catch((err) => {
-//       res.status(500).json(err);
-//     });
-// });
-
-// app.post("/registerAttendance", async function (req, res) {
-//   await attendance
-//     .registerAttendance(
-//       "smO9DRbq1AaLFOuX",
-//       {
-//         attendanceStatus: 0,
-//         workTimeClumn: "start",
-//         workTime: {
-//           type: "Date",
-//           iso: "2022-02-26T15:00:00.000Z",
-//         },
-//       },
-//       ["2022-02-26T15:00:00.000Z", "2022-02-27T14:59:59.999Z"],
-//       ["2022-02-26T15:00:00.000Z", "2022-02-28T14:59:59.999Z"]
-//       //   req.body.userObjectId,
-//       //   req.body.attendanceData,
-//       //   req.body.specifiedDateRangeOfStart,
-//       //   req.body.specifiedDateRangeOfEnd
-//     )
-//     .then(async function (result) {
-//       res.status(200).json(result);
-//     })
-//     .catch((err) => {
-//       res.status(500).json(err);
-//     });
-// });
 
 module.exports = app;
