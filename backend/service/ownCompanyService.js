@@ -11,24 +11,50 @@ var contactDao = new ContactDao();
 const WorkTypeDao = require("../middle/dao/workTypeDao");
 var workTypeDao = new WorkTypeDao();
 
+var ownCompanyResponse = {};
+var workTypeResponse = {};
+
+/** 会社情報を取得します。 */
+const contactFetchAll = function (contractorId) {
+  return new Promise(function (resolve, reject) {
+    contactDao
+      .selectContactAll(contractorId)
+      .then(function (items) {
+        ownCompanyResponse = items;
+        resolve(items);
+      })
+      .catch(function (err) {
+        console.log(err, reject);
+      });
+  });
+};
+
+/** 会社情報を取得します。 */
+const workTypeFetchAll = function (contractorId) {
+  return new Promise(function (resolve, reject) {
+    workTypeDao
+      .selectWorkTypeAll(contractorId)
+      .then(function (items) {
+        workTypeResponse = items;
+        resolve(items);
+      })
+      .catch(function (err) {
+        console.log(err, reject);
+      });
+  });
+};
+
 /**
  * 自社設定画面のService
  */
 //自社設定の情報を取得します。
 app.post("/", async function (req, res) {
-  var ownCompanyResponse = {};
-  var workTypeResponse = {};
-  //契約テーブルから自社情報を取得します。
-  await contactDao
-    .selectContactAll(req.body.contractorId)
-    .then(function (items) {
-      ownCompanyResponse = items;
-      //工種テーブルから工種情報を取得します。
-      return workTypeDao.selectWorkTypeAll(req.body.contractorId);
-    })
-    .then(function (items) {
-      workTypeResponse = items;
+  const promises = [];
+  promises.push(contactFetchAll(req.body.contractorId));
+  promises.push(workTypeFetchAll(req.body.contractorId));
 
+  Promise.all(promises)
+    .then(async function (result) {
       //返却用のdata
       var data = {
         ownCompanyResponse: ownCompanyResponse,
@@ -45,20 +71,14 @@ app.post("/", async function (req, res) {
 });
 //自社設定の入力情報を保存します。
 app.post("/save", async function (req, res) {
-  var ownCompanyResponse = {};
-  var workTypeResponse = {};
-  var checkResult = false;
-  var messageList = [];
   //入力値チェックします。
   await ownCompanyLogic
     .checkInputData(req.body)
     .then(function () {
       //工種テーブルから工種情報を取得します。
-      return workTypeDao.selectWorkTypeAll(req.body.contractorId);
+      return workTypeFetchAll(req.body.contractorId);
     })
-    .then(function (items) {
-      workTypeResponse = items;
-
+    .then(function () {
       //入力値の存在チェックします。
       return ownCompanyLogic.checkExistsData(req.body, workTypeResponse);
     })
@@ -70,7 +90,7 @@ app.post("/save", async function (req, res) {
       checkResult = data.checkResult;
       messageList = data.messageList;
       //契約テーブルから自社情報を取得します。
-      return contactDao.selectContactAll(req.body.contractorId);
+      return contactFetchAll(req.body.contractorId);
     })
     .then(function (items) {
       ownCompanyResponse = items;

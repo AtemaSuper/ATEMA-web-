@@ -70,14 +70,20 @@ Colum.TEL_NUMBER2 = "電話番号2";
 Colum.TEL_NUMBER3 = "電話番号3";
 /** 工種 */
 Colum.WORK_TYPE = "工種";
-/** 通常業務時間(開始) */
-Colum.NORMAL_WORK_START_TIME = "通常業務時間(開始)";
-/** 通常業務時間(終了) */
-Colum.NORMAL_WORK_FINISH_TIME = "通常業務時間(終了)";
-/** 時間外業務時間(開始) */
-Colum.EXCEPTION_WORK_START_TIME = "時間外業務時間(開始)";
-/** 時間外業務時間(終了) */
-Colum.EXCEPTION_WORK_FINISH_TIME = "時間外業務時間(終了)";
+// /** 通常業務時間(開始) */
+// Colum.NORMAL_WORK_START_TIME = "通常業務時間(開始)";
+// /** 通常業務時間(終了) */
+// Colum.NORMAL_WORK_FINISH_TIME = "通常業務時間(終了)";
+// /** 時間外業務時間(開始) */
+// Colum.EXCEPTION_WORK_START_TIME = "時間外業務時間(開始)";
+// /** 時間外業務時間(終了) */
+// Colum.EXCEPTION_WORK_FINISH_TIME = "時間外業務時間(終了)";
+/** 勤怠開始時間 */
+Colum.WORK_START_TIME = "勤怠開始時間";
+/** 勤怠終了時間 */
+Colum.WORK_FINISH_TIME = "勤怠終了時間";
+/** 勤怠時間 */
+Colum.WORKING_HOURS = "勤怠時間";
 /** 遅刻の発生 */
 Colum.TARDY_TIME = "遅刻の発生";
 /** 丸め */

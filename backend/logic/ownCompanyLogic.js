@@ -49,20 +49,8 @@ class OwnCompanyLogic {
         checkWorkTypeIdList(errorMessageList, param.workTypeIdList);
         //勤怠情報の入力チェックを行います。
       } else {
-        //通常業務時間(開始)チェック
-        checkNormalWorkStartTime(errorMessageList, param.normalWorkStartTime);
-        //通常業務時間(終了)チェック
-        checkNormalWorkFinishTime(errorMessageList, param.normalWorkFinishTime);
-        //時間外業務時間(開始)チェック
-        checkExceptionWorkStartTime(
-          errorMessageList,
-          param.exceptionWorkStartTime
-        );
-        //時間外業務時間(終了)チェック
-        checkExceptionWorkFinishTime(
-          errorMessageList,
-          param.exceptionWorkFinishTime
-        );
+        //勤怠パターンチェック
+        checkAttendancePattern(errorMessageList, param.attendancePatternList);
         //遅刻の発生チェック
         checkTardyTime(errorMessageList, param.tardyTime);
         //丸めチェック
@@ -505,154 +493,115 @@ class OwnCompanyLogic {
     }
 
     /**
-     * 通常業務時間(開始)をチェックします。
+     * 勤怠パターンをチェックします。
      *
      * @param {object} errorMessageList エラーメッセージリストです。
      * @param {string} value 入力内容です。
      */
-    function checkNormalWorkStartTime(errorMessageList, value) {
-      //未入力チェックです。
-      var errorMessage1 = commonLogic.checkEmpty(
-        value,
-        colum.NORMAL_WORK_START_TIME,
-        true
-      );
-      if (!util.isEmpty(errorMessage1)) {
-        errorMessageList.push(errorMessage1);
-        return;
-      }
-      //型チェックです。
-      var errorMessage2 = commonLogic.checkType(
-        value,
-        colum.NORMAL_WORK_START_TIME,
-        type.STRING
-      );
-      if (!util.isEmpty(errorMessage2)) {
-        errorMessageList.push(errorMessage2);
-        return;
-      }
-      //時間形式チェックです。
-      var errorMessage3 = commonLogic.checkTimeFormat(
-        value,
-        colum.NORMAL_WORK_START_TIME
-      );
-      if (!util.isEmpty(errorMessage3)) {
-        errorMessageList.push(errorMessage3);
-        return;
-      }
-    }
+    function checkAttendancePattern(errorMessageList, value) {
+      for (var i in value) {
+        var attendancePattern = value[i];
+        //勤怠開始時間の未入力チェックです。
+        var errorMessage1 = commonLogic.checkEmpty(
+          attendancePattern.workStartTime,
+          colum.WORK_START_TIME,
+          true
+        );
+        if (!util.isEmpty(errorMessage1)) {
+          errorMessageList.push(errorMessage1);
+          return;
+        }
+        //勤怠開始時間の型チェックです。
+        var errorMessage2 = commonLogic.checkType(
+          attendancePattern.workStartTime,
+          colum.WORK_START_TIME,
+          type.STRING
+        );
+        if (!util.isEmpty(errorMessage2)) {
+          errorMessageList.push(errorMessage2);
+          return;
+        }
+        //勤怠開始時間の時間形式チェックです。
+        var errorMessage3 = commonLogic.checkTimeFormat(
+          attendancePattern.workStartTime,
+          colum.WORK_START_TIME
+        );
+        if (!util.isEmpty(errorMessage3)) {
+          errorMessageList.push(errorMessage3);
+          return;
+        }
 
-    /**
-     * 通常業務時間(終了)をチェックします。
-     *
-     * @param {object} errorMessageList エラーメッセージリストです。
-     * @param {string} value 入力内容です。
-     */
-    function checkNormalWorkFinishTime(errorMessageList, value) {
-      //未入力チェックです。
-      var errorMessage1 = commonLogic.checkEmpty(
-        value,
-        colum.NORMAL_WORK_FINISH_TIME,
-        true
-      );
-      if (!util.isEmpty(errorMessage1)) {
-        errorMessageList.push(errorMessage1);
-        return;
-      }
-      //型チェックです。
-      var errorMessage2 = commonLogic.checkType(
-        value,
-        colum.NORMAL_WORK_FINISH_TIME,
-        type.STRING
-      );
-      if (!util.isEmpty(errorMessage2)) {
-        errorMessageList.push(errorMessage2);
-        return;
-      }
-      //時間形式チェックです。
-      var errorMessage3 = commonLogic.checkTimeFormat(
-        value,
-        colum.NORMAL_WORK_FINISH_TIME
-      );
-      if (!util.isEmpty(errorMessage3)) {
-        errorMessageList.push(errorMessage3);
-        return;
-      }
-    }
+        //勤怠終了時間の未入力チェックです。
+        var errorMessage4 = commonLogic.checkEmpty(
+          attendancePattern.workFinishTime,
+          colum.WORK_FINISH_TIME,
+          true
+        );
+        if (!util.isEmpty(errorMessage4)) {
+          errorMessageList.push(errorMessage4);
+          return;
+        }
+        //勤怠終了時間の型チェックです。
+        var errorMessage5 = commonLogic.checkType(
+          attendancePattern.workFinishTime,
+          colum.WORK_FINISH_TIME,
+          type.STRING
+        );
+        if (!util.isEmpty(errorMessage5)) {
+          errorMessageList.push(errorMessage5);
+          return;
+        }
+        //勤怠終了時間の時間形式チェックです。
+        var errorMessage6 = commonLogic.checkTimeFormat(
+          attendancePattern.workFinishTime,
+          colum.WORK_FINISH_TIME
+        );
+        if (!util.isEmpty(errorMessage6)) {
+          errorMessageList.push(errorMessage6);
+          return;
+        }
+        // TODO 勤怠開始時間より後の時間かチェックする
+        // var errorMessage7 = commonLogic.checkTimeFormat(
+        //   attendancePattern.workFinishTime,
+        //   colum.WORK_FINISH_TIME
+        // );
+        // if (!util.isEmpty(errorMessage7)) {
+        //   errorMessageList.push(errorMessage7);
+        //   return;
+        // }
 
-    /**
-     * 時間外業務時間(開始)をチェックします。
-     *
-     * @param {object} errorMessageList エラーメッセージリストです。
-     * @param {string} value 入力内容です。
-     */
-    function checkExceptionWorkStartTime(errorMessageList, value) {
-      //未入力チェックです。
-      var errorMessage1 = commonLogic.checkEmpty(
-        value,
-        colum.EXCEPTION_WORK_START_TIME,
-        true
-      );
-      if (!util.isEmpty(errorMessage1)) {
-        errorMessageList.push(errorMessage1);
-        return;
-      }
-      //型チェックです。
-      var errorMessage2 = commonLogic.checkType(
-        value,
-        colum.EXCEPTION_WORK_START_TIME,
-        type.STRING
-      );
-      if (!util.isEmpty(errorMessage2)) {
-        errorMessageList.push(errorMessage2);
-        return;
-      }
-      //時間形式チェックです。
-      var errorMessage3 = commonLogic.checkTimeFormat(
-        value,
-        colum.EXCEPTION_WORK_START_TIME
-      );
-      if (!util.isEmpty(errorMessage3)) {
-        errorMessageList.push(errorMessage3);
-        return;
-      }
-    }
+        //勤怠時間の未入力チェックです。
+        var errorMessage8 = commonLogic.checkEmpty(
+          attendancePattern.workingHours,
+          colum.WORKING_HOURS,
+          true
+        );
+        if (!util.isEmpty(errorMessage8)) {
+          errorMessageList.push(errorMessage8);
+          return;
+        }
+        //勤怠時間の型チェックです。
+        var errorMessage9 = commonLogic.checkType(
+          attendancePattern.workingHours,
+          colum.WORKING_HOURS,
+          type.NUMBER
+        );
+        if (!util.isEmpty(errorMessage9)) {
+          errorMessageList.push(errorMessage9);
+          return;
+        }
 
-    /**
-     * 時間外業務時間(終了)をチェックします。
-     *
-     * @param {object} errorMessageList エラーメッセージリストです。
-     * @param {string} value 入力内容です。
-     */
-    function checkExceptionWorkFinishTime(errorMessageList, value) {
-      //未入力チェックです。
-      var errorMessage1 = commonLogic.checkEmpty(
-        value,
-        colum.EXCEPTION_WORK_FINISH_TIME,
-        true
-      );
-      if (!util.isEmpty(errorMessage1)) {
-        errorMessageList.push(errorMessage1);
-        return;
-      }
-      //型チェックです。
-      var errorMessage2 = commonLogic.checkType(
-        value,
-        colum.EXCEPTION_WORK_FINISH_TIME,
-        type.STRING
-      );
-      if (!util.isEmpty(errorMessage2)) {
-        errorMessageList.push(errorMessage2);
-        return;
-      }
-      //時間形式チェックです。
-      var errorMessage3 = commonLogic.checkTimeFormat(
-        value,
-        colum.EXCEPTION_WORK_FINISH_TIME
-      );
-      if (!util.isEmpty(errorMessage3)) {
-        errorMessageList.push(errorMessage3);
-        return;
+        //勤怠時間の入力範囲チェックです。
+        var errorMessage10 = commonLogic.checkInputRange(
+          attendancePattern.workingHours,
+          colum.WORKING_HOURS,
+          1,
+          24
+        );
+        if (!util.isEmpty(errorMessage10)) {
+          errorMessageList.push(errorMessage10);
+          return;
+        }
       }
     }
 
@@ -1045,7 +994,6 @@ class OwnCompanyLogic {
   checkExistsData(param, workTypeResponse) {
     return new Promise(function (resolve, reject) {
       var errorMessageList = [];
-      console.log(param);
       //基本情報の入力値の存在チェックを行います。
       if (param.pageContents == 1) {
         //工種チェック

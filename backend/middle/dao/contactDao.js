@@ -85,10 +85,7 @@ class ContactDao {
     } else {
       const responce = await contractorRef
         .update({
-          normalWorkStartTime: param.normalWorkStartTime,
-          normalWorkFinishTime: param.normalWorkFinishTime,
-          exceptionWorkStartTime: param.exceptionWorkStartTime,
-          exceptionWorkFinishTime: param.exceptionWorkFinishTime,
+          attendancePattern: param.attendancePatternList,
           tardyTime: param.tardyTime,
           roundingTime: param.roundingTime,
           selectRoundingTime: param.selectRoundingTime,
