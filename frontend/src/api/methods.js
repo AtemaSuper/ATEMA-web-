@@ -94,6 +94,11 @@ export default {
     const item = { id: "AtemAdmin", password: "1234" };
     return Api().post("/login", item);
   },
+  // ログインユーザ情報取得処理
+  loginGetUserInfo(employeeId) {
+    const item = { employeeId: employeeId };
+    return Api().post("/login/getUserInfo", item);
+  },
   // ログイン確認処理（JSON）
   protectedPosting() {
     return Api().post("/login/protected");

@@ -16,6 +16,8 @@ import OwnWorkerAll from "@/components/pages/ownWorkerAll";
 import PasswordReset from "@/components/pages/passwordReset";
 import OwnCompany from "@/components/pages/ownCompany";
 
+import store from "../store/index";
+
 Vue.use(Router);
 
 const router = new Router({
@@ -94,24 +96,33 @@ const router = new Router({
 });
 
 const auth = async () => {
-  await Methods.auth();
+  return Methods.auth();
+};
+
+const loginUserInfo = async uid => {
+  return Methods.loginGetUserInfo(uid)
+    .then(response => {
+      store.commit("setUserInfo", response.data.userInfo);
+      return response;
+    })
+    .catch(e => {
+      alert("authentication-error");
+      throw new Error("authentication-error");
+    });
 };
 
 router.beforeEach(async (to, from, next) => {
   if (to.matched.some(record => !record.meta.isPublic)) {
     let accessToken = JSON.parse(localStorage.getItem("accessToken"));
     if (accessToken) {
-      console.log("認証");
       // バックエンドの検証APIをたたく
       await auth()
-        .then(function(uid) {
-          console.log("認証成功");
+        .then(async function(responce) {
+          await loginUserInfo(responce.data);
           next();
-          return "";
         })
         .catch(function(error) {
           next({ path: "/login", query: { redirect: to.fullPath } });
-          console.log("認証失敗");
           return error;
         });
     }
