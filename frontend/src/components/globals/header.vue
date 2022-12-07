@@ -79,6 +79,7 @@
 import { firebaseApp } from "../../plugins/firebaseConfig";
 import { getAuth, signOut } from "@firebase/auth";
 import firebaseUtils from "./../../store/modules/firebaseUtils";
+import store from "../../store/index";
 const auth = getAuth();
 
 export default {
@@ -86,16 +87,11 @@ export default {
     return {
       dialog: false,
       // ログインユーザ情報
-      userInfo: {
-        companyName: "ABC事業",
-        companyId: "2021001",
-        userName: "山田太郎",
-        postName: "社長"
-      }
+      userInfo: store.getters.userInfo
     };
   },
   components: {},
-  conputed: {},
+  computed: {},
   methods: {
     // ページ遷移処理
     transition(path) {

@@ -10,6 +10,7 @@ import workFieldList from "./modules/workFieldList/index";
 import ownWorker from "./modules/ownWorker/index";
 import postList from "./modules/postList/index";
 import subCompany from "./modules/subCompany/index";
+import userInfo from "./modules/userInfo/index";
 
 Vue.use(Vuex);
 export default new Vuex.Store({
@@ -22,7 +23,8 @@ export default new Vuex.Store({
     workFieldList,
     ownWorker,
     postList,
-    subCompany
+    subCompany,
+    userInfo
   },
   plugins: [
     createPersistedState({
