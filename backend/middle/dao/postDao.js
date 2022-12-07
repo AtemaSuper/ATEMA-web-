@@ -13,7 +13,7 @@ if (admin.apps.length === 0) {
  */
 class PostDao {
   /**
-   * 役職情報一覧を取得します。
+   * 社員情報一覧を取得します。
    *
    * @param {string} contractorId 契約IDです。
    *
@@ -21,13 +21,13 @@ class PostDao {
    */
   async selectPostAll(contractorId) {
     const db = admin.firestore();
-    const postRef = db
+    const employeeRef = db
       .collection("post")
       .doc(contractorId)
       .collection("data")
       .where("deleteFlg", "==", false);
 
-    const responce = await postRef
+    const responce = await employeeRef
       .get()
       .then(function (items) {
         return items.docs.map((doc) => {
@@ -35,31 +35,6 @@ class PostDao {
           data.postId = doc.id;
           return data;
         });
-      })
-      .catch(function (err) {
-        return err;
-      });
-    return responce;
-  }
-  /**
-   * 役職IDから役職情報を取得します。
-   *
-   * @param {string} postId 契約IDです。
-   *
-   * @returns
-   */
-  async selectPostInfoByPostId(contractorId, postId) {
-    const db = admin.firestore();
-    const postRef = db
-      .collection("post")
-      .doc(contractorId)
-      .collection("data")
-      .doc(postId);
-
-    const responce = await postRef
-      .get()
-      .then(function (items) {
-        return items.data();
       })
       .catch(function (err) {
         return err;

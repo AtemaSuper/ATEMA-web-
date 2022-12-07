@@ -106,8 +106,9 @@ export default {
             alert("login success");
             return Methods.loginGetUserInfo(responce.user.uid);
           })
-          .then((response) => {
+          .then((response) => {;
             store.commit('setUserInfo', response.data.userInfo);
+            console.log(store.getters.companyName);
             if (!this.$route.query.redirect) {
               this.$router.push("/main");
             }else{
