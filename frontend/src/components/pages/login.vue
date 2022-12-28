@@ -68,6 +68,8 @@
 import { firebaseApp } from "../../plugins/firebaseConfig";
 import { getAuth, signInWithEmailAndPassword } from "@firebase/auth";
 import firebaseUtils from "./../../store/modules/firebaseUtils";
+import Methods from '@/api/methods'
+import store from "../../store/index";
 const auth = getAuth();
 
 export default {
@@ -92,14 +94,20 @@ export default {
     login() {
       if (this.$refs.loginForm.validate()) {
         signInWithEmailAndPassword(auth, this.model.email, this.model.password)
-          .then(() => {
+          .then((responce) => {
             firebaseUtils.onAuthStoreStateChanged();
             alert("login success");
+            return Methods.loginGetUserInfo(responce.user.uid);
+          })
+          .then((response) => {;
+            store.commit('setUserInfo', response.data.userInfo);
+            console.log(store.getters.companyName);
             if (!this.$route.query.redirect) {
               this.$router.push("/main");
+            }else{
+              const redirectTo = this.$route.query.redirect;
+              this.$router.push(redirectTo);
             }
-            const redirectTo = this.$route.query.redirect;
-            this.$router.push(redirectTo);
           })
           .catch(e => {
             alert("login error");
@@ -109,6 +117,6 @@ export default {
         alert("validate error");
       }
     }
-  }
+  },
 };
 </script>
