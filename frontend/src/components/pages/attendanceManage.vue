@@ -5,7 +5,7 @@
         <v-sheet color="white" rounded outlined>
           <v-row align="center">
             <!-- 日付選択（※フィルター動作未実装） -->
-            <v-col cols="12" sm="4" md="2">
+            <v-col cols="12" sm="4" md="4">
               <v-menu
                 ref="menu"
                 v-model="menu"
@@ -59,16 +59,14 @@
               ></v-text-field>
             </v-col>
             <v-col cols="12" sm="4" md="4"> </v-col>
-            <v-col cols="12" sm="4" md="4"> </v-col>
-            <v-col cols="12" sm="4" md="2">
+            <v-col cols="12" sm="4" md="4" style="text-align: right;">
               <!-- ダウンロード形式選択 -->
               <v-menu offset-y>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn v-bind="attrs" v-on="on" outlined elevation="3"
-                    >ダウンロード<v-icon color="#00ffd0"
-                      >mdi-download</v-icon
-                    ></v-btn
-                  >
+                  <v-btn v-bind="attrs" v-on="on" outlined elevation="3">
+                    ダウンロード
+                    <v-icon color="#00ffd0">mdi-download</v-icon>
+                  </v-btn>
                 </template>
                 <v-list>
                   <v-list-item @click="download('myCompanyAll')">
@@ -133,7 +131,10 @@
 
               <!-- workFieldDetail Row -->
               <template v-slot:[`item.workFieldDetail`]="{ item }">
-                <v-btn outlined @click="fieldContents(item.workFieldDetail,item.employeeId)">
+                <v-btn
+                  outlined
+                  @click="fieldContents(item.workFieldDetail, item.employeeId)"
+                >
                   {{ item.workFieldDetail.jobNo }}
                 </v-btn>
               </template>
@@ -141,9 +142,7 @@
               <!-- contract Row -->
               <template v-slot:[`item.contractStatus`]="{ item }">
                 <v-chip>
-                  {{
-                    toStringContractStatus(item.contractStatus)
-                  }}
+                  {{ toStringContractStatus(item.contractStatus) }}
                 </v-chip>
               </template>
 
@@ -465,7 +464,12 @@
           </v-card>
         </v-dialog>
 
-        <v-dialog v-model="fieldEditDialog" :value="detailEdit" max-width="600px" persistent>
+        <v-dialog
+          v-model="fieldEditDialog"
+          :value="detailEdit"
+          max-width="600px"
+          persistent
+        >
           <v-card>
             <v-card-title class="text-h5 grey lighten-2">
               現場詳細編集
@@ -514,14 +518,16 @@
                             <v-chip color="red" dark>必須</v-chip>
                           </v-col>
                           <v-col cols="12" md="6">
-                            <v-select 
-                            v-model="detailEdit.selectClientField" 
-                            v-on:change="selectCleintField"
-                            label="(例)株式会社ABC" 
-                            :items="clientFieldList" 
-                            item-text="clientFieldName"
-                            item-value="value" 
-                            return-object outlined required
+                            <v-select
+                              v-model="detailEdit.selectClientField"
+                              v-on:change="selectCleintField"
+                              label="(例)株式会社ABC"
+                              :items="clientFieldList"
+                              item-text="clientFieldName"
+                              item-value="value"
+                              return-object
+                              outlined
+                              required
                             ></v-select>
                           </v-col>
                         </v-row>
@@ -534,13 +540,15 @@
                           </v-col>
                           <v-col cols="12" md="6">
                             <v-select
-                              v-model="detailEdit.selectWorkField" 
+                              v-model="detailEdit.selectWorkField"
                               label="(例)株式会社ABC"
                               v-on:change="selectWorkField"
                               :items="workFieldList"
                               item-text="workFieldName"
-                              item-value="value" 
-                              return-object outlined required
+                              item-value="value"
+                              return-object
+                              outlined
+                              required
                             ></v-select>
                           </v-col>
                         </v-row>
@@ -553,12 +561,14 @@
                           </v-col>
                           <v-col cols="12" md="6">
                             <v-select
-                              v-model="detailEdit.selectWorkFieldDetail" 
+                              v-model="detailEdit.selectWorkFieldDetail"
                               label="(例)株式会社ABC"
                               :items="workFieldDetailList"
                               item-text="workFieldDetailName"
-                              item-value="value" 
-                              return-object outlined required
+                              item-value="value"
+                              return-object
+                              outlined
+                              required
                             ></v-select>
                           </v-col>
                         </v-row>
@@ -601,11 +611,11 @@ export default {
   components: {},
   data: () => ({
     // TODO ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
-    userId: '6tQPHzHQwlGErXeLSzt1',
+    userId: "6tQPHzHQwlGErXeLSzt1",
     // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
     // ※複数社契約になった場合、セッションで契約IDを保持して、
     // ※そのIDをもとに検索するように修正
-    contractorId: '00000001',
+    contractorId: "00000001",
     contractorInfo: {},
     clientFieldList: [],
     workFieldList: [],
@@ -642,11 +652,11 @@ export default {
     fieldEditTab: 0,
     attendanceList: [],
     attendanceTimehh: "",
-    attendanceTimemm: "",
+    attendanceTimemm: ""
   }),
   mounted: async function() {
     // 出退勤管理の画面情報をとってきます。
-    this.getAttendanceInfo()
+    this.getAttendanceInfo();
   },
   computed: {
     /** v-tableのヘッダーを設定 */
@@ -700,7 +710,7 @@ export default {
   },
   methods: {
     /** 初期表示処理 */
-    async getAttendanceInfo () {
+    async getAttendanceInfo() {
       // this.displayDate = dayjs(new Date()).format("YYYY-MM-DD");
       this.displayDate = dayjs("2022-07-01").format("YYYY-MM-DD");
       await this.findAttendanceListAsync(this.displayDate);
@@ -737,9 +747,9 @@ export default {
       this.attendanceList = response.data.attendanceManageResponse;
       this.contractorInfo = response.data.contractorResponse;
       this.roundingTime = this.convertRoundingTime();
-      this.clientFieldList = this.createClientFieldList(response)
-      this.workFieldResponse = response.data.workFieldResponse
-      this.workFieldDetailResponse = response.data.workFieldDetailResponse
+      this.clientFieldList = this.createClientFieldList(response);
+      this.workFieldResponse = response.data.workFieldResponse;
+      this.workFieldDetailResponse = response.data.workFieldDetailResponse;
     },
     async updateAttendanceListAsync(employeeId, clumns, items, index) {
       if (this.attendanceList.length < 0) {
@@ -758,15 +768,15 @@ export default {
         this.attendanceList = response.data.attendanceManageResponse;
         this.contractorInfo = response.data.contractorResponse;
         this.roundingTime = this.convertRoundingTime();
-        this.clientFieldList = this.createClientFieldList(response)
-        this.workFieldResponse = response.data.workFieldResponse
-        this.workFieldDetailResponse = response.data.workFieldDetailResponse
+        this.clientFieldList = this.createClientFieldList(response);
+        this.workFieldResponse = response.data.workFieldResponse;
+        this.workFieldDetailResponse = response.data.workFieldDetailResponse;
         // 保存完了メッセージ表示
-        this.$emit('alertMethod', response);
-      }catch (err){
+        this.$emit("alertMethod", response);
+      } catch (err) {
         let response = err.response;
         // エラーメッセージ表示
-        this.$emit('alertMethod', response)
+        this.$emit("alertMethod", response);
       }
     },
     /** ダウンロード処理 */
@@ -827,7 +837,7 @@ export default {
     /** 表示する時間を処理 */
     formatTime(date) {
       // 未入力の場合、ハイフンで表示する
-      if(date === ""){
+      if (date === "") {
         return "--:--";
       }
       return date;
@@ -859,7 +869,7 @@ export default {
     /** 時間外表示処理 */
     displayOverTime(startTime, endTime) {
       // 業務開始時間または終了時間が未入力の場合
-      if(startTime === "" || endTime === "") {
+      if (startTime === "" || endTime === "") {
         return "--:--";
       }
       // 自社設定から取得したデータを格納します。
@@ -870,55 +880,51 @@ export default {
       // var exceptionWorkFinishTime = this.contractorInfo.nexceptionWorkFinishTime;
 
       // 通常業務終了時間
-      var contractorEndTime = this.contractorInfo.normalWorkFinishTime.split(":");
+      var contractorEndTime = this.contractorInfo.normalWorkFinishTime.split(
+        ":"
+      );
       const fromOverTime = dayjs(this.displayDate)
         .hour(contractorEndTime[0])
-        .minute(contractorEndTime[1])
-        .second(0);
+        .minute(contractorEndTime[1]);
 
       // 業務開始入力時間
       var startTWorkTime = startTime.split(":");
       const targetStartTime = dayjs(this.displayDate)
         .hour(startTWorkTime[0])
-        .minute(startTWorkTime[1])
-        .second(0);
-      // 業務開始終了時間
+        .minute(startTWorkTime[1]);
+
+      // 業務終了入力時間
       var endTWorkTime = endTime.split(":");
       const targetEndTime = dayjs(this.displayDate)
         .hour(endTWorkTime[0])
-        .minute(endTWorkTime[1])
-        .second(0);
-      
+        .minute(endTWorkTime[1]);
+
       // 早出時間の範囲
-      const fromEaryTimeRange = dayjs(this.displayDate)
-        .hour(5)
-        .minute(0)
-        .second(0);
+      const fromEaryTimeRange = dayjs(this.displayDate).hour(5);
+
       const toEaryTimeRange = dayjs(this.displayDate)
         .hour(normalWorkStartTime.split(":")[0])
-        .minute(normalWorkStartTime.split(":")[1])
-        .second(0);
+        .minute(normalWorkStartTime.split(":")[1]);
+
       // 深夜時間の範囲
       const fromMidNightTimeRange = dayjs(this.displayDate)
         .hour(exceptionWorkStartTime.split(":")[0])
-        .minute(exceptionWorkStartTime.split(":")[1])
-        .second(0);
+        .minute(exceptionWorkStartTime.split(":")[1]);
+
       // const toMidNightTimeRange = dayjs(this.displayDate)
       //   .add(1, "day")
       //   .hour(5)
       //   .minute(0)
-      //   .second(0);
+      //
       // 業務の次の日の時間外時間の範囲
       const fromEaryOverTimeRange = dayjs(this.displayDate)
         .add(1, "day")
-        .hour(5)
-        .minute(0)
-        .second(0);
+        .hour(5);
+
       const toEaryOverTimeRange = dayjs(this.displayDate)
         .add(1, "day")
         .hour(normalWorkStartTime.split(":")[0])
-        .minute(normalWorkStartTime.split(":")[1])
-        .second(0);
+        .minute(normalWorkStartTime.split(":")[1]);
 
       // 表示する時間外
       let displayHour = 0;
@@ -952,7 +958,7 @@ export default {
           "hour"
         );
         subtractionTodayEaryMinute = -(
-          targetStartTime.diff(toEaryTimeRange, "minute")% 60
+          targetStartTime.diff(toEaryTimeRange, "minute") % 60
         );
       }
       // 通常：当日
@@ -960,19 +966,19 @@ export default {
       if (fromOverTime < targetEndTime) {
         if (fromMidNightTimeRange < targetEndTime) {
           subtractionHour = targetEndTime.diff(fromOverTime, "hour");
-          subtractionMinute = targetEndTime.diff(fromOverTime, "minute")% 60;
+          subtractionMinute = targetEndTime.diff(fromOverTime, "minute") % 60;
         } else {
-          // 自社設定より算出した最大通常時間外固定値を入れる 
+          // 自社設定より算出した最大通常時間外固定値を入れる
           // (通常業務終了時間から22時までの差分)
           // 業務終了時間が22時以降に設定されている場合、0を設定
-          if(fromOverTime.hour() < 22) {
+          if (fromOverTime.hour() < 22) {
             subtractionHour = 22 - fromOverTime.hour();
-          }else{
+          } else {
             subtractionHour = 0;
           }
         }
       }
-      
+
       // 深夜
       // TODO 丸め設定を入れる（切り捨て）
       // if (fromMidNightTimeRange < targetEndTime) {
@@ -1014,12 +1020,13 @@ export default {
       // 丸め設定をします。
       var roundingDisplayMinute = displayMinute % this.roundingTime;
       // 丸め時間で割り、0の場合なにもしません。
-      if(roundingDisplayMinute !== 0){
+      if (roundingDisplayMinute !== 0) {
         // 切り上げの場合
-        if(updownSelect === 0){
-          displayMinute = displayMinute - roundingDisplayMinute + this.roundingTime;
-        // 切り捨ての場合
-        }else{
+        if (updownSelect === 0) {
+          displayMinute =
+            displayMinute - roundingDisplayMinute + this.roundingTime;
+          // 切り捨ての場合
+        } else {
           displayMinute = displayMinute - roundingDisplayMinute;
         }
       }
@@ -1032,16 +1039,13 @@ export default {
     },
     /** 深夜時間表示処理 */
     displayMidNightTime(endTime) {
-      const fromTimeRange = dayjs(this.displayDate)
-        .hour(22)
-        .minute(0)
-        .second(0);
+      const fromTimeRange = dayjs(this.displayDate).hour(22);
+
       const toTimeRange = dayjs(this.displayDate)
         .add(1, "day")
-        .hour(5)
-        .minute(0)
-        .second(0);
-      const toTime = dayjs("2022-07-01"+ endTime);
+        .hour(5);
+
+      const toTime = dayjs("2022-07-01" + endTime);
 
       if (fromTimeRange < toTime && toTimeRange > toTime) {
         const overTimeHour = toTime.diff(fromTimeRange, "hour");
@@ -1054,7 +1058,7 @@ export default {
       }
       return "00:00";
     },
-     /** 備考表示処理 */
+    /** 備考表示処理 */
     isNoteContents(noteContents) {
       if (noteContents.length > 0) {
         return "あり";
@@ -1068,14 +1072,14 @@ export default {
     fieldContents(item, employeeId) {
       // observerのためにわざわざこの書き方するよ
       this.detailEdit = {
-        "employeeId": employeeId,
-        "jobNo":item.jobNo,
-        "selectClientField":item.selectClientField,
-        "selectWorkField":item.selectWorkField,
-        "selectWorkFieldDetail":item.selectWorkFieldDetail,
-        "clientFieldName":item.clientFieldName,
-        "workFieldName":item.workFieldName,
-        "workFieldDetailName":item.workFieldDetailName,
+        employeeId: employeeId,
+        jobNo: item.jobNo,
+        selectClientField: item.selectClientField,
+        selectWorkField: item.selectWorkField,
+        selectWorkFieldDetail: item.selectWorkFieldDetail,
+        clientFieldName: item.clientFieldName,
+        workFieldName: item.workFieldName,
+        workFieldDetailName: item.workFieldDetailName
       };
       this.fieldDialog = true;
     },
@@ -1096,8 +1100,10 @@ export default {
     async saveFieldDetail() {
       // 現場詳細IDだけ渡します。
       var workFieldDetailId = "";
-      if(this.detailEdit.selectWorkFieldDetail != null){
-        let selectWorkFieldDetail = JSON.parse(JSON.stringify(this.detailEdit.selectWorkFieldDetail))
+      if (this.detailEdit.selectWorkFieldDetail != null) {
+        let selectWorkFieldDetail = JSON.parse(
+          JSON.stringify(this.detailEdit.selectWorkFieldDetail)
+        );
         workFieldDetailId = selectWorkFieldDetail.workFieldDetailId;
       }
       try {
@@ -1106,22 +1112,22 @@ export default {
           this.detailEdit.employeeId,
           this.fieldEditTab,
           this.detailEdit.jobNo,
-          workFieldDetailId,
+          workFieldDetailId
         );
         // レスポンスから画面情報をセットする
         this.attendanceList = response.data.attendanceManageResponse;
         this.contractorInfo = response.data.contractorResponse;
         this.roundingTime = this.convertRoundingTime();
-        this.clientFieldList = this.createClientFieldList(response)
-        this.workFieldResponse = response.data.workFieldResponse
-        this.workFieldDetailResponse = response.data.workFieldDetailResponse
+        this.clientFieldList = this.createClientFieldList(response);
+        this.workFieldResponse = response.data.workFieldResponse;
+        this.workFieldDetailResponse = response.data.workFieldDetailResponse;
         this.fieldEditDialog = false;
         // 保存完了メッセージ表示
-        this.$emit('alertMethod', response);
-      }catch (err){
+        this.$emit("alertMethod", response);
+      } catch (err) {
         let response = err.response;
         // エラーメッセージ表示
-        this.$emit('alertMethod', response)
+        this.$emit("alertMethod", response);
       }
     },
     /** 現場詳細ダイアログ（編集時）キャンセルボタン押下処理 */
@@ -1131,70 +1137,78 @@ export default {
       this.fieldEditDialog = false;
     },
     /** 客先名セレクトボックス作成処理 */
-    createClientFieldList (response) {
-      var clientFieldResponse = response.data.clientFieldResponse
-      var clientFieldList = []
+    createClientFieldList(response) {
+      var clientFieldResponse = response.data.clientFieldResponse;
+      var clientFieldList = [];
       for (var j = 0; j < clientFieldResponse.length; j++) {
-        var clientField = {}
-        clientField.clientFieldId = clientFieldResponse[j].clientFieldId
-        clientField.clientFieldName = clientFieldResponse[j].clientFieldName
-        clientFieldList.push(clientField)
+        var clientField = {};
+        clientField.clientFieldId = clientFieldResponse[j].clientFieldId;
+        clientField.clientFieldName = clientFieldResponse[j].clientFieldName;
+        clientFieldList.push(clientField);
       }
-      return clientFieldList
+      return clientFieldList;
     },
     /** 現場セレクトボックス作成処理 */
-    createWorkFieldLiist () {
-      var workFieldList = []
+    createWorkFieldLiist() {
+      var workFieldList = [];
       var clientFieldId = "";
       // 工種は工種IDだけ渡します。
-      if(this.detailEdit.selectClientField != null){
-        let selectClientField = JSON.parse(JSON.stringify(this.detailEdit.selectClientField))
+      if (this.detailEdit.selectClientField != null) {
+        let selectClientField = JSON.parse(
+          JSON.stringify(this.detailEdit.selectClientField)
+        );
         clientFieldId = selectClientField.clientFieldId;
       }
       for (var i = 0; i < this.workFieldResponse.length; i++) {
         // 選択した客先に紐づく現場のみ表示します。
-        if(clientFieldId === this.workFieldResponse[i].clientFieldId){
-          var workField = {}
-          workField.workFieldId = this.workFieldResponse[i].workFieldId
-          workField.workFieldName = this.workFieldResponse[i].workFieldName
-          workFieldList.push(workField)
+        if (clientFieldId === this.workFieldResponse[i].clientFieldId) {
+          var workField = {};
+          workField.workFieldId = this.workFieldResponse[i].workFieldId;
+          workField.workFieldName = this.workFieldResponse[i].workFieldName;
+          workFieldList.push(workField);
         }
       }
       return workFieldList;
     },
     /** 現場詳細セレクトボックス作成処理 */
-    createWorkFieldDetailLiist () {
-      var workFieldDetailList = []
+    createWorkFieldDetailLiist() {
+      var workFieldDetailList = [];
       var workFieldId = "";
       // 工種は工種IDだけ渡します。
-      if(this.detailEdit.selectWorkField != null){
-        let selectWorkField = JSON.parse(JSON.stringify(this.detailEdit.selectWorkField))
+      if (this.detailEdit.selectWorkField != null) {
+        let selectWorkField = JSON.parse(
+          JSON.stringify(this.detailEdit.selectWorkField)
+        );
         workFieldId = selectWorkField.workFieldId;
       }
       for (var i = 0; i < this.workFieldDetailResponse.length; i++) {
         // 選択した客先に紐づく現場のみ表示します。
-        if(workFieldId === this.workFieldDetailResponse[i].workFieldId){
-          var workFieldDetail = {}
-          workFieldDetail.workFieldDetailId = this.workFieldDetailResponse[i].workFieldDetailId
-          workFieldDetail.workFieldDetailName = this.workFieldDetailResponse[i].workFieldDetailName
-          workFieldDetailList.push(workFieldDetail)
+        if (workFieldId === this.workFieldDetailResponse[i].workFieldId) {
+          var workFieldDetail = {};
+          workFieldDetail.workFieldDetailId = this.workFieldDetailResponse[
+            i
+          ].workFieldDetailId;
+          workFieldDetail.workFieldDetailName = this.workFieldDetailResponse[
+            i
+          ].workFieldDetailName;
+          workFieldDetailList.push(workFieldDetail);
         }
       }
-      return workFieldDetailList
+      return workFieldDetailList;
     },
     /** 客先セレクトボックス押下処理 */
     selectCleintField() {
       // 現場セレクトボックスを作成します。
       this.workFieldList = this.createWorkFieldLiist();
       this.detailEdit = {
-        "employeeId": this.detailEdit.employeeId,
-        "jobNo":"",
-        "selectClientField":this.detailEdit.selectClientField,
-        "selectWorkField":"",
-        "selectWorkFieldDetail":"",
-        "clientFieldName":this.detailEdit.clientFieldName,
-        "workFieldName":"",
-        "workFieldDetailName":"",
+        employeeId: this.detailEdit.employeeId,
+        jobNo: "",
+        selectClientField: this.detailEdit.selectClientField,
+        selectWorkField: "",
+        selectWorkFieldDetail: "",
+        clientFieldName: this.detailEdit.clientFieldName,
+        workFieldName: "",
+        workFieldDetailName: ""
       };
     },
     /** 現場セレクトボックス押下処理 */
@@ -1202,26 +1216,26 @@ export default {
       // 現場詳細セレクトボックスを作成します。
       this.workFieldDetailList = this.createWorkFieldDetailLiist();
       this.detailEdit = {
-        "employeeId": this.detailEdit.employeeId,
-        "jobNo":"",
-        "selectClientField":this.detailEdit.selectClientField,
-        "selectWorkField":this.detailEdit.selectWorkField,
-        "selectWorkFieldDetail":"",
-        "clientFieldName":this.detailEdit.clientFieldName,
-        "workFieldName":this.detailEdit.workFieldName,
-        "workFieldDetailName":"",
+        employeeId: this.detailEdit.employeeId,
+        jobNo: "",
+        selectClientField: this.detailEdit.selectClientField,
+        selectWorkField: this.detailEdit.selectWorkField,
+        selectWorkFieldDetail: "",
+        clientFieldName: this.detailEdit.clientFieldName,
+        workFieldName: this.detailEdit.workFieldName,
+        workFieldDetailName: ""
       };
     },
     /** 丸み時間を設定 */
-    convertRoundingTime () {
+    convertRoundingTime() {
       // 15分指定
-      if(this.contractorInfo.roundingTime === "0") {
+      if (this.contractorInfo.roundingTime === "0") {
         return 15;
-      // 30分指定
-      }else if(this.contractorInfo.roundingTime === "1"){
+        // 30分指定
+      } else if (this.contractorInfo.roundingTime === "1") {
         return 30;
-      // 分指定
-      }else{
+        // 分指定
+      } else {
         return this.contractorInfo.selectRoundingTime;
       }
     }
