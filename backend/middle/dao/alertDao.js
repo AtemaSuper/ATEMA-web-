@@ -13,7 +13,7 @@ if (admin.apps.length === 0) {
  */
 class AlertDao {
   /**
-   * 社員情報一覧を取得します。
+   * 通知情報一覧を取得します。
    *
    * @param {string} contractorId 契約IDです。
    *

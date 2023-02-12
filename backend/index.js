@@ -14,8 +14,9 @@ const loginController = require("./controller/loginController");
 const mainController = require("./controller/mainController");
 const ownCompanyController = require("./controller/ownCompanyController");
 const ownWorkerAllController = require("./controller/ownWorkerAllController");
-const subCompanyAllController = require("./controller/subCompanyAllController");
 const passwordResetController = require("./controller/passwordResetController");
+const subCompanyAllController = require("./controller/subCompanyAllController");
+const stubController = require("./controller/stubController");
 const workFieldController = require("./controller/workFieldController");
 const commonLogic = require("./logic/commonLogic");
 
@@ -39,6 +40,7 @@ app.use("/subCompanyAll", subCompanyAllController);
 app.use("/passwordReset", passwordResetController);
 app.use("/workField", workFieldController);
 
+app.use("/stub", stubController);
 app.use("/serviceTest", loginController);
 app.use("/test", test);
 app.use("/user", user);

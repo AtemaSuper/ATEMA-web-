@@ -86,6 +86,15 @@ export default {
   },
 
   /*
+    スタブ
+  */
+  // スタブデータ追加
+  stubImport(collectionName, documentName) {
+    const item = { collectionName: collectionName, documentName: documentName };
+    return Api().post("/stub", item);
+  },
+
+  /*
     ログイン画面
   */
 
