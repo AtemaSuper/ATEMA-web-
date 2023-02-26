@@ -483,6 +483,7 @@ app.post("/check", async function (req, res) {
       }
     });
 });
+
 //勤怠先入力情報の保存処理をします。
 app.post("/save", async function (req, res) {
   const promises = [];

@@ -67,23 +67,6 @@ export default {
   ownWorkerAllService() {
     return Api().get("/ownWorkerAll");
   },
-  // ログインテスト処理
-  testLoginPosting() {
-    const item = { id: "AtemAdmin", password: "1234" };
-    return Api().post("/user/login", item);
-  },
-  // ログイン確認処理（JSON）
-  testProtectedPosting() {
-    return Api().post("/login/protected");
-  },
-  // ログアウトテスト処理
-  testlogoutPosting() {
-    return Api().post("/user/logout");
-  },
-  // 他の処理も追加可能
-  testNcmb() {
-    return Api().post("/ncmb");
-  },
 
   /*
     スタブ
@@ -97,29 +80,13 @@ export default {
   /*
     ログイン画面
   */
-
-  // ログイン処理
-  login() {
-    const item = { id: "AtemAdmin", password: "1234" };
-    return Api().post("/login", item);
-  },
   // ログインユーザ情報取得処理
   loginGetUserInfo(employeeId) {
     const item = { employeeId: employeeId };
     return Api().post("/login/getUserInfo", item);
-  },
-  // ログイン確認処理（JSON）
-  protectedPosting() {
-    return Api().post("/login/protected");
-  },
-  // ログアウト処理
-  logoutPosting() {
-    return Api().post("/login/logout");
-  },
-
-  /*
+  } /*
     自社設定画面
-  */
+  */,
 
   // 初期表示処理
   getOwnComapanyInfo(contractorId) {

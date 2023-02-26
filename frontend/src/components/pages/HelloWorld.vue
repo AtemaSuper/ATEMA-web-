@@ -66,35 +66,6 @@ export default {
     msg: "Welcome To ATEMA ! ! ! ! !"
   }),
   methods: {
-    // サーバーから返ってくる値をログに出力したいのでasyncとawaitを行う
-    async post() {
-      let response = await Methods.testPost();
-      console.log(response);
-    },
-    // サーバーから返ってくる値をログに出力したいのでasyncとawaitを行う
-    async serviceTestGet() {
-      let response = await Methods.serviceTestGet();
-      console.log(response);
-    },
-    async ownWorkerAll() {
-      let response = await Methods.ownWorkerAllService();
-      console.log(response);
-    },
-    // user_API_login
-    async testLoginPosting() {
-      let response = await Methods.testLoginPosting();
-      console.log(response);
-    },
-
-    // user_API_logout
-    async testLogoutPosting() {
-      let response = await Methods.testlogoutPosting();
-      console.log(response);
-    },
-    async testNcmb() {
-      let response = await Methods.testNcmb();
-      console.log(response);
-    },
     async firebaseJsonImport(collectionName, documentName) {
       let response = await Methods.stubImport(collectionName, documentName);
       console.log(response);
