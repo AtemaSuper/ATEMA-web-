@@ -5,7 +5,6 @@ const cors = require("cors");
 const constractor = require("./public/const");
 const test = require("./middle/test");
 const user = require("./middle/user");
-const ncmb = require("./middle/ncmb");
 const attendanceManageController = require("./controller/attendanceManageController");
 const authenticationController = require("./controller/authenticationController");
 const clientFieldController = require("./controller/clientFieldController");
@@ -44,7 +43,6 @@ app.use("/stub", stubController);
 app.use("/serviceTest", loginController);
 app.use("/test", test);
 app.use("/user", user);
-app.use("/ncmb", ncmb);
 
 app.all("/*", authenticationController);
 
