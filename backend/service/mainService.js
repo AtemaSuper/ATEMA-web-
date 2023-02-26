@@ -22,11 +22,15 @@ var workFieldDetailDao = new WorkFieldDetailDao();
 //社員テーブル
 const EmployeeDao = require("../middle/dao/employeeDao");
 var employeeDao = new EmployeeDao();
+//役職テーブル
+const PostDao = require("../middle/dao/postDao");
+var postDao = new PostDao();
 
 var attendanceManageResponse = [];
 var clientFieldResponse = [];
 var contactResponse = [];
 var employeeResponse = [];
+var postResponse = {};
 var workFieldResponse = [];
 var workFieldDetailResponse = [];
 var selectJob = {};
