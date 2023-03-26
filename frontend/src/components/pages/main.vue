@@ -22,7 +22,7 @@
               :src="require('../../assets/qa.png')"
               :class="['mx-auto', 'ma-5']"
               @click="pagePush('/qa')"
-            ></v-img>
+            />
           </v-col>
         </v-row>
 
@@ -52,7 +52,7 @@
                       'Logo.png')
                   "
                   :class="['mx-auto', 'ma-5']"
-                ></v-img>
+                />
                 <h3>
                   {{ formatMenuTitle(displayAuthorityList[n - 1].value) }}
                 </h3>
@@ -70,7 +70,7 @@
               <v-toolbar-title class="h2 white--text">
                 勤怠入力
               </v-toolbar-title>
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-btn color="white" icon>
                 <v-icon @click="closeAttendanceEditDialog()">mdi-close</v-icon>
               </v-btn>
@@ -95,7 +95,7 @@
                       勤務先を入力
                     </v-stepper-step>
 
-                    <v-divider></v-divider>
+                    <v-divider />
 
                     <v-stepper-step step="2" color="info">
                       勤怠を入力
@@ -116,7 +116,7 @@
                               <v-col md="3">
                                 <p>jobNo</p>
                               </v-col>
-                              <v-spacer></v-spacer>
+                              <v-spacer />
                               <v-col cols="12" md="6">
                                 <v-text-field
                                   outlined
@@ -127,7 +127,7 @@
                                   clearable
                                   clear-icon="mdi-close-circle"
                                   color="info"
-                                ></v-text-field>
+                                />
                               </v-col>
                             </v-row>
                           </v-card>
@@ -136,7 +136,7 @@
                               v-model="selectJob.isSaveFlag"
                               label="入力内容を保存しますか？"
                               color="info"
-                            ></v-checkbox>
+                            />
                           </v-row>
                         </v-tab-item>
                         <v-tab-item>
@@ -146,7 +146,7 @@
                                 <v-col md="3">
                                   <p>客先名</p>
                                 </v-col>
-                                <v-spacer></v-spacer>
+                                <v-spacer />
                                 <v-col cols="12" md="6">
                                   <v-select
                                     v-model="selectJob.selectClientField"
@@ -154,18 +154,20 @@
                                     label="(例)株式会社ABC"
                                     :items="clientFieldList"
                                     item-text="clientFieldName"
-                                    item-value="value" 
-                                    return-object outlined required
+                                    item-value="value"
+                                    return-object
+                                    outlined
+                                    required
                                     dense
                                     color="info"
-                                  ></v-select>
+                                  />
                                 </v-col>
                               </v-row>
                               <v-row align="center">
                                 <v-col md="3">
                                   <p>現場名</p>
                                 </v-col>
-                                <v-spacer></v-spacer>
+                                <v-spacer />
                                 <v-col cols="12" md="6">
                                   <v-select
                                     v-model="selectJob.selectWorkField"
@@ -173,29 +175,33 @@
                                     v-on:change="selectWorkField"
                                     :items="workFieldList"
                                     item-text="workFieldName"
-                                    item-value="value" 
-                                    return-object outlined required
+                                    item-value="value"
+                                    return-object
+                                    outlined
+                                    required
                                     dense
                                     color="info"
-                                  ></v-select>
+                                  />
                                 </v-col>
                               </v-row>
                               <v-row align="center">
                                 <v-col md="3">
                                   <p>工事件名</p>
                                 </v-col>
-                                <v-spacer></v-spacer>
+                                <v-spacer />
                                 <v-col cols="12" md="6">
                                   <v-select
                                     v-model="selectJob.selectWorkFieldDetail"
                                     label="(例)株式会社ABC"
                                     :items="workFieldDetailList"
                                     item-text="workFieldDetailName"
-                                    item-value="value" 
-                                    return-object outlined required
+                                    item-value="value"
+                                    return-object
+                                    outlined
+                                    required
                                     dense
                                     color="info"
-                                  ></v-select>
+                                  />
                                 </v-col>
                               </v-row>
                             </v-card-text>
@@ -205,7 +211,7 @@
                               v-model="selectJob.isSaveFlag"
                               label="入力内容を保存しますか？"
                               color="info"
-                            ></v-checkbox>
+                            />
                           </v-row>
                         </v-tab-item>
                       </v-tabs>
@@ -218,7 +224,7 @@
                         <v-col md="3">
                           <p>勤怠ステータス</p>
                         </v-col>
-                        <v-spacer></v-spacer>
+                        <v-spacer />
                         <v-col cols="12" md="6">
                           <v-select
                             v-model="selectStatus"
@@ -228,14 +234,14 @@
                             outlined
                             dense
                             color="info"
-                          ></v-select>
+                          />
                         </v-col>
                       </v-row>
                       <v-row align="center">
                         <v-col md="3">
                           <p>勤怠パターン</p>
                         </v-col>
-                        <v-spacer></v-spacer>
+                        <v-spacer />
                         <v-col cols="12" md="6">
                           <v-select
                             v-model="selecAtttendancePattern"
@@ -245,20 +251,20 @@
                             outlined
                             dense
                             color="info"
-                          ></v-select>
+                          />
                         </v-col>
                       </v-row>
                       <v-row>
                         <v-col md="3">
                           <p>備考欄</p>
                         </v-col>
-                        <v-spacer></v-spacer>
+                        <v-spacer />
                         <v-col cols="12" md="6">
                           <v-textarea
                             v-model="noteContents"
                             outlined
                             color="info"
-                          ></v-textarea>
+                          />
                         </v-col>
                       </v-row>
                       <v-btn color="info" @click="saveAttendance()">
@@ -278,9 +284,10 @@
 
 <script>
 /** 外部コンポーネントの呼び出し */
-import Methods from '@/api/methods'
+import Methods from "@/api/methods";
 import dayjs from "dayjs";
 import ja from "dayjs/locale/ja";
+import store from "../../store/index";
 
 dayjs.locale(ja);
 
@@ -290,6 +297,8 @@ export default {
   mounted: async function() {
     this.getToDay();
     this.getToTime();
+    this.menuAuthorityMapper();
+    this.employeeId = this.userInfo.userName;
   },
   computed: {
     displayAuthorityList: function() {
@@ -297,12 +306,14 @@ export default {
     }
   },
   data: () => ({
+    // ログインユーザ情報
+    userInfo: store.getters.userInfo,
     // TODO ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
-    userId: '020J5ruy8WEnQF1anhfT',
+    employeeId: "",
     // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
     // ※複数社契約になった場合、セッションで契約IDを保持して、
     // ※そのIDをもとに検索するように修正
-    contractorId: '00000001',
+    contractorId: "",
     clientFieldList: [],
     workFieldList: [],
     workFieldDetailList: [],
@@ -315,12 +326,12 @@ export default {
       "【障害】現在つながりにくい状態が続いております。"
     ],
     menuAuthorityList: [
-      { type: "page", value: "attendanceManage", permission: true },
-      { type: "page", value: "contactBox", permission: true },
-      { type: "page", value: "workField", permission: true },
-      { type: "page", value: "subCompanyAll", permission: true },
-      { type: "page", value: "ownWorkerAll", permission: true },
-      { type: "dialog", value: "editAttendance", permission: true }
+      { type: "page", value: "attendanceManage", permission: false },
+      { type: "page", value: "contactBox", permission: false },
+      { type: "page", value: "workField", permission: false },
+      { type: "page", value: "subCompanyAll", permission: false },
+      { type: "page", value: "ownWorkerAll", permission: false },
+      { type: "dialog", value: "editAttendance", permission: false }
     ],
     displayDate: "",
     displayTime: "",
@@ -359,6 +370,38 @@ export default {
           return "";
       }
     },
+    menuAuthorityMapper: function() {
+      return (this.menuAuthorityList = this.menuAuthorityList.map(item => {
+        switch (item.value) {
+          case "attendanceManage":
+            item.permission =
+              this.userInfo.menuActivity.attendanceManageAuth !== "0";
+            break;
+          case "contactBox":
+            item.permission =
+              this.userInfo.menuActivity.attendanceManageAuth === "2";
+            break;
+          case "workField":
+            item.permission =
+              this.userInfo.menuActivity.attendanceManageAuth === "2";
+            break;
+          case "subCompanyAll":
+            item.permission =
+              this.userInfo.menuActivity.subCompanyManageAuth !== "0";
+            break;
+          case "ownWorkerAll":
+            item.permission =
+              this.userInfo.menuActivity.ownWorkerManageAuth !== "0";
+            break;
+          case "editAttendance":
+            item.permission = true;
+            break;
+          default:
+            break;
+        }
+        return item;
+      }));
+    },
     /** コンテンツボタン押下時処理 */
     async nextCheck(item) {
       if (item.type === "page") {
@@ -366,11 +409,14 @@ export default {
         // 勤怠入力ダイアログ表示処理
       } else {
         this.isShowAttendanceEditDialog = true;
-        let response = await Methods.getAttendance(this.contractorId, this.userId);
+        let response = await Methods.getAttendance(
+          this.contractorId,
+          this.employeeId
+        );
         // レスポンスから画面情報をセットする
         this.clientFieldList = this.createClientFieldList(response);
-        this.workFieldResponse = response.data.workFieldResponse
-        this.workFieldDetailResponse = response.data.workFieldDetailResponse
+        this.workFieldResponse = response.data.workFieldResponse;
+        this.workFieldDetailResponse = response.data.workFieldDetailResponse;
         this.selectJob = response.data.selectJob;
         this.workFieldList = this.createWorkFieldList();
         this.workFieldDetailList = this.createWorkFieldDetailLiist();
@@ -383,24 +429,24 @@ export default {
     async checkAttendance() {
       const param = {
         contractorId: this.contractorId,
-        employeeId: this.userId,
-        selectJob: this.selectJob,
-      }
+        employeeId: this.employeeId,
+        selectJob: this.selectJob
+      };
       try {
-        let response = await Methods.checkAttendance(param)
+        let response = await Methods.checkAttendance(param);
         // レスポンスから画面情報をセットする
-        this.selectStatus = response.data.selectStatus
-        this.selecAtttendancePattern = response.data.selecAtttendancePattern
-        this.statusList = response.data.statusList
-        this.attendancePatternList = response.data.attendancePatternList
-        this.noteContents = response.data.noteContents
+        this.selectStatus = response.data.selectStatus;
+        this.selecAtttendancePattern = response.data.selecAtttendancePattern;
+        this.statusList = response.data.statusList;
+        this.attendancePatternList = response.data.attendancePatternList;
+        this.noteContents = response.data.noteContents;
         this.stepperCount = 2;
         // 保存完了メッセージ表示
         // this.$emit('alertMethod', response)
-      }catch (err){
+      } catch (err) {
         let response = err.response;
         // エラーメッセージ表示
-        this.$emit('alertMethod', response)
+        this.$emit("alertMethod", response);
       }
     },
     /** 勤怠入力：勤怠を登録押下時処理 */
@@ -408,22 +454,21 @@ export default {
       const now = dayjs();
       const param = {
         contractorId: this.contractorId,
-        employeeId: this.userId,
+        employeeId: this.employeeId,
         saveTime: now.format("HH：mm"),
         selectJob: this.selectJob,
         selectStatus: this.selectStatus,
         selecAtttendancePattern: this.selecAtttendancePattern,
-        noteContents: this.noteContents,
-      }
+        noteContents: this.noteContents
+      };
       try {
-        let response = await Methods.saveAttendance(param)
-        console.log(response);
+        await Methods.saveAttendance(param);
         this.stepperCount = 1;
         this.isShowAttendanceEditDialog = false;
-      }catch (err){
+      } catch (err) {
         let response = err.response;
         // エラーメッセージ表示
-        this.$emit('alertMethod', response)
+        this.$emit("alertMethod", response);
       }
     },
     getToDay() {
@@ -440,55 +485,63 @@ export default {
       this.stepperCount = 1;
       this.isShowAttendanceEditDialog = false;
     },
-     /** 客先名セレクトボックス作成処理 */
-    createClientFieldList (response) {
-      var clientFieldResponse = response.data.clientFieldResponse
-      var clientFieldList = []
+    /** 客先名セレクトボックス作成処理 */
+    createClientFieldList(response) {
+      var clientFieldResponse = response.data.clientFieldResponse;
+      var clientFieldList = [];
       for (var j = 0; j < clientFieldResponse.length; j++) {
-        var clientField = {}
-        clientField.clientFieldId = clientFieldResponse[j].clientFieldId
-        clientField.clientFieldName = clientFieldResponse[j].clientFieldName
-        clientFieldList.push(clientField)
+        var clientField = {};
+        clientField.clientFieldId = clientFieldResponse[j].clientFieldId;
+        clientField.clientFieldName = clientFieldResponse[j].clientFieldName;
+        clientFieldList.push(clientField);
       }
-      return clientFieldList
+      return clientFieldList;
     },
     /** 現場セレクトボックス作成処理 */
-    createWorkFieldList () {
+    createWorkFieldList() {
       var workFieldList = [];
       var clientFieldId = "";
-      if(this.selectJob.selectClientField != null){
-        let selectClientField = JSON.parse(JSON.stringify(this.selectJob.selectClientField))
+      if (this.selectJob.selectClientField != null) {
+        let selectClientField = JSON.parse(
+          JSON.stringify(this.selectJob.selectClientField)
+        );
         clientFieldId = selectClientField.clientFieldId;
       }
       for (var i = 0; i < this.workFieldResponse.length; i++) {
         // 選択した客先に紐づく現場のみ表示します。
-        if(clientFieldId === this.workFieldResponse[i].clientFieldId){
-          var workField = {}
-          workField.workFieldId = this.workFieldResponse[i].workFieldId
-          workField.workFieldName = this.workFieldResponse[i].workFieldName
-          workFieldList.push(workField)
+        if (clientFieldId === this.workFieldResponse[i].clientFieldId) {
+          var workField = {};
+          workField.workFieldId = this.workFieldResponse[i].workFieldId;
+          workField.workFieldName = this.workFieldResponse[i].workFieldName;
+          workFieldList.push(workField);
         }
       }
       return workFieldList;
     },
     /** 現場詳細セレクトボックス作成処理 */
-    createWorkFieldDetailLiist () {
+    createWorkFieldDetailLiist() {
       var workFieldDetailList = [];
       var workFieldId = "";
-      if(this.selectJob.selectWorkField != null){
-        let selectWorkField = JSON.parse(JSON.stringify(this.selectJob.selectWorkField))
+      if (this.selectJob.selectWorkField != null) {
+        let selectWorkField = JSON.parse(
+          JSON.stringify(this.selectJob.selectWorkField)
+        );
         workFieldId = selectWorkField.workFieldId;
       }
       for (var i = 0; i < this.workFieldDetailResponse.length; i++) {
         // 選択した客先に紐づく現場のみ表示します。
-        if(workFieldId === this.workFieldDetailResponse[i].workFieldId){
-          var workFieldDetail = {}
-          workFieldDetail.workFieldDetailId = this.workFieldDetailResponse[i].workFieldDetailId
-          workFieldDetail.workFieldDetailName = this.workFieldDetailResponse[i].workFieldDetailName
-          workFieldDetailList.push(workFieldDetail)
+        if (workFieldId === this.workFieldDetailResponse[i].workFieldId) {
+          var workFieldDetail = {};
+          workFieldDetail.workFieldDetailId = this.workFieldDetailResponse[
+            i
+          ].workFieldDetailId;
+          workFieldDetail.workFieldDetailName = this.workFieldDetailResponse[
+            i
+          ].workFieldDetailName;
+          workFieldDetailList.push(workFieldDetail);
         }
       }
-      return workFieldDetailList
+      return workFieldDetailList;
     },
     /** 客先セレクトボックス押下処理 */
     selectCleintField() {
@@ -519,7 +572,7 @@ export default {
       //   "workFieldName":this.detailEdit.workFieldName,
       //   "workFieldDetailName":"",
       // };
-    },
+    }
   }
 };
 </script>

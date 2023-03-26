@@ -27,46 +27,51 @@ app.post("/getUserInfo", async function (req, res) {
   //会社紐づけテーブルから会社IDを取得します。
   await contractRelationDao
     .getContractorId(req.body.employeeId)
-    .then(function (items) {
+    .then(async function (items) {
       contractorId = items.contractorId;
       //社員テーブルから社員情報を取得します。
-      return employeeDao.selectEmployee(contractorId, req.body.employeeId);
+      return (employeeResponse = await employeeDao.selectEmployee(
+        contractorId,
+        req.body.employeeId
+      ));
     })
-    .then(function (items) {
-      employeeResponse = items;
+    .then(async function () {
       //会社テーブルから会社情報を取得します。
-      return contactDao.selectContactAll(contractorId);
+      return (contactResponse = await contactDao.selectContact(contractorId));
     })
-    .then(function (items) {
-      contactResponse = items;
+    .then(async function () {
       //役職IDから役職名を取得します。
-      return postDao.selectPostInfoByPostId(
+      return (postResponse = await postDao.selectPostInfoByPostId(
         contractorId,
         employeeResponse.postId
-      );
+      ));
     })
-    .then(function (items) {
-      postResponse = items;
+    .then(function () {
       var userInfo = {
+        employeeId: req.body.employeeId,
         companyName: contactResponse.contractorName,
         companyId: contractorId,
         userName:
           employeeResponse.employeeFirstName +
           employeeResponse.employeeLastName,
         postName: postResponse.postName,
+        menuActivity: {
+          payPlanAuth: postResponse.payPlanAuth,
+          subCompanyManageAuth: postResponse.subCompanyManageAuth,
+          attendanceManageAuth: postResponse.attendanceManageAuth,
+          ownWorkerManageAuth: postResponse.ownWorkerManageAuth,
+          ownCompanyManageAuth: postResponse.ownCompanyManageAuth,
+        },
       };
 
       //返却用のdata
       var data = {
         userInfo: userInfo,
       };
-      console.log(data);
       //dataをレスポンスで返却します。
       res.status(200).json(data);
     })
     .catch(function (err) {
-      console.log(err);
-
       res.status(500).json(err);
     });
 });

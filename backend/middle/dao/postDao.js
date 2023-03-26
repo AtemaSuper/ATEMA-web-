@@ -93,8 +93,8 @@ class PostDao {
       const responce = await postRef
         .add({
           postName: param.postName,
-          attendanceAuth: param.attendanceAuth,
-          ownWokerManageAuth: param.ownWokerManageAuth,
+          attendanceManageAuth: param.attendanceManageAuth,
+          ownWorkerManageAuth: param.ownWorkerManageAuth,
           subCompanyManageAuth: param.subCompanyManageAuth,
           ownCompanyManageAuth: param.ownCompanyManageAuth,
           payPlanAuth: param.payPlanAuth,
@@ -125,8 +125,8 @@ class PostDao {
       const responce = await postRef
         .update({
           postName: param.postName,
-          attendanceAuth: param.attendanceAuth,
-          ownWokerManageAuth: param.ownWokerManageAuth,
+          attendanceManageAuth: param.attendanceManageAuth,
+          ownWorkerManageAuth: param.ownWorkerManageAuth,
           subCompanyManageAuth: param.subCompanyManageAuth,
           ownCompanyManageAuth: param.ownCompanyManageAuth,
           payPlanAuth: param.payPlanAuth,
