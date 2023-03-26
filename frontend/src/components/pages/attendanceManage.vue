@@ -782,7 +782,6 @@ export default {
     /** ダウンロード処理 */
     download(format) {
       // TODO ダウンロード処理
-      console.log(format);
     },
     /** 検索処理 */
     filterOnlyCapsText(value, search, item) {

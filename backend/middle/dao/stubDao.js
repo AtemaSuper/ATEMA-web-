@@ -49,7 +49,6 @@ class StubDao {
       }
     })();
 
-    console.log(subCompanyRef);
     const responce = await subCompanyRef
       .then(function () {
         var data = {

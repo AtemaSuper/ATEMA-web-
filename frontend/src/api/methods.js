@@ -11,7 +11,6 @@ export default {
     出退勤管理画面
     attendanceManege
   */
-
   // 初期表示処理
   findAttendanceListAsync(
     contractorId,
@@ -84,10 +83,11 @@ export default {
   loginGetUserInfo(employeeId) {
     const item = { employeeId: employeeId };
     return Api().post("/login/getUserInfo", item);
-  } /*
-    自社設定画面
-  */,
+  },
 
+  /*
+    自社設定画面
+  */
   // 初期表示処理
   getOwnComapanyInfo(contractorId) {
     const item = { contractorId: contractorId };
@@ -114,6 +114,7 @@ export default {
   deleteWorkFieldInfo(param) {
     return Api().post("/workField/delete", param);
   },
+
   /*
     客先・現場編集画面
   */
@@ -138,6 +139,7 @@ export default {
   deleteWorkField(param) {
     return Api().post("/clientField/deleteWorkField", param);
   },
+
   /*
     自社員管理画面
   */
@@ -162,6 +164,7 @@ export default {
   deletePost(param) {
     return Api().post("/ownWorkerAll/deletePost", param);
   },
+
   /*
     協力会社管理画面
   */
@@ -186,6 +189,7 @@ export default {
   deleteSubEmployee(param) {
     return Api().post("/subCompanyAll/deleteSubEmployee", param);
   },
+
   /*
     通知管理画面
   */
@@ -198,6 +202,7 @@ export default {
   saveStatus(param) {
     return Api().post("/contactBox/saveStatus", param);
   },
+
   /*
     トップ画面（勤怠入力）
   */

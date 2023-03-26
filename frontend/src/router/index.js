@@ -102,7 +102,6 @@ const auth = async () => {
 const loginUserInfo = async uid => {
   return Methods.loginGetUserInfo(uid)
     .then(response => {
-      console.log(response);
       store.commit("setUserInfo", response.data.userInfo);
       return response;
     })

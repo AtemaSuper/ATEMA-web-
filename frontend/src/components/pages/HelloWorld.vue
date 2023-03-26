@@ -67,8 +67,7 @@ export default {
   }),
   methods: {
     async firebaseJsonImport(collectionName, documentName) {
-      let response = await Methods.stubImport(collectionName, documentName);
-      console.log(response);
+      await Methods.stubImport(collectionName, documentName);
     }
   }
 };
