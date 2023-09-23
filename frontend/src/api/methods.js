@@ -71,8 +71,12 @@ export default {
     スタブ
   */
   // スタブデータ追加
-  stubImport(collectionName, documentName) {
-    const item = { collectionName: collectionName, documentName: documentName };
+  stubImport(collectionName, documentName, documentId) {
+    const item = {
+      collectionName: collectionName,
+      documentName: documentName,
+      documentId: documentId
+    };
     return Api().post("/stub", item);
   },
 
@@ -218,5 +222,14 @@ export default {
   // 勤怠先入力保存処理
   saveAttendance(param) {
     return Api().post("/main/save", param);
+  },
+
+  /*
+    excel出力テスト
+  */
+  // 勤怠入力ダイアログ初期表示処理
+  excelDownload(contractorId, employeeId) {
+    const item = { contractorId: contractorId, employeeId: employeeId };
+    return Api().post("/excel", item);
   }
 };

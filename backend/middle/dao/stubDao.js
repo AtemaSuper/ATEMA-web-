@@ -22,7 +22,7 @@ class StubDao {
    *
    * @returns
    */
-  async stubImport(collectionName, documentName) {
+  async stubImport(collectionName, documentName, documentId) {
     const db = admin.firestore();
     const subCompanyRef = (() => {
       // TODO: 1コレクション内の複数データを1ファイルで登録できるように変更する
@@ -39,6 +39,14 @@ class StubDao {
         case "contractRelation" || "contractor":
           return db.collection(collectionName).doc().set(stubData);
 
+        case "employee":
+          return db
+            .collection(collectionName)
+            .doc(documentName)
+            .collection("data")
+            .doc(documentId)
+            .set(stubData);
+
         default:
           return db
             .collection(collectionName)
@@ -50,7 +58,8 @@ class StubDao {
     })();
 
     const responce = await subCompanyRef
-      .then(function () {
+      .then(function (a) {
+        console.log(a);
         var data = {
           checkResult: true,
           messageList: [collectionName + "のスタブデータを保存しました。"],
@@ -61,6 +70,7 @@ class StubDao {
         console.log(err);
         return err;
       });
+    console.log(responce);
     return responce;
   }
 }
