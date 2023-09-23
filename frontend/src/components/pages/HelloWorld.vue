@@ -19,9 +19,12 @@
       <v-btn @click="firebaseJsonImport('contractor', '00000001')"
         >contractor</v-btn
       >
-      <v-btn @click="firebaseJsonImport('emoployee', '00000001')"
-        >emoployee</v-btn
+      <br />
+      <input v-model="documentId" placeholder="documentId" />
+      <v-btn @click="firebaseJsonImport('employee', '00000001')"
+        >employee</v-btn
       >
+      <br />
       <v-btn @click="firebaseJsonImport('post', '00000001')">post</v-btn>
       <v-btn @click="firebaseJsonImport('subCompany', '00000001')"
         >subCompany</v-btn
@@ -34,6 +37,12 @@
       >
       <v-btn @click="firebaseJsonImport('workTypeId', '00000001')"
         >workTypeId</v-btn
+      >
+
+      <v-divider class="my-5" />
+      <h3>firebase excel download</h3>
+      <v-btn @click="firestoreExcelDownload('workTypeId', '00000001')"
+        >API test</v-btn
       >
 
       <v-divider class="my-5" />
@@ -63,11 +72,19 @@ export default {
   data: () => ({
     drawer: false,
     group: null,
-    msg: "Welcome To ATEMA ! ! ! ! !"
+    msg: "Welcome To ATEMA ! ! ! ! !",
+    documentId: ""
   }),
   methods: {
     async firebaseJsonImport(collectionName, documentName) {
-      await Methods.stubImport(collectionName, documentName);
+      if (collectionName === "employee" && this.documentId.length < 2) {
+        alert("documentIdを入力してください");
+        return;
+      }
+      await Methods.stubImport(collectionName, documentName, this.documentId);
+    },
+    async firestoreExcelDownload() {
+      await Methods.excelDownload();
     }
   }
 };

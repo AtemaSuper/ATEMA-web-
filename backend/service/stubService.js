@@ -11,7 +11,11 @@ const stubDao = new StubDao();
 
 app.use("/", function (req, res) {
   stubDao
-    .stubImport(req.body.collectionName, req.body.documentName)
+    .stubImport(
+      req.body.collectionName,
+      req.body.documentName,
+      req.body.documentId
+    )
     .then(async (result) => {
       res.status(200).send(result);
     })
