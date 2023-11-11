@@ -927,9 +927,9 @@ class OwnWorkerAllLogic {
       //役職名チェック
       checkPostName(errorMessageList, param.postName);
       //出退勤管理権限チェック
-      checkaAtendanceAuth(errorMessageList, param.attendanceAuth);
+      checkaAtendanceAuth(errorMessageList, param.attendanceManageAuth);
       //自社員管理権限チェック
-      checkOwnWokerManageAuth(errorMessageList, param.ownWokerManageAuth);
+      checkownWorkerManageAuth(errorMessageList, param.ownWorkerManageAuth);
       //協力会社管理権限チェック
       checkSubCompanyManageAuth(errorMessageList, param.subCompanyManageAuth);
       //自社設定権限チェック
@@ -1038,7 +1038,7 @@ class OwnWorkerAllLogic {
      * @param {object} errorMessageList エラーメッセージリストです。
      * @param {string} value 入力内容です。
      */
-    function checkOwnWokerManageAuth(errorMessageList, value) {
+    function checkownWorkerManageAuth(errorMessageList, value) {
       //未入力チェックです。
       var errorMessage1 = commonLogic.checkEmpty(
         value,

@@ -19,7 +19,7 @@ class ContactDao {
    *
    * @returns
    */
-  async selectContactAll(contractorId) {
+  async selectContact(contractorId) {
     const db = admin.firestore();
     const contractorRef = db.collection("contractor").doc(contractorId);
 

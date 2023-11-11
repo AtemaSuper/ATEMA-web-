@@ -33,11 +33,15 @@ const SubcompanyDao = require("../middle/dao/subCompanyDao");
 var subCompanyDao = new SubcompanyDao();
 const Util = require("../public/util");
 var util = new Util();
+//役職テーブル
+const PostDao = require("../middle/dao/postDao");
+var postDao = new PostDao();
 
 var attendanceManageResponse = [];
 var clientFieldResponse = [];
 var contactResponse = [];
 var employeeResponse = [];
+var postResponse = {};
 var workFieldResponse = [];
 var workFieldDetailResponse = [];
 var selectJob = {};
@@ -558,6 +562,7 @@ app.post("/check", async function (req, res) {
       }
     });
 });
+
 //勤怠先入力情報の保存処理をします。
 app.post("/save", async function (req, res) {
   const promises = [];

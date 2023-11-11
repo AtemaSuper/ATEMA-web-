@@ -11,7 +11,6 @@ export default {
     出退勤管理画面
     attendanceManege
   */
-
   // 初期表示処理
   findAttendanceListAsync(
     contractorId,
@@ -67,51 +66,32 @@ export default {
   ownWorkerAllService() {
     return Api().get("/ownWorkerAll");
   },
-  // ログインテスト処理
-  testLoginPosting() {
-    const item = { id: "AtemAdmin", password: "1234" };
-    return Api().post("/user/login", item);
-  },
-  // ログイン確認処理（JSON）
-  testProtectedPosting() {
-    return Api().post("/login/protected");
-  },
-  // ログアウトテスト処理
-  testlogoutPosting() {
-    return Api().post("/user/logout");
-  },
-  // 他の処理も追加可能
-  testNcmb() {
-    return Api().post("/ncmb");
+
+  /*
+    スタブ
+  */
+  // スタブデータ追加
+  stubImport(collectionName, documentName, documentId) {
+    const item = {
+      collectionName: collectionName,
+      documentName: documentName,
+      documentId: documentId
+    };
+    return Api().post("/stub", item);
   },
 
   /*
     ログイン画面
   */
-
-  // ログイン処理
-  login() {
-    const item = { id: "AtemAdmin", password: "1234" };
-    return Api().post("/login", item);
-  },
   // ログインユーザ情報取得処理
   loginGetUserInfo(employeeId) {
     const item = { employeeId: employeeId };
     return Api().post("/login/getUserInfo", item);
   },
-  // ログイン確認処理（JSON）
-  protectedPosting() {
-    return Api().post("/login/protected");
-  },
-  // ログアウト処理
-  logoutPosting() {
-    return Api().post("/login/logout");
-  },
 
   /*
     自社設定画面
   */
-
   // 初期表示処理
   getOwnComapanyInfo(contractorId) {
     const item = { contractorId: contractorId };
@@ -138,6 +118,7 @@ export default {
   deleteWorkFieldInfo(param) {
     return Api().post("/workField/delete", param);
   },
+
   /*
     客先・現場編集画面
   */
@@ -162,6 +143,7 @@ export default {
   deleteWorkField(param) {
     return Api().post("/clientField/deleteWorkField", param);
   },
+
   /*
     自社員管理画面
   */
@@ -186,6 +168,7 @@ export default {
   deletePost(param) {
     return Api().post("/ownWorkerAll/deletePost", param);
   },
+
   /*
     協力会社管理画面
   */
@@ -210,6 +193,7 @@ export default {
   deleteSubEmployee(param) {
     return Api().post("/subCompanyAll/deleteSubEmployee", param);
   },
+
   /*
     通知管理画面
   */
@@ -222,6 +206,7 @@ export default {
   saveStatus(param) {
     return Api().post("/contactBox/saveStatus", param);
   },
+
   /*
     トップ画面（勤怠入力）
   */
@@ -241,5 +226,13 @@ export default {
   // 協力会社員一覧取得処理
   getSubEmployeeList(param) {
     return Api().post("/main/getSubEmployeeList", param);
+  },
+  /*
+    excel出力テスト
+  */
+  // 勤怠入力ダイアログ初期表示処理
+  excelDownload(contractorId, employeeId) {
+    const item = { contractorId: contractorId, employeeId: employeeId };
+    return Api().post("/excel", item);
   }
 };

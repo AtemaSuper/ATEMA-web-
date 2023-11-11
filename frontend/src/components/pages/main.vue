@@ -22,7 +22,7 @@
               :src="require('../../assets/qa.png')"
               :class="['mx-auto', 'ma-5']"
               @click="pagePush('/qa')"
-            ></v-img>
+            />
           </v-col>
         </v-row>
 
@@ -52,7 +52,7 @@
                       'Logo.png')
                   "
                   :class="['mx-auto', 'ma-5']"
-                ></v-img>
+                />
                 <h3>
                   {{ formatMenuTitle(displayAuthorityList[n - 1].value) }}
                 </h3>
@@ -70,7 +70,7 @@
               <v-toolbar-title class="h2 white--text">
                 勤怠入力{{ this.selectedEmployeeNameLabel }}
               </v-toolbar-title>
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-btn color="white" icon>
                 <v-icon @click="closeAttendanceEditDialog()">mdi-close</v-icon>
               </v-btn>
@@ -95,7 +95,7 @@
                       勤務先を入力
                     </v-stepper-step>
 
-                    <v-divider></v-divider>
+                    <v-divider />
 
                     <v-stepper-step step="2" color="info">
                       勤怠を入力
@@ -116,7 +116,7 @@
                               <v-col md="3">
                                 <p>jobNo</p>
                               </v-col>
-                              <v-spacer></v-spacer>
+                              <v-spacer />
                               <v-col cols="12" md="6">
                                 <v-text-field
                                   outlined
@@ -127,7 +127,7 @@
                                   clearable
                                   clear-icon="mdi-close-circle"
                                   color="info"
-                                ></v-text-field>
+                                />
                               </v-col>
                             </v-row>
                           </v-card>
@@ -136,7 +136,7 @@
                               v-model="selectJob.isSaveFlag"
                               label="入力内容を保存しますか？"
                               color="info"
-                            ></v-checkbox>
+                            />
                           </v-row>
                         </v-tab-item>
                         <v-tab-item>
@@ -146,7 +146,7 @@
                                 <v-col md="3">
                                   <p>客先名</p>
                                 </v-col>
-                                <v-spacer></v-spacer>
+                                <v-spacer />
                                 <v-col cols="12" md="6">
                                   <v-select
                                     v-model="selectJob.selectClientField"
@@ -160,14 +160,14 @@
                                     required
                                     dense
                                     color="info"
-                                  ></v-select>
+                                  />
                                 </v-col>
                               </v-row>
                               <v-row align="center">
                                 <v-col md="3">
                                   <p>現場名</p>
                                 </v-col>
-                                <v-spacer></v-spacer>
+                                <v-spacer />
                                 <v-col cols="12" md="6">
                                   <v-select
                                     v-model="selectJob.selectWorkField"
@@ -181,14 +181,14 @@
                                     required
                                     dense
                                     color="info"
-                                  ></v-select>
+                                  />
                                 </v-col>
                               </v-row>
                               <v-row align="center">
                                 <v-col md="3">
                                   <p>工事件名</p>
                                 </v-col>
-                                <v-spacer></v-spacer>
+                                <v-spacer />
                                 <v-col cols="12" md="6">
                                   <v-select
                                     v-model="selectJob.selectWorkFieldDetail"
@@ -201,7 +201,7 @@
                                     required
                                     dense
                                     color="info"
-                                  ></v-select>
+                                  />
                                 </v-col>
                               </v-row>
                             </v-card-text>
@@ -211,7 +211,7 @@
                               v-model="selectJob.isSaveFlag"
                               label="入力内容を保存しますか？"
                               color="info"
-                            ></v-checkbox>
+                            />
                           </v-row>
                         </v-tab-item>
                       </v-tabs>
@@ -231,7 +231,7 @@
                         <v-col md="3">
                           <p>勤怠ステータス</p>
                         </v-col>
-                        <v-spacer></v-spacer>
+                        <v-spacer />
                         <v-col cols="12" md="6">
                           <v-select
                             v-model="selectStatus"
@@ -241,14 +241,14 @@
                             outlined
                             dense
                             color="info"
-                          ></v-select>
+                          />
                         </v-col>
                       </v-row>
                       <v-row align="center">
                         <v-col md="3">
                           <p>勤怠パターン</p>
                         </v-col>
-                        <v-spacer></v-spacer>
+                        <v-spacer />
                         <v-col cols="12" md="6">
                           <v-select
                             v-model="selecAtttendancePattern"
@@ -258,20 +258,20 @@
                             outlined
                             dense
                             color="info"
-                          ></v-select>
+                          />
                         </v-col>
                       </v-row>
                       <v-row>
                         <v-col md="3">
                           <p>備考欄</p>
                         </v-col>
-                        <v-spacer></v-spacer>
+                        <v-spacer />
                         <v-col cols="12" md="6">
                           <v-textarea
                             v-model="noteContents"
                             outlined
                             color="info"
-                          ></v-textarea>
+                          />
                         </v-col>
                       </v-row>
                       <v-btn color="info" @click="saveAttendance()">
@@ -340,6 +340,8 @@ export default {
   mounted: async function() {
     this.getToDay();
     this.getToTime();
+    this.menuAuthorityMapper();
+    this.employeeId = this.userInfo.userName;
   },
   computed: {
     displayAuthorityList: function() {
@@ -368,12 +370,12 @@ export default {
       "【障害】現在つながりにくい状態が続いております。"
     ],
     menuAuthorityList: [
-      { type: "page", value: "attendanceManage", permission: true },
-      { type: "page", value: "contactBox", permission: true },
-      { type: "page", value: "workField", permission: true },
-      { type: "page", value: "subCompanyAll", permission: true },
-      { type: "page", value: "ownWorkerAll", permission: true },
-      { type: "dialog", value: "editAttendance", permission: true }
+      { type: "page", value: "attendanceManage", permission: false },
+      { type: "page", value: "contactBox", permission: false },
+      { type: "page", value: "workField", permission: false },
+      { type: "page", value: "subCompanyAll", permission: false },
+      { type: "page", value: "ownWorkerAll", permission: false },
+      { type: "dialog", value: "editAttendance", permission: false }
     ],
     displayDate: "",
     displayTime: "",
@@ -419,6 +421,38 @@ export default {
         default:
           return "";
       }
+    },
+    menuAuthorityMapper: function() {
+      return (this.menuAuthorityList = this.menuAuthorityList.map(item => {
+        switch (item.value) {
+          case "attendanceManage":
+            item.permission =
+              this.userInfo.menuActivity.attendanceManageAuth !== "0";
+            break;
+          case "contactBox":
+            item.permission =
+              this.userInfo.menuActivity.attendanceManageAuth === "2";
+            break;
+          case "workField":
+            item.permission =
+              this.userInfo.menuActivity.attendanceManageAuth === "2";
+            break;
+          case "subCompanyAll":
+            item.permission =
+              this.userInfo.menuActivity.subCompanyManageAuth !== "0";
+            break;
+          case "ownWorkerAll":
+            item.permission =
+              this.userInfo.menuActivity.ownWorkerManageAuth !== "0";
+            break;
+          case "editAttendance":
+            item.permission = true;
+            break;
+          default:
+            break;
+        }
+        return item;
+      }));
     },
     /** コンテンツボタン押下時処理 */
     async nextCheck(item) {
@@ -495,7 +529,6 @@ export default {
       };
       try {
         let response = await Methods.checkAttendance(param);
-        console.log(response);
         // レスポンスから画面情報をセットする
         this.selectStatus = response.data.selectStatus;
         this.selecAtttendancePattern = response.data.selecAtttendancePattern;
@@ -516,7 +549,7 @@ export default {
       const now = dayjs();
       const param = {
         contractorId: this.contractorId,
-        employeeId: this.userId,
+        employeeId: this.employeeId,
         saveTime: now.format("HH：mm"),
         selectJob: this.selectJob,
         selectStatus: this.selectStatus,

@@ -582,9 +582,7 @@ export default {
         response.data.ownCompanyResponse.attendancePattern;
     },
     /** 時間詳細ダイアログ保存ボタン押下処理 */
-    focusoutTimeInput(item) {
-      console.log(item);
-    },
+    focusoutTimeInput(item) {},
     /** 時間詳細ダイアログ保存ボタン押下処理 */
     updateAttendancePattern(column, item, items, index) {
       // 勤怠開始時間の場合
@@ -603,7 +601,7 @@ export default {
           index
         ].workingHours = items;
       }
-      // console.log(this.attendancePatternList)
+      console.log(this.attendancePatternList);
     },
     /** 日付のフォーマット処理です。 */
 
