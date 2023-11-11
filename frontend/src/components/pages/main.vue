@@ -216,7 +216,7 @@
                         </v-tab-item>
                       </v-tabs>
                       <v-btn
-                        v-if="userInfo.subCompanyAuth === '2'"
+                        v-if="userInfo.subCompanyManageAuth === '2'"
                         color="info mt-2"
                         @click="returnSelectSubEmployee()"
                       >
@@ -461,7 +461,7 @@ export default {
         // 勤怠入力ダイアログ表示処理
       } else {
         // 協力会社管理権限がある場合
-        if (this.userInfo.subCompanyAuth === "2") {
+        if (this.userInfo.menuActivity.subCompanyManageAuth === "2") {
           // 協力会社員選択ダイアログを表示する
           this.isShowSubAttendanceEditDialog = true;
           var param = {
