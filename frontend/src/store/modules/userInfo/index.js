@@ -5,7 +5,13 @@ const state = {
     companyId: "",
     userName: "",
     postName: "",
-    menuActivity: {}
+    menuActivity: {
+      attendanceManageAuth: false,
+      ownCompanyManageAuth: false,
+      ownWorkerManageAuth: false,
+      payPlanAuth: false,
+      subCompanyManageAuth: false
+    }
   }
 };
 
@@ -27,17 +33,22 @@ const actions = {
 const mutations = {
   /** store内データ更新箇所 */
   setUserInfo(state, userInfo) {
+    console.log(userInfo);
     state.userInfo.employeeId = userInfo.employeeId;
     state.userInfo.companyName = userInfo.companyName;
     state.userInfo.companyId = userInfo.companyId;
     state.userInfo.userId = userInfo.userId;
     state.userInfo.userName = userInfo.userName;
     state.userInfo.postName = userInfo.postName;
-    state.userInfo.attendanceAuth = userInfo.attendanceAuth;
-    state.userInfo.ownCompanyManageAuth = userInfo.ownCompanyManageAuth;
-    state.userInfo.ownWorkerManageAuth = userInfo.ownWorkerManageAuth;
-    state.userInfo.payPlanAuth = userInfo.payPlanAuth;
-    state.userInfo.subCompanyAuth = userInfo.subCompanyAuth;
+    state.userInfo.menuActivity.attendanceManageAuth =
+      userInfo.menuActivity.attendanceManageAuth;
+    state.userInfo.menuActivity.ownCompanyManageAuth =
+      userInfo.menuActivity.ownCompanyManageAuth;
+    state.userInfo.menuActivity.ownWorkerManageAuth =
+      userInfo.menuActivity.ownWorkerManageAuth;
+    state.userInfo.menuActivity.payPlanAuth = userInfo.menuActivity.payPlanAuth;
+    state.userInfo.menuActivity.subCompanyManageAuth =
+      userInfo.menuActivity.subCompanyManageAuth;
   }
 };
 
