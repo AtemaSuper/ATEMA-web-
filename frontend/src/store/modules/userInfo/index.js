@@ -33,7 +33,6 @@ const actions = {
 const mutations = {
   /** store内データ更新箇所 */
   setUserInfo(state, userInfo) {
-    console.log(userInfo);
     state.userInfo.employeeId = userInfo.employeeId;
     state.userInfo.companyName = userInfo.companyName;
     state.userInfo.companyId = userInfo.companyId;
