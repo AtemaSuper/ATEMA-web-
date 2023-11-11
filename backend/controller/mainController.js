@@ -9,5 +9,6 @@ app.use("/", main);
 app.use("/showAttendanceDialog", main);
 app.use("/check", main);
 app.use("/save", main);
+app.use("/getSubEmployeeList", main);
 
 module.exports = app;

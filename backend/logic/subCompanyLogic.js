@@ -1483,6 +1483,38 @@ class SUbCompanyLogic {
   }
 
   /**
+   * 協力会社員一覧を作成します。
+   *
+   * @param {object} subEmployeeItems
+   * @param {object} subCompanyResponse
+   * @param {object} subEmployeeResponse
+   *
+   * @return subEmployeeItems
+   */
+  createSubEmployeeItems(
+    subEmployeeItems,
+    subCompanyResponse,
+    subEmployeeResponse
+  ) {
+    for (var i in subEmployeeResponse) {
+      var subEmployee = subEmployeeResponse[i];
+      var subEmployeeItem = {};
+      subEmployeeItem.subEmployeeId = subEmployee.employeeId;
+      subEmployeeItem.subEmployeeName =
+        subEmployee.employeeFirstName + " " + subEmployee.employeeLastName;
+      for (var j in subCompanyResponse) {
+        var subCompany = subCompanyResponse[j];
+        if (subCompany.subCompanyId == subEmployee.companyId) {
+          subEmployeeItem.subCompanyName = subCompany.subCompanyName;
+          break;
+        }
+      }
+      subEmployeeItems.push(subEmployeeItem);
+    }
+    return subEmployeeItems;
+  }
+
+  /**
    * サクセスメッセージを作成します。
    *
    * @returns {string} サクセスメッセージです。

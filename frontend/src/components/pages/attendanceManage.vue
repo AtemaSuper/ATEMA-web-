@@ -880,14 +880,14 @@ export default {
       var startTWorkTime = startTime.split(":");
       const targetStartTime = dayjs(this.displayDate)
         .hour(startTWorkTime[0])
-        .minute(startTWorkTime[1])
-        .second(0);
+        .minute(startTWorkTime[1]);
+        // .second(0);
       // 業務開始終了時間
       var endTWorkTime = endTime.split(":");
       const targetEndTime = dayjs(this.displayDate)
         .hour(endTWorkTime[0])
-        .minute(endTWorkTime[1])
-        .second(0);
+        .minute(endTWorkTime[1]);
+        // .second(0);
       
       // 早出時間の範囲
       const fromEaryTimeRange = dayjs(this.displayDate)
@@ -912,13 +912,13 @@ export default {
       const fromEaryOverTimeRange = dayjs(this.displayDate)
         .add(1, "day")
         .hour(5)
-        .minute(0)
-        .second(0);
+        .minute(0);
+        // .second(0);
       const toEaryOverTimeRange = dayjs(this.displayDate)
         .add(1, "day")
         .hour(normalWorkStartTime.split(":")[0])
-        .minute(normalWorkStartTime.split(":")[1])
-        .second(0);
+        .minute(normalWorkStartTime.split(":")[1]);
+        // .second(0);
 
       // 表示する時間外
       let displayHour = 0;

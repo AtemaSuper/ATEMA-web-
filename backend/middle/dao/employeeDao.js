@@ -80,8 +80,8 @@ class EmployeeDao {
       .collection("employee")
       .doc(contractorId)
       .collection("data")
-      .where("deleteFlg", "==", false);
-    // .where("companyId", "==", contractorId);
+      .where("deleteFlg", "==", false)
+      .where("companyId", "==", contractorId);
 
     const responce = await employeeRef
       .get()
@@ -110,8 +110,9 @@ class EmployeeDao {
       .collection("employee")
       .doc(contractorId)
       .collection("data")
-      .where("deleteFlg", "==", false);
-    // .where("companyId", "!=", contractorId);
+      // TODO firestoreだとwhereを2つ使用して絞り込めないのでなんとかする
+      // .where("deleteFlg", "==", false);
+      .where("companyId", "!=", contractorId);
 
     const responce = await employeeRef
       .get()

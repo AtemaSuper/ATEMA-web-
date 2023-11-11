@@ -169,6 +169,10 @@ class CommonLogic {
     if (column.JOB_NO == colum) {
       check = response.find((res) => res.jobNo == value);
     }
+    //勤怠パターンのチェックです。
+    if (column.ATTENDANCE_PATTERN == colum) {
+      check = response.find((res) => res.patternId == value);
+    }
     if (!check) {
       return util.stringFormat(errorMessage.IS_NOT_EXISTS, colum);
     }

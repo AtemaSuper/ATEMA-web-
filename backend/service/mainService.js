@@ -1,9 +1,15 @@
 const express = require("express");
 const app = express();
 
-//客先Logic
+//mainLogic
 const MainLogic = require("../logic/mainLogic");
 var mainLogic = new MainLogic();
+//客先Logic
+const SubCompanyLogic = require("../logic/subCompanyLogic");
+var subCompanyLogic = new SubCompanyLogic();
+//出退勤Logic
+const AttendanceManageLogic = require("../logic/attendanceManageLogic");
+var attendanceManageLogic = new AttendanceManageLogic();
 //出退勤テーブル
 const AttendanceManageDao = require("../middle/dao/attendanceDao");
 var attendanceManageDao = new AttendanceManageDao();
@@ -22,6 +28,11 @@ var workFieldDetailDao = new WorkFieldDetailDao();
 //社員テーブル
 const EmployeeDao = require("../middle/dao/employeeDao");
 var employeeDao = new EmployeeDao();
+//協力会社テーブル
+const SubcompanyDao = require("../middle/dao/subCompanyDao");
+var subCompanyDao = new SubcompanyDao();
+const Util = require("../public/util");
+var util = new Util();
 
 var attendanceManageResponse = [];
 var clientFieldResponse = [];
@@ -108,6 +119,7 @@ const employeeFecthAll = function (contractorId) {
       });
   });
 };
+
 /**
  * 契約IDをもとに契約情報を取得します。
  *
@@ -237,13 +249,13 @@ const setSelectJob = function () {
       break;
     }
   }
-  if (selectJob === {}) {
-    selectJob.jobNo = "";
-    setWorkFieldDetail.selectClientField = {};
-    setWorkFieldDetail.selectWorkField = {};
-    setWorkFieldDetail.selectWorkFieldDetail = {};
-    setWorkFieldDetail.isSaveFlag = false;
-  }
+  // if (selectJob === {}) {
+  selectJob.jobNo = "";
+  setWorkFieldDetail.selectClientField = {};
+  setWorkFieldDetail.selectWorkField = {};
+  setWorkFieldDetail.selectWorkFieldDetail = {};
+  setWorkFieldDetail.isSaveFlag = false;
+  // }
   selectJob = setWorkFieldDetail;
 };
 /**
@@ -268,49 +280,113 @@ const attendanceManageFind = function (contractorId, employeeId) {
   });
 };
 /**
- * 勤怠情報を保存します。
+ * 契約IDをもとにすべての勤怠情報を取得します。
  *
- * @param {string} param 画面パラメータです。
+ * @param {string} contractorId 契約IDです。
  *
  * @returns
  */
-const attendanceManageUpdate = function (param) {
+const attendanceManageFindAll = function (contractorId) {
   return new Promise(function (resolve, reject) {
-    var selecAtttendancePattern = param.selecAtttendancePattern;
-    var selectStatus = param.selectStatus;
-    var updateKey = getUpdateKey(selectStatus.value);
-    var updateItem = {
-      attendancePatternId: selecAtttendancePattern.patternId,
-      status: selectStatus.value,
-      noteContents: param.noteContents,
-      [updateKey]: param.saveTime,
-    };
+    attendanceManageDao
+      .findAllToToday(contractorId)
+      .then(function (items) {
+        attendanceManageResponse = items;
+        resolve(items);
+      })
+      .catch(function (err) {
+        console.log(err, reject);
+      });
+  });
+};
+/**
+ * 勤怠情報を保存します。
+ *
+ * @param {string} param 画面パラメータです。
+ * @param {object} workFieldDetailResponse 現場詳細情報です。
+ * @param {object} attendanceManageResponse 出退勤情報です。
+ *
+ * @returns
+ */
+const attendanceManageUpdate = function (
+  param,
+  workFieldDetailResponse,
+  attendanceManageResponse
+) {
+  return new Promise(function (resolve, reject) {
+    var isNew = util.isEmpty(attendanceManageResponse);
+    var updateItem = attendanceManageLogic.createUpdateItemForAttendance(
+      param,
+      workFieldDetailResponse,
+      isNew
+    );
 
     attendanceManageDao
       .saveAttendance(param.contractorId, param.employeeId, updateItem)
       .then(function (data) {
         checkResult = data.checkResult;
         messageList = data.messageList;
-        resolve();
+        resolve(data);
       })
       .catch(function (err) {
-        console.log(err, reject);
+        reject(err);
       });
   });
-  function getUpdateKey(selectStatus) {
-    switch (selectStatus) {
-      case "0":
-        return "start";
-      case "1":
-        return "restStart";
-      case "2":
-        return "restEnd";
-      case "3":
-        return "end";
-      default:
-        return "start";
+};
+/**
+ * 勤怠情報を保存します。（協力会社員用）
+ *
+ * @param {string} param 画面パラメータです。
+ * @param {object} workFieldDetailResponse 現場詳細情報です。
+ * @param {object} attendanceManageResponse 出退勤情報です。
+ *
+ * @returns
+ */
+const attendanceManageUpdateForSubEmployee = function (
+  param,
+  workFieldDetailResponse,
+  attendanceManageResponse
+) {
+  return new Promise(async function (resolve, reject) {
+    const promises = [];
+    for (var i in param.selectedEmployee) {
+      var employee = param.selectedEmployee[i];
+      var isNew = true;
+      // attendanceManageResponseが空の場合、全員新規追加
+      if (attendanceManageResponse.length !== 0) {
+        for (var j in attendanceManageResponse) {
+          // attendanceManageResponseに自身の情報がある場合更新
+          if (
+            attendanceManageResponse[j].employeeId === employee.subEmployeeId
+          ) {
+            isNew = false;
+            break;
+          }
+        }
+      }
+      var updateItem = attendanceManageLogic.createUpdateItemForAttendance(
+        param,
+        workFieldDetailResponse,
+        isNew
+      );
+      promises.push(
+        attendanceManageDao.saveAttendance(
+          param.contractorId,
+          employee.subEmployeeId,
+          updateItem
+        )
+      );
     }
-  }
+    Promise.all(promises)
+      .then(async function (data) {
+        checkResult = data.checkResult;
+        messageList = data.messageList;
+        resolve(data);
+      })
+      .catch(function (err) {
+        reject(err);
+      });
+  });
 };
 /**
  * 勤怠ステータスを取得します。
@@ -425,7 +501,6 @@ app.post("/showAttendanceDialog", async function (req, res) {
 //勤怠先入力情報のチェック処理をします。
 app.post("/check", async function (req, res) {
   const promises = [];
-
   promises.push(mainLogic.checkInputData(req.body.selectJob));
   promises.push(workFieldDetailFecthAll(req.body.contractorId));
   promises.push(employeeFecthAll(req.body.contractorId));
@@ -447,13 +522,17 @@ app.post("/check", async function (req, res) {
     })
     .then(async function () {
       getAttendancePattern();
-      getSelectAttendancePattern(attendanceManageResponse.attendancePatternId);
       var selectStatus = {};
+      var noteContents = "";
       // 取得できない場合は、まだ出勤していないので「0：出勤」を設定
       if (attendanceManageResponse === undefined) {
         selectStatus = { text: "出勤", value: "0" };
       } else {
+        getSelectAttendancePattern(
+          attendanceManageResponse.attendancePatternId
+        );
         selectStatus = getSelectStatus(attendanceManageResponse.status);
+        noteContents = attendanceManageResponse.noteContents;
       }
       var statusList = getStatusList(selectStatus.value);
       var data = {
@@ -462,7 +541,7 @@ app.post("/check", async function (req, res) {
         statusList: statusList,
         attendancePatternList: attendancePatternList,
         contactResponse: contactResponse,
-        noteContents: attendanceManageResponse.noteContents,
+        noteContents: noteContents,
       };
       res.status(200).json(data);
     })
@@ -474,7 +553,7 @@ app.post("/check", async function (req, res) {
         //サーバー側でのシステムエラーです。
       } else {
         err.checkResult = false;
-        err.messageList = clientFieldLogic.createSytemErrorMessage();
+        err.messageList = mainLogic.createSytemErrorMessage();
         res.status(500).json(err);
       }
     });
@@ -482,47 +561,157 @@ app.post("/check", async function (req, res) {
 //勤怠先入力情報の保存処理をします。
 app.post("/save", async function (req, res) {
   const promises = [];
+  const checkPromises = [];
 
   promises.push(mainLogic.checkInputData(req.body.selectJob));
+  promises.push(mainLogic.checkInputAttendanceData(req.body));
   promises.push(workFieldDetailFecthAll(req.body.contractorId));
   promises.push(employeeFecthAll(req.body.contractorId));
+  promises.push(contactFecthAll(req.body.contractorId));
+  //通常時
+  if (req.body.selectedEmployee.length === 0) {
+    Promise.all(promises)
+      .then(async function () {
+        //responseをもとにチェック処理を別に実行
+        checkPromises.push(
+          mainLogic.checkExistsData(
+            req.body,
+            employeeResponse,
+            workFieldDetailResponse
+          )
+        );
+        checkPromises.push(
+          mainLogic.checkExistsAttendanceData(req.body, contactResponse)
+        );
+        checkPromises.push(
+          attendanceManageFind(req.body.contractorId, req.body.employeeId)
+        );
+        return Promise.all(checkPromises);
+      })
+      .then(async function () {
+        return await attendanceManageUpdate(
+          req.body,
+          workFieldDetailResponse,
+          attendanceManageResponse
+        );
+      })
+      .then(async function () {
+        //返却用のdata
+        var data = {
+          checkResult: checkResult,
+          messageList: messageList,
+        };
+        res.status(200).json(data);
+      })
+      .catch((err) => {
+        console.log(err);
+        //サーバー側での入力値チェックエラーです。
+        if (err.messageList) {
+          res.status(400).json(err);
+          //サーバー側でのシステムエラーです。
+        } else {
+          err.checkResult = false;
+          err.messageList = mainLogic.createSytemErrorMessage();
+          res.status(500).json(err);
+        }
+      });
+    // 協力会社選択時
+  } else {
+    Promise.all(promises)
+      .then(async function () {
+        //responseをもとにチェック処理を別に実行
+        checkPromises.push(
+          mainLogic.checkExistsData(
+            req.body,
+            employeeResponse,
+            workFieldDetailResponse
+          )
+        );
+        checkPromises.push(
+          mainLogic.checkExistsAttendanceData(req.body, contactResponse)
+        );
+        checkPromises.push(attendanceManageFindAll(req.body.contractorId));
+        return Promise.all(checkPromises);
+      })
+      //TODO 協力会社員の存在チェック
+      .then(async function () {
+        return await attendanceManageUpdateForSubEmployee(
+          req.body,
+          workFieldDetailResponse,
+          attendanceManageResponse
+        );
+      })
+      .then(async function () {
+        //返却用のdata
+        var data = {
+          checkResult: checkResult,
+          messageList: messageList,
+        };
+        res.status(200).json(data);
+      })
+      .catch((err) => {
+        console.log(err);
+        //サーバー側での入力値チェックエラーです。
+        if (err.messageList) {
+          res.status(400).json(err);
+          //サーバー側でのシステムエラーです。
+        } else {
+          err.checkResult = false;
+          err.messageList = mainLogic.createSytemErrorMessage();
+          res.status(500).json(err);
+        }
+      });
+  }
+});
+//勤怠先入力ダイアログの初期表示処理をします。
+app.post("/getSubEmployeeList", async function (req, res) {
+  const promises = [];
+  promises.push(contactFecthAll(req.body.contractorId));
+  promises.push(selectEmployee(req.body.contractorId, req.body.employeeId));
+  var subEmployeeItems = [];
+  var subCompanyResponse = {};
+  var subEmployeeResponse = {};
+
   Promise.all(promises)
     .then(async function () {
-      //promiseallだとresponseが空になっちゃうので、別に実行
-      return await mainLogic.checkExistsData(
-        req.body,
-        employeeResponse,
-        workFieldDetailResponse
+      //先頭に自身のユーザ情報をセットします。
+      var employeeItem = {};
+      employeeItem.subEmployeeId = req.body.employeeId;
+      employeeItem.subEmployeeName =
+        employeeResponse.employeeFirstName +
+        " " +
+        employeeResponse.employeeLastName;
+      employeeItem.subCompanyName = contactResponse.contractorName;
+      subEmployeeItems.push(employeeItem);
+      //協力会社テーブルから協力会社情報を取得します。
+      return await subCompanyDao.selectSubCompanyAll(req.body.contractorId);
+    })
+    .then(async function (items) {
+      subCompanyResponse = items;
+      //社員テーブルから社員情報を取得します。
+      return await employeeDao.selectSubEmployeeAll(req.body.contractorId);
+    })
+    .then(async function (items) {
+      subEmployeeResponse = items;
+
+      //2番目以降に協力会社員の情報をセットします。
+      subEmployeeItems = subCompanyLogic.createSubEmployeeItems(
+        subEmployeeItems,
+        subCompanyResponse,
+        subEmployeeResponse
       );
-    })
-    .then(async function () {
-      return await attendanceManageFind(
-        req.body.contractorId,
-        req.body.employeeId
-      );
-    })
-    .then(async function () {
-      return await attendanceManageUpdate(req.body);
-    })
-    .then(async function () {
+      // 先頭に
       //返却用のdata
       var data = {
-        checkResult: checkResult,
-        messageList: messageList,
+        subEmployeeItems: subEmployeeItems,
       };
+      //dataをレスポンスで返却します。
       res.status(200).json(data);
     })
     .catch((err) => {
       console.log(err);
-      //サーバー側での入力値チェックエラーです。
-      if (err.messageList) {
-        res.status(400).json(err);
-        //サーバー側でのシステムエラーです。
-      } else {
-        err.checkResult = false;
-        err.messageList = clientFieldLogic.createSytemErrorMessage();
-        res.status(500).json(err);
-      }
+
+      res.status(500).json(err);
     });
 });
 

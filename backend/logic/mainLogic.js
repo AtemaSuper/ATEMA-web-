@@ -6,6 +6,7 @@ const Util = require("../public/util");
 var util = new Util();
 const constractor = require("../public/const");
 var successMessage = constractor.SuccessMessage;
+var errorMessage = constractor.ErrorMessage;
 var colum = constractor.Colum;
 var type = constractor.Type;
 var format = constractor.Format;
@@ -77,6 +78,85 @@ class MainLogic {
         errorMessageList.push(errorMessage4);
         return;
       }
+    }
+  }
+  /**
+   * 勤怠入力の入力情報(勤怠ステータス、勤怠パターン)をチェックします。
+   *
+   * @param {string} param 画面パラメータです。
+   *
+   * @returns
+   */
+  checkInputAttendanceData(param) {
+    return new Promise(function (resolve, reject) {
+      var errorMessageList = [];
+      //勤怠ステータスチェック
+      var selectStatus = param.selectStatus;
+      checkAttendanceSatus(errorMessageList, selectStatus.value);
+      //勤怠パターンチェック
+      var selecAtttendancePattern = param.selecAtttendancePattern;
+      checkAttendancePattern(
+        errorMessageList,
+        selecAtttendancePattern.patternId
+      );
+      var data = {};
+      //エラーがある場合
+      if (errorMessageList.length !== 0) {
+        data = {
+          checkResult: false,
+          messageList: errorMessageList,
+        };
+        reject(data);
+      }
+      resolve();
+    });
+
+    /**
+     * 勤怠ステータスをチェックします。
+     *
+     * @param {object} errorMessageList エラーメッセージリストです。
+     * @param {string} value 入力内容です。
+     */
+    function checkAttendanceSatus(errorMessageList, value) {
+      var errorMessage1 = commonLogic.checkEmpty(
+        value,
+        colum.ATTENDANCE_STATUS,
+        true
+      );
+      if (!util.isEmpty(errorMessage1)) {
+        errorMessageList.push(errorMessage1);
+        return;
+      }
+      var errorMessage2 = commonLogic.chehckFormat(
+        value,
+        colum.ATTENDANCE_STATUS,
+        format.HALF_WITH_NUMBER
+      );
+      if (!util.isEmpty(errorMessage2)) {
+        errorMessageList.push(errorMessage2);
+        return;
+      }
+      return errorMessageList;
+    }
+
+    /**
+     * 勤怠パターンをチェックします。
+     *
+     * @param {object} errorMessageList エラーメッセージリストです。
+     * @param {string} value 入力内容です。
+     * @param {string} attendanceResponse 勤怠パターン情報です。
+     */
+    function checkAttendancePattern(errorMessageList, value) {
+      var errorMessage1 = commonLogic.checkEmpty(
+        value,
+        colum.ATTENDANCE_PATTERN,
+        true
+      );
+      if (!util.isEmpty(errorMessage1)) {
+        errorMessageList.push(errorMessage1);
+        return;
+      }
+      return errorMessageList;
     }
   }
   /**
@@ -239,6 +319,64 @@ class MainLogic {
     }
   }
 
+  /**
+   * 選択した勤怠ステータス、勤怠パターンをチェックします。
+   *
+   * @param {string} param 画面パラメータです。
+   * @param {string} attendanceResponse 勤怠パターン情報です。
+   *
+   * @returns
+   */
+  checkExistsAttendanceData(param, contactResponse) {
+    return new Promise(function (resolve, reject) {
+      var errorMessageList = [];
+      //勤怠入力情報の入力値の存在チェックを行います。
+      //TODO 勤怠ステータスチェック 存在チェックいるか確認
+      //勤怠パターンチェック
+      var selecAtttendancePattern = param.selecAtttendancePattern;
+      var attendanceManageResponse = contactResponse.attendancePattern;
+      checkAttendancePattern(
+        errorMessageList,
+        selecAtttendancePattern.patternId,
+        attendanceManageResponse
+      );
+      var data = {};
+      //エラーがある場合
+      if (errorMessageList.length !== 0) {
+        data = {
+          checkResult: false,
+          messageList: errorMessageList,
+        };
+        reject(data);
+      }
+      resolve();
+    });
+
+    /**
+     * 勤怠パターンをチェックします。
+     *
+     * @param {object} errorMessageList エラーメッセージリストです。
+     * @param {string} value 入力内容です。
+     * @param {string} attendanceResponse 勤怠パターン情報です。
+     */
+    function checkAttendancePattern(
+      errorMessageList,
+      value,
+      attendanceResponse
+    ) {
+      var errorMessage1 = commonLogic.checkExists(
+        value,
+        attendanceResponse,
+        colum.ATTENDANCE_PATTERN
+      );
+      if (!util.isEmpty(errorMessage1)) {
+        errorMessageList.push(errorMessage1);
+        return;
+      }
+      return errorMessageList;
+    }
+  }
+
   // /**
   //  * 現場詳細の入力値(現場情報)の存在チェックします。
   //  *
@@ -357,7 +495,7 @@ class MainLogic {
    * @returns {string} システムエラーメッセージです。
    */
   createSytemErrorMessage() {
-    return util.stringFormat(successMessage.SYSTEM_ERROR);
+    return util.stringFormat(errorMessage.SYSTEM_ERROR);
   }
 }
 

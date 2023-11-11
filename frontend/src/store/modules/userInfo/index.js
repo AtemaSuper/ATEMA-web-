@@ -27,8 +27,14 @@ const mutations = {
   setUserInfo(state, userInfo) {
     state.userInfo.companyName = userInfo.companyName;
     state.userInfo.companyId = userInfo.companyId;
+    state.userInfo.userId = userInfo.userId;
     state.userInfo.userName = userInfo.userName;
     state.userInfo.postName = userInfo.postName;
+    state.userInfo.attendanceAuth = userInfo.attendanceAuth;
+    state.userInfo.ownCompanyManageAuth = userInfo.ownCompanyManageAuth;
+    state.userInfo.ownWorkerManageAuth = userInfo.ownWorkerManageAuth;
+    state.userInfo.payPlanAuth = userInfo.payPlanAuth;
+    state.userInfo.subCompanyAuth = userInfo.subCompanyAuth;
   }
 };
 

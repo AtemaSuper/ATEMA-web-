@@ -68,7 +68,7 @@
           <v-card>
             <v-app-bar flat color="info">
               <v-toolbar-title class="h2 white--text">
-                勤怠入力
+                勤怠入力{{ this.selectedEmployeeNameLabel }}
               </v-toolbar-title>
               <v-spacer></v-spacer>
               <v-btn color="white" icon>
@@ -154,8 +154,10 @@
                                     label="(例)株式会社ABC"
                                     :items="clientFieldList"
                                     item-text="clientFieldName"
-                                    item-value="value" 
-                                    return-object outlined required
+                                    item-value="value"
+                                    return-object
+                                    outlined
+                                    required
                                     dense
                                     color="info"
                                   ></v-select>
@@ -170,11 +172,13 @@
                                   <v-select
                                     v-model="selectJob.selectWorkField"
                                     label="(例)株式会社ABC"
-                                    v-on:change="selectWorkField"
+                                    v-on:change="this.selectWorkField"
                                     :items="workFieldList"
                                     item-text="workFieldName"
-                                    item-value="value" 
-                                    return-object outlined required
+                                    item-value="value"
+                                    return-object
+                                    outlined
+                                    required
                                     dense
                                     color="info"
                                   ></v-select>
@@ -191,8 +195,10 @@
                                     label="(例)株式会社ABC"
                                     :items="workFieldDetailList"
                                     item-text="workFieldDetailName"
-                                    item-value="value" 
-                                    return-object outlined required
+                                    item-value="value"
+                                    return-object
+                                    outlined
+                                    required
                                     dense
                                     color="info"
                                   ></v-select>
@@ -209,6 +215,13 @@
                           </v-row>
                         </v-tab-item>
                       </v-tabs>
+                      <v-btn
+                        v-if="userInfo.subCompanyAuth === '2'"
+                        color="info mt-2"
+                        @click="returnSelectSubEmployee()"
+                      >
+                        戻る
+                      </v-btn>
                       <v-btn color="info mt-2" @click="checkAttendance()">
                         次へ
                       </v-btn>
@@ -271,6 +284,42 @@
             </v-card-text>
           </v-card>
         </v-dialog>
+        <v-dialog
+          v-model="isShowSubAttendanceEditDialog"
+          max-width="600px"
+          persistent
+        >
+          <v-card>
+            <v-app-bar flat color="info">
+              <v-toolbar-title class="h2 white--text">
+                従業員選択
+              </v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-btn color="white" icon>
+                <v-icon @click="closeAttendanceEditDialog()">mdi-close</v-icon>
+              </v-btn>
+            </v-app-bar>
+            <v-alert v-if="isErrorSelectedEmployee" type="error"
+              >従業員を選択してください。</v-alert
+            >
+            <v-card-text>
+              <v-container>
+                <v-data-table
+                  v-model="selectedEmployee"
+                  :headers="subEmployeeHeaders"
+                  :items="subEmployeeItems"
+                  :items-per-page="5"
+                  item-key="subEmployeeId"
+                  show-select
+                  class="elevation-1"
+                ></v-data-table>
+                <v-btn color="info mt-2" @click="editSubAttendance()">
+                  次へ
+                </v-btn>
+              </v-container>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
       </v-container>
     </v-main>
   </v-app>
@@ -278,9 +327,10 @@
 
 <script>
 /** 外部コンポーネントの呼び出し */
-import Methods from '@/api/methods'
+import Methods from "@/api/methods";
 import dayjs from "dayjs";
 import ja from "dayjs/locale/ja";
+import store from "../../store/index";
 
 dayjs.locale(ja);
 
@@ -297,18 +347,21 @@ export default {
     }
   },
   data: () => ({
-    // TODO ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
-    userId: '020J5ruy8WEnQF1anhfT',
+    // ログインユーザ情報
+    userInfo: store.getters.userInfo,
+    // ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
+    userId: store.getters.userInfo.userId,
     // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
     // ※複数社契約になった場合、セッションで契約IDを保持して、
     // ※そのIDをもとに検索するように修正
-    contractorId: '00000001',
+    contractorId: "00000001",
     clientFieldList: [],
     workFieldList: [],
     workFieldDetailList: [],
     workFieldResponse: {},
     workFieldDetailResrponse: {},
     selectJob: {},
+    selectedEmployee: [],
     newsList: [
       "【機能改善】自社員管理機能が新しくなりました。",
       "【年末年始について】年末年始営業情報についてこちらをはご参照ください。",
@@ -336,7 +389,15 @@ export default {
     statusList: [],
     attendancePatternList: [],
     noteContents: "",
-    isShowAttendanceEditDialog: false
+    isShowAttendanceEditDialog: false,
+    subEmployeeHeaders: [
+      { text: "名前", value: "subEmployeeName" },
+      { text: "会社名", value: "subCompanyName" }
+    ],
+    subEmployeeItems: [],
+    selectedEmployeeNameLabel: "",
+    isErrorSelectedEmployee: false,
+    isShowSubAttendanceEditDialog: false
   }),
   methods: {
     // サーバーから返ってくる値をログに出力したいのでasyncとawaitを行う
@@ -365,16 +426,62 @@ export default {
         this.pagePush(item.value);
         // 勤怠入力ダイアログ表示処理
       } else {
+        // 協力会社管理権限がある場合
+        if (this.userInfo.subCompanyAuth === "2") {
+          // 協力会社員選択ダイアログを表示する
+          this.isShowSubAttendanceEditDialog = true;
+          var param = {
+            contractorId: this.contractorId,
+            employeeId: this.userId
+          };
+          let response = await Methods.getSubEmployeeList(param);
+          this.subEmployeeItems = response.data.subEmployeeItems;
+        } else {
+          // 勤怠入力画面を表示する
+          this.isShowAttendanceEditDialog = true;
+          let response = await Methods.getAttendance(
+            this.contractorId,
+            this.userId
+          );
+          // レスポンスから画面情報をセットする
+          this.clientFieldList = this.createClientFieldList(response);
+          this.workFieldResponse = response.data.workFieldResponse;
+          this.workFieldDetailResponse = response.data.workFieldDetailResponse;
+          this.selectJob = response.data.selectJob;
+          this.workFieldList = this.createWorkFieldList();
+          this.workFieldDetailList = this.createWorkFieldDetailLiist();
+        }
+      }
+    },
+    // 次へボタン押下時（従業員選択）
+    async editSubAttendance() {
+      // 従業員未選択の場合、エラーとする
+      if (this.selectedEmployee.length === 0) {
+        this.isErrorSelectedEmployee = true;
+      } else {
+        this.isErrorSelectedEmployee = false;
+        this.isShowSubAttendanceEditDialog = false;
         this.isShowAttendanceEditDialog = true;
-        let response = await Methods.getAttendance(this.contractorId, this.userId);
+        let response = await Methods.getAttendance(
+          this.contractorId,
+          this.userId
+        );
         // レスポンスから画面情報をセットする
         this.clientFieldList = this.createClientFieldList(response);
-        this.workFieldResponse = response.data.workFieldResponse
-        this.workFieldDetailResponse = response.data.workFieldDetailResponse
+        this.workFieldResponse = response.data.workFieldResponse;
+        this.workFieldDetailResponse = response.data.workFieldDetailResponse;
         this.selectJob = response.data.selectJob;
         this.workFieldList = this.createWorkFieldList();
         this.workFieldDetailList = this.createWorkFieldDetailLiist();
+        this.selectedEmployeeNameLabel = this.createSelectedEmployeeNameLabel();
       }
+    },
+    // 戻るボタン押下時
+    async returnSelectSubEmployee() {
+      this.stepperCount = 1;
+      this.selectedEmployeeNameLabel = "";
+      this.isShowSubAttendanceEditDialog = true;
+      this.isShowAttendanceEditDialog = false;
     },
     pagePush(pageName) {
       this.$router.push(pageName);
@@ -384,23 +491,24 @@ export default {
       const param = {
         contractorId: this.contractorId,
         employeeId: this.userId,
-        selectJob: this.selectJob,
-      }
+        selectJob: this.selectJob
+      };
       try {
-        let response = await Methods.checkAttendance(param)
+        let response = await Methods.checkAttendance(param);
+        console.log(response);
         // レスポンスから画面情報をセットする
-        this.selectStatus = response.data.selectStatus
-        this.selecAtttendancePattern = response.data.selecAtttendancePattern
-        this.statusList = response.data.statusList
-        this.attendancePatternList = response.data.attendancePatternList
-        this.noteContents = response.data.noteContents
+        this.selectStatus = response.data.selectStatus;
+        this.selecAtttendancePattern = response.data.selecAtttendancePattern;
+        this.statusList = response.data.statusList;
+        this.attendancePatternList = response.data.attendancePatternList;
+        this.noteContents = response.data.noteContents;
         this.stepperCount = 2;
         // 保存完了メッセージ表示
         // this.$emit('alertMethod', response)
-      }catch (err){
+      } catch (err) {
         let response = err.response;
         // エラーメッセージ表示
-        this.$emit('alertMethod', response)
+        this.$emit("alertMethod", response);
       }
     },
     /** 勤怠入力：勤怠を登録押下時処理 */
@@ -414,16 +522,17 @@ export default {
         selectStatus: this.selectStatus,
         selecAtttendancePattern: this.selecAtttendancePattern,
         noteContents: this.noteContents,
-      }
+        selectedEmployee: this.selectedEmployee
+      };
       try {
-        let response = await Methods.saveAttendance(param)
+        let response = await Methods.saveAttendance(param);
         console.log(response);
         this.stepperCount = 1;
         this.isShowAttendanceEditDialog = false;
-      }catch (err){
+      } catch (err) {
         let response = err.response;
         // エラーメッセージ表示
-        this.$emit('alertMethod', response)
+        this.$emit("alertMethod", response);
       }
     },
     getToDay() {
@@ -436,90 +545,120 @@ export default {
         this.displayTime = now.format("HH：mm：ss");
       }, 100);
     },
+    // 閉じるボタン押下時（従業員選択、勤怠入力共通）
     closeAttendanceEditDialog() {
       this.stepperCount = 1;
+      this.isShowSubAttendanceEditDialog = false;
       this.isShowAttendanceEditDialog = false;
+      this.selectedEmployee = [];
     },
-     /** 客先名セレクトボックス作成処理 */
-    createClientFieldList (response) {
-      var clientFieldResponse = response.data.clientFieldResponse
-      var clientFieldList = []
+    /** 客先名セレクトボックス作成処理 */
+    createClientFieldList(response) {
+      var clientFieldResponse = response.data.clientFieldResponse;
+      var clientFieldList = [];
       for (var j = 0; j < clientFieldResponse.length; j++) {
-        var clientField = {}
-        clientField.clientFieldId = clientFieldResponse[j].clientFieldId
-        clientField.clientFieldName = clientFieldResponse[j].clientFieldName
-        clientFieldList.push(clientField)
+        var clientField = {};
+        clientField.clientFieldId = clientFieldResponse[j].clientFieldId;
+        clientField.clientFieldName = clientFieldResponse[j].clientFieldName;
+        clientFieldList.push(clientField);
       }
-      return clientFieldList
+      return clientFieldList;
     },
     /** 現場セレクトボックス作成処理 */
-    createWorkFieldList () {
+    createWorkFieldList() {
       var workFieldList = [];
       var clientFieldId = "";
-      if(this.selectJob.selectClientField != null){
-        let selectClientField = JSON.parse(JSON.stringify(this.selectJob.selectClientField))
+      if (this.selectJob.selectClientField != null) {
+        let selectClientField = JSON.parse(
+          JSON.stringify(this.selectJob.selectClientField)
+        );
         clientFieldId = selectClientField.clientFieldId;
       }
       for (var i = 0; i < this.workFieldResponse.length; i++) {
         // 選択した客先に紐づく現場のみ表示します。
-        if(clientFieldId === this.workFieldResponse[i].clientFieldId){
-          var workField = {}
-          workField.workFieldId = this.workFieldResponse[i].workFieldId
-          workField.workFieldName = this.workFieldResponse[i].workFieldName
-          workFieldList.push(workField)
+        if (clientFieldId === this.workFieldResponse[i].clientFieldId) {
+          var workField = {};
+          workField.workFieldId = this.workFieldResponse[i].workFieldId;
+          workField.workFieldName = this.workFieldResponse[i].workFieldName;
+          workFieldList.push(workField);
         }
       }
       return workFieldList;
     },
     /** 現場詳細セレクトボックス作成処理 */
-    createWorkFieldDetailLiist () {
+    createWorkFieldDetailLiist() {
       var workFieldDetailList = [];
       var workFieldId = "";
-      if(this.selectJob.selectWorkField != null){
-        let selectWorkField = JSON.parse(JSON.stringify(this.selectJob.selectWorkField))
+      if (this.selectJob.selectWorkField != null) {
+        let selectWorkField = JSON.parse(
+          JSON.stringify(this.selectJob.selectWorkField)
+        );
         workFieldId = selectWorkField.workFieldId;
       }
       for (var i = 0; i < this.workFieldDetailResponse.length; i++) {
         // 選択した客先に紐づく現場のみ表示します。
-        if(workFieldId === this.workFieldDetailResponse[i].workFieldId){
-          var workFieldDetail = {}
-          workFieldDetail.workFieldDetailId = this.workFieldDetailResponse[i].workFieldDetailId
-          workFieldDetail.workFieldDetailName = this.workFieldDetailResponse[i].workFieldDetailName
-          workFieldDetailList.push(workFieldDetail)
+        if (workFieldId === this.workFieldDetailResponse[i].workFieldId) {
+          var workFieldDetail = {};
+          workFieldDetail.workFieldDetailId = this.workFieldDetailResponse[
+            i
+          ].workFieldDetailId;
+          workFieldDetail.workFieldDetailName = this.workFieldDetailResponse[
+            i
+          ].workFieldDetailName;
+          workFieldDetailList.push(workFieldDetail);
         }
       }
-      return workFieldDetailList
+      return workFieldDetailList;
     },
     /** 客先セレクトボックス押下処理 */
     selectCleintField() {
       // 現場セレクトボックスを作成します。
       this.workFieldList = this.createWorkFieldList();
-      // this.detailEdit = {
-      //   "employeeId": this.detailEdit.employeeId,
-      //   "jobNo":"",
-      //   "selectClientField":this.detailEdit.selectClientField,
-      //   "selectWorkField":"",
-      //   "selectWorkFieldDetail":"",
-      //   "clientFieldName":this.detailEdit.clientFieldName,
-      //   "workFieldName":"",
-      //   "workFieldDetailName":"",
-      // };
+      this.detailEdit = {
+        employeeId: this.detailEdit.employeeId,
+        jobNo: "",
+        selectClientField: this.detailEdit.selectClientField,
+        selectWorkField: "",
+        selectWorkFieldDetail: "",
+        clientFieldName: this.detailEdit.clientFieldName,
+        workFieldName: "",
+        workFieldDetailName: ""
+      };
     },
-    /** 現場セレクトボックス押下処理 */
-    selectWorkField() {
-      // 現場詳細セレクトボックスを作成します。
-      this.workFieldDetailList = this.createWorkFieldDetailLiist();
-      // this.detailEdit = {
-      //   "employeeId": this.detailEdit.employeeId,
-      //   "jobNo":"",
-      //   "selectClientField":this.detailEdit.selectClientField,
-      //   "selectWorkField":this.detailEdit.selectWorkField,
-      //   "selectWorkFieldDetail":"",
-      //   "clientFieldName":this.detailEdit.clientFieldName,
-      //   "workFieldName":this.detailEdit.workFieldName,
-      //   "workFieldDetailName":"",
-      // };
-    },
+    // /** 現場セレクトボックス押下処理 */
+    // selectWorkField() {
+    //   // 現場詳細セレクトボックスを作成します。
+    //   this.workFieldDetailList = this.createWorkFieldDetailLiist();
+    //   this.detailEdit = {
+    //     employeeId: this.detailEdit.employeeId,
+    //     jobNo: "",
+    //     selectClientField: this.detailEdit.selectClientField,
+    //     selectWorkField: this.detailEdit.selectWorkField,
+    //     selectWorkFieldDetail: "",
+    //     clientFieldName: this.detailEdit.clientFieldName,
+    //     workFieldName: this.detailEdit.workFieldName,
+    //     workFieldDetailName: ""
+    //   };
+    // },
+    /** 従業員名リスト作成処理 */
+    createSelectedEmployeeNameLabel() {
+      if (this.selectedEmployee.length === 0) {
+        return "()";
+      } else {
+        var employeeNameLabel = "";
+        for (var i = 0; i < this.selectedEmployee.length; i++) {
+          if (i === 0) {
+            employeeNameLabel = this.selectedEmployee[i].subEmployeeName;
+          } else {
+            employeeNameLabel =
+              employeeNameLabel +
+              "," +
+              this.selectedEmployee[i].subEmployeeName;
+          }
+        }
+        return "(" + employeeNameLabel + ")";
+      }
+    }
   }
 };
 </script>

@@ -112,7 +112,13 @@ app.post("/getUserInfo", async function (req, res) {
         userName:
           employeeResponse.employeeFirstName +
           employeeResponse.employeeLastName,
+        userId: req.body.employeeId,
         postName: postResponse.postName,
+        attendanceAuth: postResponse.attendanceAuth,
+        ownCompanyManageAuth: postResponse.ownCompanyManageAuth,
+        ownWorkerManageAuth: postResponse.ownWorkerManageAuth,
+        payPlanAuth: postResponse.payPlanAuth,
+        subCompanyAuth: postResponse.subCompanyAuth,
       };
 
       //返却用のdata

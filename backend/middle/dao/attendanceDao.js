@@ -1,12 +1,23 @@
 "use strict";
 
 const admin = require("firebase-admin");
+const Util = require("../../public/util");
+var util = new Util();
 if (admin.apps.length === 0) {
   const serviceAccount = require("../../atema-develop-firebase-adminsdk.json");
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
 }
+//本日の日時を取得
+//TODO ここで取得していいのか検討
+var date = new Date();
+var todayDate =
+  date.getFullYear() +
+  "-" +
+  (Number(date.getMonth()) + 1) +
+  "-" +
+  date.getDate();
 
 /**
  * 出退勤テーブルのDaoクラスです。
@@ -20,21 +31,11 @@ class AttendanceDao {
    * @returns
    */
   async fetchAll(contractorId) {
-    //日付を取得します。
-    var date = new Date();
-    var todayDate =
-      date.getFullYear() +
-      "-" +
-      (Number(date.getMonth()) + 1) +
-      "-" +
-      date.getDate();
-    var test = "2022-07-01";
-
     const db = admin.firestore();
     const attendanceRef = db
       .collection("attendance")
       .doc(contractorId)
-      .collection(test)
+      .collection(todayDate)
       .where("deleteFlg", "==", false);
 
     const responce = await attendanceRef
@@ -60,13 +61,11 @@ class AttendanceDao {
    * @returns
    */
   async find(contractorId, specifiedDateRangeOfStart, specifiedDateRangeOfEnd) {
-    //TODO 日付範囲で検索
-    var test = "2022-07-01";
     const db = admin.firestore();
     const attendanceRef = db
       .collection("attendance")
       .doc(contractorId)
-      .collection(test)
+      .collection(todayDate)
       .where("deleteFlg", "==", false);
 
     const responce = await attendanceRef
@@ -120,21 +119,11 @@ class AttendanceDao {
    */
   async singleUpdate(contractorId, employeeId, clumn, items) {
     const db = admin.firestore();
-    //TODO 日付範囲で検索
-    var test = "2022-07-01";
-    // //日付を取得します。
-    // var date = new Date();
-    // var updateDate =
-    //   date.getFullYear() +
-    //   "-" +
-    //   (Number(date.getMonth()) + 1) +
-    //   "-" +
-    //   date.getDate();
 
     const attendanceRef = db
       .collection("attendance")
       .doc(contractorId)
-      .collection(test)
+      .collection(todayDate)
       .doc(employeeId);
     var updateKey = clumn;
     var updateItem = { [updateKey]: items };
@@ -148,7 +137,7 @@ class AttendanceDao {
         return data;
       })
       .catch(function (err) {
-        res.status(500).json(err);
+        return err;
       });
     return responce;
   }
@@ -232,13 +221,11 @@ class AttendanceDao {
    * @returns
    */
   async findToToday(contractorId, employeeId) {
-    //TODO 日付範囲で検索
-    var test = "2022-07-01";
     const db = admin.firestore();
     const attendanceRef = db
       .collection("attendance")
       .doc(contractorId)
-      .collection(test)
+      .collection(todayDate)
       .doc(employeeId);
 
     const responce = await attendanceRef
@@ -252,36 +239,80 @@ class AttendanceDao {
     return responce;
   }
   /**
-   * 指定された条件に対してレコードを更新します。
+   * 指定された日時範囲に対するすべての勤怠情報一覧を取得します。
    *
+   * @param {string} contractorId 契約IDです。
+   * @param {string} employeeId 社員IDです。
+   * @returns
+   */
+  async findAllToToday(contractorId) {
+    const db = admin.firestore();
+    const attendanceRef = db
+      .collection("attendance")
+      .doc(contractorId)
+      .collection(todayDate)
+      .where("deleteFlg", "==", false);
+
+    const responce = await attendanceRef
+      .get()
+      .then(function (items) {
+        return items.docs.map((doc) => {
+          var data = doc.data();
+          data.employeeId = doc.id;
+          return data;
+        });
+      })
+      .catch(function (err) {
+        return err;
+      });
+    return responce;
+  }
+  /**
+   * 指定された条件に対してレコードを更新します。
    * @param {string} contractorId 会社IDです。
    * @param {string} employeeId 社員IDです。
-   * @param {string} updateItem 保存する情報です。
+   * @param {object} updateItem 入力情報です。
+   *
    * @returns
    */
   async saveAttendance(contractorId, employeeId, updateItem) {
     const db = admin.firestore();
-    //TODO 日付範囲で検索
-    var test = "2022-07-01";
-
     const attendanceRef = db
       .collection("attendance")
       .doc(contractorId)
-      .collection(test)
+      .collection(todayDate)
       .doc(employeeId);
-    const responce = await attendanceRef
-      .update(updateItem)
-      .then(function () {
-        var data = {
-          checkResult: true,
-          messageList: ["勤怠情報を更新しました。"],
-        };
-        return data;
-      })
-      .catch(function (err) {
-        res.status(500).json(err);
-      });
-    return responce;
+    //新規の場合
+    if (!util.isEmpty(updateItem.createDate)) {
+      const responce = await attendanceRef
+        .set(updateItem)
+        .then(function () {
+          var data = {
+            checkResult: true,
+            messageList: ["勤怠情報を更新しました。"],
+          };
+          return data;
+        })
+        .catch(function (err) {
+          return err;
+        });
+      return responce;
+      //更新の場合
+    } else {
+      const responce = await attendanceRef
+        .update(updateItem)
+        .then(function () {
+          var data = {
+            checkResult: true,
+            messageList: ["勤怠情報を更新しました。"],
+          };
+          return data;
+        })
+        .catch(function (err) {
+          return err;
+        });
+      return responce;
+    }
   }
 }
 

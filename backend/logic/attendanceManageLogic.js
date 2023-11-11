@@ -9,6 +9,14 @@ var successMessage = constractor.SuccessMessage;
 var colum = constractor.Colum;
 var type = constractor.Type;
 var format = constractor.Format;
+//本日の日時を取得
+var date = new Date();
+var todayDate =
+  date.getFullYear() +
+  "-" +
+  (Number(date.getMonth()) + 1) +
+  "-" +
+  date.getDate();
 
 /**
  * 出退勤のLogicクラスです。
@@ -469,6 +477,106 @@ class AttendanceManageLogic {
         return;
       }
       return errorMessageList;
+    }
+  }
+
+  /**
+   * 出退勤テーブル更新用のデータ情報を作成します。
+   *
+   * @param {string} param 画面パラメータです。
+   * @param {object} workFieldDetailResponse 現場詳細情報です。
+   * @param {boolean} isNew 新規登録かどうかです。
+   *
+   *
+   */
+  createUpdateItemForAttendance(param, workFieldDetailResponse, isNew) {
+    var selecAtttendancePattern = param.selecAtttendancePattern;
+    var selectStatus = param.selectStatus;
+    var updateKey = getUpdateKey(selectStatus.value);
+    var workFieldDetail = getWorkFieldDetail(
+      workFieldDetailResponse,
+      param.selectJob
+    );
+    //新規登録の場合
+    if (isNew) {
+      return {
+        attendancePatternId: selecAtttendancePattern.patternId,
+        contractStatus: workFieldDetail.contractStatus,
+        noteContents: util.isEmpty(param.noteContents)
+          ? ""
+          : param.noteContents,
+        status: selectStatus.value,
+        workFieldDetailId: workFieldDetail.workFieldDetailId,
+        start: updateKey == "start" ? param.saveTime : "",
+        restStart: updateKey == "restStart" ? param.saveTime : "",
+        restEnd: updateKey == "restEnd" ? param.saveTime : "",
+        end: updateKey == "end" ? param.saveTime : "",
+        createDate: todayDate,
+        createUserId: param.employeeId,
+        updateDate: todayDate,
+        updateUserId: param.employeeId,
+        deleteFlg: false,
+      };
+      //更新の場合
+    } else {
+      return {
+        attendancePatternId: selecAtttendancePattern.patternId,
+        noteContents: util.isEmpty(param.noteContents)
+          ? ""
+          : param.noteContents,
+        status: selectStatus.value,
+        workFieldDetailId: workFieldDetail.workFieldDetailId,
+        [updateKey]: param.saveTime,
+        updateDate: todayDate,
+        updateUserId: param.employeeId,
+      };
+    }
+
+    /**
+     * 選択したステータスで、更新するカラムを取得します。
+     *
+     * @param {string} selectStatus
+     * @returns
+     */
+    function getUpdateKey(selectStatus) {
+      switch (selectStatus) {
+        case "0":
+          return "start";
+        case "1":
+          return "restStart";
+        case "2":
+          return "restEnd";
+        case "3":
+          return "end";
+        default:
+          return "start";
+      }
+    }
+
+    /**
+     * 選択した現場詳細情報を取得します。
+     *
+     * @param {string} selectStatus
+     * @returns
+     */
+    function getWorkFieldDetail(workFieldDetailResponse, selectJob) {
+      for (var i in workFieldDetailResponse) {
+        var workFieldDetail = workFieldDetailResponse[i];
+        //入力したjobNoから取得
+        if (!util.isEmpty(selectJob.jobNo)) {
+          if (selectJob.jobNo === workFieldDetail.jobNo) {
+            return workFieldDetail;
+          }
+          //選択した現場詳細情報から取得
+        } else {
+          if (
+            selectJob.selectWorkFieldDetail.workFieldDetailId ===
+            workFieldDetail.workFieldDetailId
+          ) {
+            return workFieldDetail;
+          }
+        }
+      }
     }
   }
 

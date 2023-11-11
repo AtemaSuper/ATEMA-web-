@@ -192,6 +192,10 @@ Colum.WORK_TYPE_NAME = "工種名";
 Colum.WORK_TYPE_ID = "工種ID";
 /** ステータス */
 Colum.STATUS = "ステータス";
+/** 勤怠ステータス */
+Colum.ATTENDANCE_STATUS = "勤怠ステータス";
+/** 勤怠パターン */
+Colum.ATTENDANCE_PATTERN = "勤怠パターン";
 
 /** 作成者ID */
 Colum.CREATE_USER_ID = "作成者ID";

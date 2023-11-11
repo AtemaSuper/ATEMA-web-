@@ -237,5 +237,9 @@ export default {
   // 勤怠先入力保存処理
   saveAttendance(param) {
     return Api().post("/main/save", param);
+  },
+  // 協力会社員一覧取得処理
+  getSubEmployeeList(param) {
+    return Api().post("/main/getSubEmployeeList", param);
   }
 };

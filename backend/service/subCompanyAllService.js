@@ -39,6 +39,7 @@ app.post("/", async function (req, res) {
     .then(function (items) {
       workTypeResponse = items;
       //返却用のdata
+      console.log(subEmployeeResponse);
       var data = {
         subCompanyResponse: subCompanyResponse,
         subEmployeeResponse: subEmployeeResponse,
