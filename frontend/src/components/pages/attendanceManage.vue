@@ -897,11 +897,12 @@ export default {
       const targetEndTime = dayjs(this.displayDate)
         .hour(endTWorkTime[0])
         .minute(endTWorkTime[1]);
-      // .second(0);
+      // 早出時間の範囲
+      const fromEaryTimeRange = dayjs(this.displayDate).hour(5);
 
-      const toEaryTimeRange = dayjs(this.displayDate).minute(
-        normalWorkStartTime.split(":")[1]
-      );
+      const toEaryTimeRange = dayjs(this.displayDate)
+        .hour(normalWorkStartTime.split(":")[0])
+        .minute(normalWorkStartTime.split(":")[1]);
 
       // 深夜時間の範囲
       const fromMidNightTimeRange = dayjs(this.displayDate)
