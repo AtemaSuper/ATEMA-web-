@@ -133,7 +133,7 @@ const employeeFecthAll = function (contractorId) {
 const contactFecthAll = function (contractorId) {
   return new Promise(function (resolve, reject) {
     contactDao
-      .selectContactAll(contractorId)
+      .selectContact(contractorId)
       .then(function (items) {
         contactResponse = items;
         resolve(items);
