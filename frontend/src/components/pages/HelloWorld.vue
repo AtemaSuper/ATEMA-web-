@@ -85,6 +85,20 @@ export default {
     },
     async firestoreExcelDownload() {
       await Methods.excelDownload();
+      // APIエンドポイントからExcelデータのバッファを取得
+      const response = await Methods.excelDownload();
+      console.log(response);
+
+      // バッファを受け取り、Excelファイルとしてダウンロード
+      const blob = new Blob([response.data], {
+        type:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      });
+
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "example.xlsx"; // ダウンロード時のファイル名
+      link.click();
     }
   }
 };
