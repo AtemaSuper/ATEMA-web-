@@ -197,6 +197,11 @@ Colum.ATTENDANCE_STATUS = "勤怠ステータス";
 /** 勤怠パターン */
 Colum.ATTENDANCE_PATTERN = "勤怠パターン";
 
+/** 従業員 */
+Colum.EMPLOYEE = "従業員";
+/** 協力会社従業員 */
+Colum.SUB_EMPLOYEE = "協力会社従業員";
+
 /** 作成者ID */
 Colum.CREATE_USER_ID = "作成者ID";
 /** 作成日 */

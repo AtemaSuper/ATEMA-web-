@@ -299,9 +299,9 @@
                 <v-icon @click="closeAttendanceEditDialog()">mdi-close</v-icon>
               </v-btn>
             </v-app-bar>
-            <v-alert v-if="isErrorSelectedEmployee" type="error"
-              >従業員を選択してください。</v-alert
-            >
+            <v-alert v-if="isErrorSelectedEmployee" type="error">{{
+              errorSelectedEmployeeLabel
+            }}</v-alert>
             <v-card-text>
               <v-container>
                 <v-data-table
@@ -351,12 +351,8 @@ export default {
   data: () => ({
     // ログインユーザ情報
     userInfo: store.getters.userInfo,
-    // ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
     userId: store.getters.userInfo.userId,
-    // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
-    // ※複数社契約になった場合、セッションで契約IDを保持して、
-    // ※そのIDをもとに検索するように修正
-    contractorId: "00000001",
+    contractorId: store.getters.userInfo.companyId,
     clientFieldList: [],
     workFieldList: [],
     workFieldDetailList: [],
@@ -394,11 +390,13 @@ export default {
     isShowAttendanceEditDialog: false,
     subEmployeeHeaders: [
       { text: "名前", value: "subEmployeeName" },
-      { text: "会社名", value: "subCompanyName" }
+      { text: "会社名", value: "subCompanyName" },
+      { text: "ステータス", value: "status" }
     ],
     subEmployeeItems: [],
     selectedEmployeeNameLabel: "",
     isErrorSelectedEmployee: false,
+    errorSelectedEmployeeLabel: "",
     isShowSubAttendanceEditDialog: false
   }),
   methods: {
@@ -464,12 +462,20 @@ export default {
         if (this.userInfo.menuActivity.subCompanyManageAuth === "2") {
           // 協力会社員選択ダイアログを表示する
           this.isShowSubAttendanceEditDialog = true;
+          // エラーメッセージを初期化する
+          this.isErrorSelectedEmployee = false;
+          this.errorSelectedEmployeeLabel = "";
           var param = {
             contractorId: this.contractorId,
             employeeId: this.userId
           };
           let response = await Methods.getSubEmployeeList(param);
           this.subEmployeeItems = response.data.subEmployeeItems;
+          for (var i in this.subEmployeeItems) {
+            this.subEmployeeItems[i].status = this.toStringStatus(
+              this.subEmployeeItems[i].status
+            );
+          }
         } else {
           // 勤怠入力画面を表示する
           this.isShowAttendanceEditDialog = true;
@@ -487,13 +493,12 @@ export default {
         }
       }
     },
-    // 次へボタン押下時（従業員選択）
+    // 勤怠入力：次へ押下時処理（従業員選択）
     async editSubAttendance() {
-      // 従業員未選択の場合、エラーとする
-      if (this.selectedEmployee.length === 0) {
-        this.isErrorSelectedEmployee = true;
-      } else {
-        this.isErrorSelectedEmployee = false;
+      // エラーチェック
+      this.checkSelectedEmployee();
+      // エラーがある場合、後続の処理を実行しません。
+      if (!this.isErrorSelectedEmployee) {
         this.isShowSubAttendanceEditDialog = false;
         this.isShowAttendanceEditDialog = true;
         let response = await Methods.getAttendance(
@@ -525,7 +530,10 @@ export default {
       const param = {
         contractorId: this.contractorId,
         employeeId: this.userId,
-        selectJob: this.selectJob
+        selectJob: this.selectJob,
+        selectedEmployee: this.selectedEmployee,
+        isAuthSelectedEmployee:
+          this.userInfo.menuActivity.subCompanyManageAuth === "2"
       };
       try {
         let response = await Methods.checkAttendance(param);
@@ -555,7 +563,9 @@ export default {
         selectStatus: this.selectStatus,
         selecAtttendancePattern: this.selecAtttendancePattern,
         noteContents: this.noteContents,
-        selectedEmployee: this.selectedEmployee
+        selectedEmployee: this.selectedEmployee,
+        isAuthSelectedEmployee:
+          this.userInfo.menuActivity.subCompanyManageAuth === "2"
       };
       try {
         let response = await Methods.saveAttendance(param);
@@ -690,6 +700,45 @@ export default {
           }
         }
         return "(" + employeeNameLabel + ")";
+      }
+    },
+    /** 従業員選択モーダルで選択チェックします。 */
+    checkSelectedEmployee() {
+      // 現在のエラーを初期化します。
+      this.errorSelectedEmployeeLabel = "";
+      this.isErrorSelectedEmployee = false;
+      // 従業員未選択;
+      if (this.selectedEmployee.length === 0) {
+        this.errorSelectedEmployeeLabel = "従業員を選択してください。";
+      } else if (this.selectedEmployee.length !== 1) {
+        // 1人目のステータス
+        var selectedEmployeeStatus = this.selectedEmployee[0].status;
+        for (var i in this.selectedEmployee) {
+          // １人目のステータスと比較して、違うステータスの場合、変更できない
+          if (selectedEmployeeStatus !== this.selectedEmployee[i].status) {
+            this.errorSelectedEmployeeLabel =
+              "ステータスが同じ従業員を選択してください。";
+          }
+        }
+      }
+      // エラー文言が設定されている場合、エラーを表示します。
+      if (this.errorSelectedEmployeeLabel !== "") {
+        this.isErrorSelectedEmployee = true;
+      }
+    },
+    /** ステータス変換処理 */
+    toStringStatus(statusCode) {
+      switch (statusCode) {
+        case "0":
+          return "出勤中";
+        case "1":
+          return "休憩中";
+        case "2":
+          return "出勤中";
+        case "3":
+          return "退勤中";
+        default:
+          return "未出勤";
       }
     }
   }

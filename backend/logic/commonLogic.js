@@ -196,5 +196,21 @@ class CommonLogic {
     }
     return "";
   }
+  /**
+   * フォーマットした日付を返します。
+   *
+   * @param {Date} date フォーマットしたい日付です。
+   *
+   * @returns date
+   */
+  createFormatDate(date) {
+    return (
+      date.getFullYear() +
+      "-" +
+      ("0" + (Number(date.getMonth()) + 1)).slice(-2) +
+      "-" +
+      ("0" + date.getDate()).slice(-2)
+    );
+  }
 }
 module.exports = CommonLogic;

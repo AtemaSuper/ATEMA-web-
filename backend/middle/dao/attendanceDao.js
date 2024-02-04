@@ -1,5 +1,5 @@
 "use strict";
-
+// const firebase = require("../firebase.js");
 const admin = require("firebase-admin");
 const Util = require("../../public/util");
 var util = new Util();
@@ -15,9 +15,9 @@ var date = new Date();
 var todayDate =
   date.getFullYear() +
   "-" +
-  (Number(date.getMonth()) + 1) +
+  ("0" + (Number(date.getMonth()) + 1)).slice(-2) +
   "-" +
-  date.getDate();
+  ("0" + date.getDate()).slice(-2);
 
 /**
  * 出退勤テーブルのDaoクラスです。
@@ -216,6 +216,40 @@ class AttendanceDao {
         });
       return responce;
     }
+  }
+
+  /**
+   * 指定された社員ID+日時に対するすべての勤怠情報一覧を取得します。
+   *
+   * @param {string} date 日付です。
+   * @param {string} contractorId 契約IDです。
+   * @param {string} employeeIdList 社員IDのリストです。
+   *
+   * @returns {Array} 会社員ごとの出退勤情報です。
+   */
+  async getAttendanceByEmployeeIdList(date, contractorId, employeeIdList) {
+    const db = admin.firestore();
+    console.log(employeeIdList);
+    const attendanceRef = db
+      .collection("attendance")
+      .doc(contractorId)
+      .collection(date)
+      .where(admin.firestore.FieldPath.documentId(), "in", employeeIdList)
+      .where("deleteFlg", "==", false);
+
+    const responce = await attendanceRef
+      .get()
+      .then(function (items) {
+        return items.docs.map((doc) => {
+          var data = doc.data();
+          data.employeeId = doc.id;
+          return data;
+        });
+      })
+      .catch(function (err) {
+        return err;
+      });
+    return responce;
   }
 }
 

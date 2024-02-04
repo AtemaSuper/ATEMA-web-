@@ -26,7 +26,13 @@ class MainLogic {
     return new Promise(function (resolve, reject) {
       var errorMessageList = [];
       //jobNoチェック
-      checkJobNo(errorMessageList, param.jobNo);
+      var selectJob = param.selectJob;
+      checkJobNo(errorMessageList, selectJob.jobNo);
+      //従業員選択権限がある場合
+      if (param.isAuthSelectedEmployee) {
+        //従業員選択チェック
+        checkSelectedEmployee(errorMessageList, param.selectedEmployee);
+      }
       var data = {};
       //エラーがある場合
       if (errorMessageList.length !== 0) {
@@ -76,6 +82,22 @@ class MainLogic {
       var errorMessage4 = commonLogic.checkMaxLength(value, colum.WORK_TYPE, 7);
       if (!util.isEmpty(errorMessage4)) {
         errorMessageList.push(errorMessage4);
+        return;
+      }
+    }
+
+    /**
+     * EMPLOYEEをチェックします。
+     *
+     * @param {object} errorMessageList エラーメッセージリストです。
+     * @param {string} value 入力内容です。
+     */
+    function checkSelectedEmployee(errorMessageList, value) {
+      console.log(value);
+      //未入力チェックです。
+      var errorMessage1 = commonLogic.checkEmpty(value, colum.EMPLOYEE, true);
+      if (!util.isEmpty(errorMessage1)) {
+        errorMessageList.push(errorMessage1);
         return;
       }
     }
@@ -249,6 +271,72 @@ class MainLogic {
   }
 
   /**
+   * 従業員選択の入力情報(をチェックします。
+   *
+   * @param {string} param 画面パラメータです。
+   *
+   * @returns
+   */
+  checkSelectSubEmployeeData(param) {
+    return new Promise(function (resolve, reject) {
+      var errorMessageList = [];
+      //jobNoチェック
+      checkJobNo(errorMessageList, param.jobNo);
+      var data = {};
+      //エラーがある場合
+      if (errorMessageList.length !== 0) {
+        data = {
+          checkResult: false,
+          messageList: errorMessageList,
+        };
+        reject(data);
+      }
+      resolve();
+    });
+
+    /**
+     * jobNoをチェックします。
+     *
+     * @param {object} errorMessageList エラーメッセージリストです。
+     * @param {string} value 入力内容です。
+     */
+    function checkJobNo(errorMessageList, value) {
+      //未入力チェックです。
+      var errorMessage1 = commonLogic.checkEmpty(value, colum.JOB_NO, true);
+      if (!util.isEmpty(errorMessage1)) {
+        errorMessageList.push(errorMessage1);
+        return;
+      }
+      //型チェックです。
+      var errorMessage2 = commonLogic.checkType(
+        value,
+        colum.JOB_NO,
+        type.STRING
+      );
+      if (!util.isEmpty(errorMessage2)) {
+        errorMessageList.push(errorMessage2);
+        return;
+      }
+      //半角文字チェックです。
+      var errorMessage3 = commonLogic.chehckFormat(
+        value,
+        colum.WORK_FIELD_DETAIL_ID,
+        format.HALF_WITH_NUMBER
+      );
+      if (!util.isEmpty(errorMessage3)) {
+        errorMessageList.push(errorMessage3);
+        return;
+      }
+      //最大文字数チェックです。
+      var errorMessage4 = commonLogic.checkMaxLength(value, colum.WORK_TYPE, 7);
+      if (!util.isEmpty(errorMessage4)) {
+        errorMessageList.push(errorMessage4);
+        return;
+      }
+    }
+  }
+
+  /**
    * 現場詳細の入力値(現場情報以外)の存在チェックします。
    *
    * @param {string} param 画面パラメータです。
@@ -376,6 +464,91 @@ class MainLogic {
       return errorMessageList;
     }
   }
+
+  // /**
+  //  * 選択した従業員の入力値の存在チェックします。
+  //  *
+  //  * @param {string} param 画面パラメータです。
+  //  * @param {string} employeeResponse 従業員情報です。
+  //  * @param {string} subEmployeeResponse 協力会社従業員情報です。
+  //  *
+  //  * @returns
+  //  */
+  // checkExistsData(param, employeeResponse, subEmployeeResponse) {
+  //   return new Promise(function (resolve, reject) {
+  //     var errorMessageList = [];
+  //     //選択した従業員の存在チェックを行います。
+  //     //従業員チェック
+  //     checkSelectedEmployee(
+  //       errorMessageList,
+  //       param.selectedEmployee[0],
+  //       employeeResponse
+  //     );
+  //     //協力会社従業員チェック
+  //     checkSelectedSubEmployee(
+  //       errorMessageList,
+  //       param.selectedEmployee,
+  //       subEmployeeResponse
+  //     );
+  //     var data = {};
+  //     //エラーがある場合
+  //     if (errorMessageList.length !== 0) {
+  //       data = {
+  //         checkResult: false,
+  //         messageList: errorMessageList,
+  //       };
+  //       reject(data);
+  //     }
+  //     resolve();
+  //   });
+
+  //   /**
+  //    * 従業員をチェックします。
+  //    *
+  //    * @param {object} errorMessageList エラーメッセージリストです。
+  //    * @param {string} value 入力内容です。
+  //    * @param {string} employeeResponse 客先情報です。
+  //    */
+  //   function checkSelectedEmployee(errorMessageList, value, employeeResponse) {
+  //     var errorMessage1 = commonLogic.checkExists(
+  //       value,
+  //       employeeResponse,
+  //       colum.EMPLOYEE
+  //     );
+  //     if (!util.isEmpty(errorMessage1)) {
+  //       errorMessageList.push(errorMessage1);
+  //       return;
+  //     }
+  //     return errorMessageList;
+  //   }
+
+  //   /**
+  //    * 協力会社従業員をチェックします。
+  //    *
+  //    * @param {object} errorMessageList エラーメッセージリストです。
+  //    * @param {string} value 入力内容です。
+  //    * @param {string} subEmployeeResponse 客先情報です。
+  //    */
+  //   function checkSelectedEmployee(
+  //     errorMessageList,
+  //     value,
+  //     subEmployeeResponse
+  //   ) {
+  //     // 1番目は従業員
+  //     for (var i = 1; i < value.length; i++) {
+  //       var errorMessage1 = commonLogic.checkExists(
+  //         value[i],
+  //         subEmployeeResponse,
+  //         colum.SUB_EMPLOYEE
+  //       );
+  //       if (!util.isEmpty(errorMessage1)) {
+  //         errorMessageList.push(errorMessage1);
+  //         return;
+  //       }
+  //     }
+  //     return errorMessageList;
+  //   }
+  // }
 
   // /**
   //  * 現場詳細の入力値(現場情報)の存在チェックします。

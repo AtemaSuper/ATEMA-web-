@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
 
+//共通Logic
+const CommonLogic = require("../logic/commonLogic");
+var commonLogic = new CommonLogic();
 //客先Logic
 const AttendanceManageLogic = require("../logic/attendanceManageLogic");
 var attendanceManageLogic = new AttendanceManageLogic();
@@ -22,6 +25,9 @@ var workFieldDetailDao = new WorkFieldDetailDao();
 //社員テーブル
 const EmployeeDao = require("../middle/dao/employeeDao");
 var employeeDao = new EmployeeDao();
+
+var date = new Date();
+var todayDate = commonLogic.createFormatDate(date);
 
 var attendanceManageResponse = [];
 var clientFieldResponse = [];
@@ -476,21 +482,13 @@ app.put("/list/updateJobNo", async function (req, res) {
     .then(function (items) {
       formatWorkFieldDetail();
       joinAttendanceManage();
-      //日付を取得します。
-      var date = new Date();
-      var todayDate =
-        date.getFullYear() +
-        "-" +
-        (Number(date.getMonth()) + 1) +
-        "-" +
-        date.getDate();
       var data = {
         attendanceManageResponse: attendanceManageResponse,
         clientFieldResponse: clientFieldResponse,
         workFieldResponse: workFieldResponse,
         workFieldDetailResponse: workFieldDetailResponse,
         contractorResponse: contractorResponse,
-        todayDate: "2022-07-01",
+        todayDate: todayDate,
         checkResult: checkResult,
         messageList: messageList,
       };

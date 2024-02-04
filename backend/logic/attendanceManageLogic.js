@@ -11,12 +11,7 @@ var type = constractor.Type;
 var format = constractor.Format;
 //本日の日時を取得
 var date = new Date();
-var todayDate =
-  date.getFullYear() +
-  "-" +
-  (Number(date.getMonth()) + 1) +
-  "-" +
-  date.getDate();
+var todayDate = commonLogic.createFormatDate(date);
 
 /**
  * 出退勤のLogicクラスです。

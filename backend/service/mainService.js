@@ -4,6 +4,9 @@ const app = express();
 //mainLogic
 const MainLogic = require("../logic/mainLogic");
 var mainLogic = new MainLogic();
+//共通Logic
+const CommonLogic = require("../logic/commonLogic");
+var commonLogic = new CommonLogic();
 //客先Logic
 const SubCompanyLogic = require("../logic/subCompanyLogic");
 var subCompanyLogic = new SubCompanyLogic();
@@ -36,6 +39,9 @@ var util = new Util();
 //役職テーブル
 const PostDao = require("../middle/dao/postDao");
 var postDao = new PostDao();
+//本日の日時を取得
+var date = new Date();
+var todayDate = commonLogic.createFormatDate(date);
 
 var attendanceManageResponse = [];
 var clientFieldResponse = [];
@@ -468,6 +474,39 @@ const getStatusList = function (statusValue) {
   return statusList;
 };
 /**
+ * 協力会社員情報に出退勤情報を追加します。
+ *
+ * @param {String} contractorId
+ * @param {Array} subEmployeeItems
+ *
+ * @returns{Array} subEmployeeItems
+ */
+const addAttendanceForSubEmployee = function (contractorId, subEmployeeItems) {
+  var employeeIdList = [];
+  subEmployeeItems.forEach((val) => {
+    employeeIdList.push(val.subEmployeeId);
+  });
+
+  return new Promise(function (resolve, reject) {
+    attendanceManageDao
+      .getAttendanceByEmployeeIdList(todayDate, contractorId, employeeIdList)
+      .then(function (attendanceItems) {
+        attendanceItems.forEach((attendance) => {
+          const matchingSubEmployee = subEmployeeItems.find(
+            (subEmployee) => subEmployee.subEmployeeId === attendance.employeeId
+          );
+          if (matchingSubEmployee) {
+            matchingSubEmployee.status = attendance.status;
+          }
+        });
+        resolve(subEmployeeItems);
+      })
+      .catch(function (err) {
+        console.log(err, reject);
+      });
+  });
+};
+/**
  * トップ画面のService
  */
 //メイン画面の初期表示処理です。
@@ -478,14 +517,12 @@ app.get("/", function (req, res) {
 //勤怠先入力ダイアログの初期表示処理をします。
 app.post("/showAttendanceDialog", async function (req, res) {
   const promises = [];
-
   promises.push(clientFieldFecthAll(req.body.contractorId));
   promises.push(workFieldFecthAll(req.body.contractorId));
   promises.push(workFieldDetailFecthAll(req.body.contractorId));
   promises.push(selectEmployee(req.body.contractorId, req.body.employeeId));
-
   Promise.all(promises)
-    .then(async function (result) {
+    .then(async function () {
       formatWorkFieldDetail();
       setSelectJob();
       var data = {
@@ -505,12 +542,14 @@ app.post("/showAttendanceDialog", async function (req, res) {
 //勤怠先入力情報のチェック処理をします。
 app.post("/check", async function (req, res) {
   const promises = [];
-  promises.push(mainLogic.checkInputData(req.body.selectJob));
+  promises.push(mainLogic.checkInputData(req.body));
   promises.push(workFieldDetailFecthAll(req.body.contractorId));
   promises.push(employeeFecthAll(req.body.contractorId));
   promises.push(contactFecthAll(req.body.contractorId));
+
   Promise.all(promises)
     .then(async function () {
+      //TODO 従業員存在チェック
       //promiseallだとresponseが空になっちゃうので、別に実行
       return await mainLogic.checkExistsData(
         req.body,
@@ -668,7 +707,7 @@ app.post("/save", async function (req, res) {
       });
   }
 });
-//勤怠先入力ダイアログの初期表示処理をします。
+//従業員選択ダイアログの初期表示処理をします。
 app.post("/getSubEmployeeList", async function (req, res) {
   const promises = [];
   promises.push(contactFecthAll(req.body.contractorId));
@@ -705,10 +744,17 @@ app.post("/getSubEmployeeList", async function (req, res) {
         subCompanyResponse,
         subEmployeeResponse
       );
+      //各社員ごとのステータスをとってきます。
+      return await addAttendanceForSubEmployee(
+        req.body.contractorId,
+        subEmployeeItems
+      );
+    })
+    .then(async function (items) {
       // 先頭に
       //返却用のdata
       var data = {
-        subEmployeeItems: subEmployeeItems,
+        subEmployeeItems: items,
       };
       //dataをレスポンスで返却します。
       res.status(200).json(data);
