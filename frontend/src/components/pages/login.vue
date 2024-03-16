@@ -76,12 +76,12 @@ export default {
   data: () => ({
     loading: false,
     emailRules: [
-      v => !!v || "IDが未入力です",
-      v => (v && v.length <= 50) || "文字数制限は50文字以内です"
+      v => !!v || "ログインIDが未入力です。",
+      v => (v && v.length <= 50) || "ログインIDは最大50文字です。"
     ],
     passwordRules: [
-      v => !!v || "パスワードが未入力です",
-      v => (v && v.length <= 50) || "文字数制限は50文字以内です"
+      v => !!v || "パスワードが未入力です。",
+      v => (v && v.length <= 50) || "パスワードは最大50文字です。"
     ],
     checkbox: true,
     model: {

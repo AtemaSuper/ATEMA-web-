@@ -88,7 +88,7 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-text-field v-model="editItem.jobNo" :rules="JobRules"  label="(例)21-0001" maxlength='7' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                <v-text-field v-model="editItem.jobNo" :rules="jobNoRules"  label="(例)21-0001" maxlength='7' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -100,7 +100,7 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-select v-model="editItem.selectClientField" label="(例)株式会社ABC" :items="clientFieldList" item-text="clientFieldName"
+                <v-select v-model="editItem.selectClientField" :rules="selectClientFieldRules" label="(例)株式会社ABC" :items="clientFieldList" item-text="clientFieldName"
             item-value="value" return-object outlined required></v-select>
               </v-col>
             </v-row>
@@ -113,7 +113,7 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-select  v-model="editItem.selectWorkField" label="(例)現場名A" :items="workFieldList" item-text="workFieldName"
+                <v-select  v-model="editItem.selectWorkField" :rules="selectWorkFieldRules" label="(例)現場名A" :items="workFieldList" item-text="workFieldName"
             item-value="value" return-object outlined required></v-select>
               </v-col>
             </v-row>
@@ -126,7 +126,7 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-text-field v-model="editItem.workFieldDetailName" :rules="constructionRules" label="(例)工事件名１－ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                <v-text-field v-model="editItem.workFieldDetailName" :rules="workFieldDetailNameRules" label="(例)工事件名１－ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -138,7 +138,7 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-radio-group v-model="editItem.status" row>
+                <v-radio-group v-model="editItem.status" row :rules="statusRules">
                   <v-radio label="未進行" value="0" color="#ff6669"></v-radio>
                   <v-radio label="進行中" value="1" color="#ff6669"></v-radio>
                 </v-radio-group>
@@ -153,7 +153,7 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-radio-group v-model="editItem.contractStatus" row>
+                <v-radio-group v-model="editItem.contractStatus" row :rules="contractStatusRules">
                   <v-radio label="常用" value="0" color="#ff6669"></v-radio>
                   <v-radio label="請負" value="1" color="#ff6669"></v-radio>
                 </v-radio-group>
@@ -199,16 +199,21 @@ export default {
     workFieldDialog: false,
     JobName: '',
     searchWorkField:'',
-    JobRules: [
-      v => !!v || 'JobNoが未入力です',
-      v => (!!v && v.length <= 7) || `7文字以内で入力してください`,
-      v => /^[A-Za-z0-9-]*$/.test(v) || '入力は半角数字・ハイフンのみです'
-    ],
     constructionName: '',
-    constructionRules: [
-      v => !!v || '工事件名が未入力です',
-      v => (!!v && v.length <= 100) || `100文字以内で入力してください`
-    ]
+    // 入力チェック
+    jobNoRules: [
+      v => !!v || "JobNoが未入力です。",
+      v => (!!v && v.length <= 7) || "JobNoは最大7文字です。",
+      // v => /^[A-Za-z0-9-]*$/.test(v) || '入力は半角数字・ハイフンのみです'
+    ],
+    selectClientFieldRules: [v => !!v || "客先名が未入力です。"],
+    selectWorkFieldRules: [v => !!v || "現場名が未入力です。"],
+    workFieldDetailNameRules: [
+      v => !!v || "工事件名が未入力です。",
+      v => (!!v && v.length <= 50) || "工事件名は最大50文字です。"
+    ],
+    statusRules: [v => !!v || "客先名が未入力です。"],
+    contractStatusRules: [v => !!v || "現場名が未入力です。"],
   }),
   mounted: function () {
     // 現場編集の画面情報をとってきます。

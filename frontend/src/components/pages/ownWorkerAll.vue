@@ -219,6 +219,8 @@
                           label="名前(姓)"
                           outlined
                           dense
+                          :rules="firstNameRules"
+                          maxlength="50"
                         ></v-text-field>
                       </v-col>
                       <v-col>
@@ -227,6 +229,8 @@
                           label="名前(名)"
                           outlined
                           dense
+                          :rules="lastNameRules"
+                          maxlength="50"
                         ></v-text-field>
                       </v-col>
                     </div>
@@ -256,6 +260,7 @@
                         item-text="postName"
                         item-value="value"
                         return-object
+                        :rules="postRules"
                       ></v-select>
                     </div>
                   </v-col>
@@ -279,6 +284,7 @@
                         label=""
                         outlined
                         dense
+                        :rules="staffCodeRules"
                       ></v-text-field>
                     </div>
                   </v-col>
@@ -327,6 +333,7 @@
                           scrollable
                           locale="jp-ja"
                           :day-format="date => new Date(date).getDate()"
+                          :rules="birthdayDateRules"
                         >
                           <v-btn
                             color="#ff6669"
@@ -369,6 +376,7 @@
                         label=""
                         outlined
                         dense
+                        :rules="addressRules"
                       ></v-text-field>
                     </div>
                   </v-col>
@@ -392,6 +400,7 @@
                         label=""
                         outlined
                         dense
+                        :rules="mailRules"
                       ></v-text-field>
                     </div>
                   </v-col>
@@ -421,6 +430,7 @@
                         label=""
                         outlined
                         dense
+                        :rules="telNumber1Rules"
                       ></v-text-field>
                     </div>
                   </v-col>
@@ -432,6 +442,7 @@
                         label=""
                         outlined
                         dense
+                        :rules="telNumber2Rules"
                       ></v-text-field>
                     </div>
                   </v-col>
@@ -443,11 +454,12 @@
                         label=""
                         outlined
                         dense
+                        :rules="telNumber3Rules"
                       ></v-text-field>
                     </div>
                   </v-col>
                 </v-row>
-                <v-row>
+                <!-- <v-row>
                   <v-col cols="3">
                     <div class="item-title">ログインID</div>
                   </v-col>
@@ -466,10 +478,11 @@
                         label=""
                         outlined
                         dense
+                        :rules="loginIdRules"
                       ></v-text-field>
                     </div>
                   </v-col>
-                </v-row>
+                </v-row> -->
                 <v-row>
                   <v-col cols="3">
                     <div class="item-title">パスワード</div>
@@ -489,6 +502,7 @@
                         label=""
                         outlined
                         dense
+                        :rules="passwordRules"
                       ></v-text-field>
                     </div>
                   </v-col>
@@ -531,6 +545,7 @@
                             dense
                             v-bind="attrs"
                             v-on="on"
+                            :rules="entryFirstDateRules"
                           ></v-text-field>
                         </template>
                         <v-date-picker
@@ -584,6 +599,7 @@
                               dense
                               v-bind="attrs"
                               v-on="on"
+                              :rules="entryEndDateRules"
                             ></v-text-field>
                           </template>
                           <v-date-picker
@@ -632,7 +648,11 @@
                       {{ employeeEditItem.employmentName }}
                     </div>
                     <div v-if="employeeEditFlag">
-                      <v-radio-group v-model="employeeEditItem.employment" row>
+                      <v-radio-group
+                        v-model="employeeEditItem.employment"
+                        row
+                        :rules="employmentRules"
+                      >
                         <v-radio
                           label="正規"
                           value="0"
@@ -777,6 +797,8 @@
                       outlined
                       dense
                       v-model="postEditItem.postName"
+                      :rules="postNameRules"
+                      maxlength="100"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -797,6 +819,7 @@
                       item-value="value"
                       label="権限を選択"
                       solo
+                      :rules="attendanceManageAuthRules"
                     ></v-select>
                   </v-col>
                   <v-col cols="2"
@@ -807,6 +830,7 @@
                       item-value="value"
                       label="権限を選択"
                       solo
+                      :rules="ownWorkerManageAuthRules"
                     ></v-select>
                   </v-col>
                   <v-col cols="2"
@@ -817,6 +841,7 @@
                       item-value="value"
                       label="権限を選択"
                       solo
+                      :rules="subCompanyManageAuthRules"
                     ></v-select>
                   </v-col>
                   <v-col cols="2"
@@ -827,6 +852,7 @@
                       item-value="value"
                       label="権限を選択"
                       solo
+                      :rules="ownCompanyManageAuthRules"
                     ></v-select> </v-col
                   ><v-col cols="2"
                     ><v-select
@@ -836,6 +862,7 @@
                       item-value="value"
                       label="権限を選択"
                       solo
+                      :rules="payPlanAuthRules"
                     ></v-select>
                   </v-col>
                 </v-row>
@@ -911,29 +938,63 @@ export default {
       { value: "1", label: "閲覧のみ" },
       { value: "0", label: "全て" }
     ],
-    // 入力チェック
-    firstnameRules: [
-      v => !!v || "姓が未入力です",
-      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+    // 入力チェック：自社員追加
+    firstNameRules: [
+      v => !!v || "名前（姓）が未入力です。",
+      v => (!!v && v.length <= 50) || "名前（姓）は最大50文字です。"
     ],
-    LastnameRules: [
-      v => !!v || "名が未入力です",
-      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+    LastNameRules: [
+      v => !!v || "名前（名）が未入力です",
+      v => (!!v && v.length <= 50) || "名前（名）は最大50文字です。"
     ],
-    codeRules: [v => v.length <= 8 || `文字数は8文字以内です`],
-    addressRules: [v => v.length <= 100 || `文字数は100文字以内です`],
-    mailRules: [v => v.length <= 100 || `文字数は100文字以内です`],
-    tellNumberOneRules: [v => v.length <= 3 || `文字数は3文字以内です`],
-    tellNumberTwoRules: [v => v.length <= 4 || `文字数は4文字以内です`],
-    tellNumberThreeRules: [v => v.length <= 4 || `文字数は4文字以内です`],
-    loginIdRules: [
-      v => !!v || "ログインIDが未入力です",
-      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+    postRules: [v => !!v || "役職が未入力です。"],
+    staffCodeRules: [
+      v => !!v || "職員コードが未入力です。",
+      v => (!!v && v.length <= 7) || "職員コードは最大7文字です。"
+    ],
+    birthdayDateRules: [v => !!v || "生年月日が未入力です。"],
+    addressRules: [
+      v => !!v || "住所が未入力です。",
+      v => (!!v && v.length <= 100) || "住所は最大100文字です。"
+    ],
+    mailRules: [
+      v => !!v || "メールアドレスが未入力です。",
+      v => (!!v && v.length <= 100) || "メールアドレスは最大100文字です。"
+    ],
+    telNumber1Rules: [
+      v => !!v || "電話番号1が未入力です。",
+      v => (!!v && v.length <= 4) || "電話番号1は最大4文字です。"
+    ],
+    telNumber2Rules: [
+      v => !!v || "電話番号2が未入力です。",
+      v => (!!v && v.length <= 4) || "電話番号2は最大4文字です。"
+    ],
+    telNumber3Rules: [
+      v => !!v || "電話番号3が未入力です。",
+      v => (!!v && v.length <= 4) || "電話番号3は最大4文字です。"
     ],
     passwordRules: [
-      v => !!v || "パスワードが未入力です",
-      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
-    ]
+      v => !!v || "パスワードが未入力です。",
+      v => (!!v && v.length <= 50) || "パスワードは最大50文字です。",
+      v => (!!v && v.length >= 6) || "パスワードは最小6文字です。"
+    ],
+    entryFirstDateRules: [v => !!v || "所属期間（始め）が未入力です。"],
+    entryEndDateRules: [v => !!v || "所属期間（終わり）が未入力です。"],
+    employmentRules: [v => !!v || "雇用形態が未入力です。"],
+    // 入力チェック：役職追加
+    postNameRules: [
+      v => !!v || "役職が未入力です。",
+      v => (!!v && v.length <= 100) || "役職は最大100文字です。"
+    ],
+    attendanceManageAuthRules: [v => !!v || "権限（出退勤管理）が未入力です。"],
+    ownWorkerManageAuthRules: [
+      v => !!v || "権限（自社員管理管理）が未入力です。"
+    ],
+    subCompanyManageAuthRules: [
+      v => !!v || "権限（協力会社管理）が未入力です。"
+    ],
+    ownCompanyManageAuthRules: [v => !!v || "権限（自社設定）が未入力です。"],
+    payPlanAuthRules: [v => !!v || "権限（プラン・支払い）が未入力です。"]
   }),
   mounted: function() {
     // 自社員管理の画面情報をとってきます。

@@ -158,7 +158,7 @@
                       <v-chip color="red" dark>必須</v-chip></div>
                   </v-col>
                   <v-col>
-                    <v-text-field v-model="clientFieldEditItem.clientFieldName" :rules="clientRules"  label="(例)株式会社ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                    <v-text-field v-model="clientFieldEditItem.clientFieldName" :rules="clientFieldNameRules"  label="(例)株式会社ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -170,7 +170,7 @@
                       <v-chip color="red" dark>必須</v-chip></div>
                   </v-col>
                   <v-col>
-                    <v-radio-group v-model="clientFieldEditItem.status" row>
+                    <v-radio-group v-model="clientFieldEditItem.status" row :rules="statusRules">
                       <v-radio label="未進行" value="0" color="#ff6669"></v-radio>
                       <v-radio label="進行中" value="1" color="#ff6669"></v-radio>
                     </v-radio-group>
@@ -208,7 +208,7 @@
                       <v-chip color="red" dark>必須</v-chip></div>
                   </v-col>
                   <v-col>
-                    <v-select v-model="workFieldEditItem.selectClientField" label="(例)株式会社ABC" :items="clientFieldList" item-text="clientFieldName"
+                    <v-select v-model="workFieldEditItem.selectClientField" :rules="selectClientFieldRules" label="(例)株式会社ABC" :items="clientFieldList" item-text="clientFieldName"
             item-value="value" return-object outlined required></v-select>
                   </v-col>
                 </v-row>
@@ -221,7 +221,7 @@
                       <v-chip color="red" dark>必須</v-chip></div>
                   </v-col>
                   <v-col>
-                    <v-text-field v-model="workFieldEditItem.workFieldName" :rules="workFieldRules"  label="(例)現場名ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                    <v-text-field v-model="workFieldEditItem.workFieldName" :rules="workFieldNameRules"  label="(例)現場名ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -233,7 +233,7 @@
                       <v-chip color="red" dark>必須</v-chip></div>
                   </v-col>
                   <v-col>
-                    <v-radio-group v-model="workFieldEditItem.status" row>
+                    <v-radio-group v-model="workFieldEditItem.status" row :rules="statusRules">
                       <v-radio label="未進行" value="0" color="#ff6669"></v-radio>
                       <v-radio label="進行中" value="1" color="#ff6669"></v-radio>
                     </v-radio-group>
@@ -290,14 +290,22 @@ export default {
     workFieldDialog: false,
     workFieldDialogName: '現場編集',
     workFieldName: '',
-    workFieldRules: [
-      v => !!v || '客先名が未入力です',
-      v => (!!v && v.length <= 100) || `文字数は100文字以内です`
-    ],
     clientFieldName: '',
-    clientRules: [
-      v => !!v || '現場名が未入力です',
-      v => (!!v && v.length <= 100) || `文字数は100文字以内です`
+    // 入力チェック：客先追加
+    workFieldRules: [
+      v => !!v || '客先名が未入力です。',
+      v => (!!v && v.length <= 100) || `客先名は最大100文字です。`
+    ],
+    clientFieldNameRules: [
+      v => !!v || "現場名が未入力です。",
+      v => (!!v && v.length <= 100) || "現場名は最大100文字です。"
+    ],
+    statusRules: [v => !!v || "ステータスが未入力です。"],
+    // 入力チェック：現場詳細追加
+    selectClientFieldRules: [v => !!v || "客先名が未入力です。"],
+    workFieldNameRules: [
+      v => !!v || "現場名が未入力です。",
+      v => (!!v && v.length <= 100) || "現場名は最大100文字です。"
     ]
   }),
   mounted: function () {

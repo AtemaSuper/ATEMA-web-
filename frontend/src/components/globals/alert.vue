@@ -6,23 +6,30 @@
       dismissible
       dense
       outlined
-      :type='responseData.type'
+      :type="responseData.type"
       text
       transition="scale-transition"
     >
-      {{responseData.messageList[0]}}
+      {{ showMessage }}
     </v-alert>
   </v-card>
 </template>
 
 <script>
-
 export default {
-  name: 'alertComponent',
+  name: "alertComponent",
   props: ["responseData"],
   computed: {
+    // メッセージの数分メッセージを表示
+    showMessage: function() {
+      var message = "";
+      for (var i in this.responseData.messageList) {
+        message += this.responseData.messageList[i] + " ";
+      }
+      return message;
+    }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -31,8 +38,6 @@ export default {
 }
 .alert-contents {
   background-color: #fff;
-  max-width: 100%;
-  width: 100%;
-  margin: auto;
+  height: auto;
 }
 </style>

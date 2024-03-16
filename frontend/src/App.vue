@@ -18,15 +18,11 @@
             !this.$route.path.match('/passwordReset')
         "
       >
-        <v-overlay :value="responseData.showAlert" opacity="opacity">
-          <component
-            :is="alertComponent"
-            v-bind:responseData="responseData"
-            class="alert-component"
-          >
-          </component>
-        </v-overlay>
         <component :is="headerComponent"></component>
+        <div class="alert-component" :value="responseData.showAlert">
+          <component :is="alertComponent" v-bind:responseData="responseData">
+          </component>
+        </div>
         <v-row v-if="showTitleComponent" class="title">
           <v-col cols="1">
             <div v-if="showSideComponent" class="side-menu-contents">
@@ -186,7 +182,6 @@ export default {
         showAlert: true,
         type: response.data.checkResult ? "success" : "error",
         messageList: response.data.messageList
-        // TODO メッセージの数分メッセージを表示するように修正
       };
     }
   }
@@ -226,6 +221,11 @@ export default {
   font-weight: 700;
 }
 .alert-component {
-  z-index: 999;
+  position: fixed;
+  z-index: 203; /** モーダルより上に来るように設定 */
+  top: 64px;
+  max-width: 100%;
+  width: 100%;
+  opacity: 0.9;
 }
 </style>

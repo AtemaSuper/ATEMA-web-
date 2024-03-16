@@ -136,7 +136,7 @@
           <v-text-field
             v-model="ownCompanyData.telNumber1"
             outlined
-            :rules="telNumberOneRules"
+            :rules="telNumber1Rules"
             name="telNumberOne"
             label="090"
             maxlength="4"
@@ -147,7 +147,7 @@
           <v-text-field
             v-model="ownCompanyData.telNumber2"
             outlined
-            :rules="telNumberTwoRules"
+            :rules="telNumber2Rules"
             name="telNumberTwo"
             label="1234"
             maxlength="4"
@@ -158,7 +158,7 @@
           <v-text-field
             v-model="ownCompanyData.telNumber3"
             outlined
-            :rules="telNumberThreeRules"
+            :rules="telNumber3Rules"
             name="telNumberThree"
             label="5678"
             maxlength="4"
@@ -443,59 +443,48 @@ export default {
       foundationMenu: false,
       foundationName: "",
       companyRules: [
-        v => !!v || "会社名が未入力です",
-        v => (v && v.length <= 100) || "会社名は100文字以内です"
+        v => !!v || "会社名が未入力です。",
+        v => (v && v.length <= 100) || "会社名は最大100文字です。"
       ],
-      foundationRules: [v => !!v || "設立が未選択です"],
+      foundationRules: [v => !!v || "設立が未選択です。"],
       presidentRules: [
         v => !!v || "代表者が未入力です",
-        v => (v && v.length <= 50) || "代表者は50文字以内です"
+        v => (v && v.length <= 50) || "代表者は最大50文字です。"
       ],
       postNumberFirstRules: [
-        v => !!v || "郵便番号1が未入力です",
-        v => (v && v.length <= 3) || "郵便番号1は3文字以内です",
-        v => /^[0-9]*$/.test(v) || "郵便番号1の入力は半角数字のみです"
+        v => !!v || "郵便番号1が未入力です。",
+        v => (v && v.length <= 3) || "郵便番号1は最大3文字です。"
       ],
       postNumberLastRules: [
         v => !!v || "郵便番号2が未入力です",
-        v => (v && v.length <= 4) || "郵便番号2は4文字以内です",
-        v => /^[0-9]*$/.test(v) || "郵便番号2の入力は半角数字のみです"
+        v => (v && v.length <= 4) || "郵便番号2は最大4文字です。"
       ],
       addressRules: [
-        v => !!v || "住所が未入力です",
-        v => (v && v.length <= 100) || "住所は100文字以内です"
+        v => !!v || "住所が未入力です。",
+        v => (v && v.length <= 100) || "住所は最大100文字です。"
       ],
-      telNumberOneRules: [
-        v => !!v || "電話番号1が未入力です",
-        v => (v && v.length <= 4) || "電話番号1は4文字以内です",
-        v => /^[0-9]*$/.test(v) || "電話番号1の入力は半角数字のみです"
+      telNumber1Rules: [
+        v => !!v || "電話番号1が未入力です。",
+        v => (!!v && v.length <= 4) || "電話番号1は最大4文字です。"
       ],
-      telNumberTwoRules: [
-        v => !!v || "電話番号2が未入力です",
-        v => (v && v.length <= 4) || "電話番号2は4文字以内です",
-        v => /^[0-9]*$/.test(v) || "電話番号2の入力は半角数字のみです"
+      telNumber2Rules: [
+        v => !!v || "電話番号2が未入力です。",
+        v => (!!v && v.length <= 4) || "電話番号2は最大4文字です。"
       ],
-      telNumberThreeRules: [
-        v => !!v || "電話番号3が未入力です",
-        v => (v && v.length <= 4) || "電話番号3は4文字以内です",
-        v => /^[0-9]*$/.test(v) || "電話番号3の入力は半角数字のみです"
+      telNumber3Rules: [
+        v => !!v || "電話番号3が未入力です。",
+        v => (!!v && v.length <= 4) || "電話番号3は最大4文字です。"
       ],
-      workTypeRules: [v => !!v || "工種が未選択です"],
-      workStartTimeRules: [
-        v => !!v || "勤怠開始時間が未入力です",
-        v => /^[0-9]*$/.test(v) || "勤怠開始時間の入力は半角数字のみです"
-      ],
-      workFinishTimeRules: [
-        v => !!v || "勤怠終了時間が未入力です",
-        v => /^[0-9]*$/.test(v) || "勤怠終了時間の入力は半角数字のみです"
-      ],
+      workTypeRules: [v => !!v || "工種が未選択です。"],
+      workStartTimeRules: [v => !!v || "勤怠開始時間が未入力です。"],
+      workFinishTimeRules: [v => !!v || "勤怠終了時間が未入力です。"],
       workingHoursRules: [v => !!v || "勤怠時間が未入力です"],
       roundingTimeRules: [
-        v => !!v || "丸めで指定選択時、指定時間(分)が未入力です",
-        v => (v && v.length <= 2) || "文字数は2文字以内です",
+        v => !!v || "丸めで指定選択時、指定時間(分)が未入力です。",
+        v => (v && v.length <= 2) || "文字数は2文字以内です。",
         v =>
           /^[0-9]*$/.test(v) ||
-          "丸めで指定選択時、指定時間(分)の入力は半角数字のみです"
+          "丸めで指定選択時、指定時間(分)の入力は半角数字のみです。"
       ]
     };
   },

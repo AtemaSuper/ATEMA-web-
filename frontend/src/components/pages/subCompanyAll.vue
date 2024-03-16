@@ -381,6 +381,7 @@
                       label=""
                       outlined
                       dense
+                      :rules="telNumber1Rules"
                     ></v-text-field>
                   </div>
                 </v-col>
@@ -392,6 +393,7 @@
                       label=""
                       outlined
                       dense
+                      :rules="telNumber2Rules"
                     ></v-text-field>
                   </div>
                 </v-col>
@@ -403,6 +405,7 @@
                       label=""
                       outlined
                       dense
+                      :rules="telNumber3Rules"
                     ></v-text-field>
                   </div>
                 </v-col>
@@ -1053,69 +1056,62 @@ export default {
     subEmployeeSearch: "",
     // 入力チェック
     companyRules: [
-      v => !!v || "会社名が未入力です",
-      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+      v => !!v || "会社名が未入力です。",
+      v => (!!v && v.length <= 50) || `会社名は最大50文字です。`
     ],
-    foundationRules: [
-      v => !!v || "設立日が未入力です",
-      v => (!!v && v.length <= 10) || `文字数は10文字以内です`
-    ],
+    foundationRules: [v => !!v || "設立日が未入力です。"],
     leaderRules: [
-      v => !!v || "代表者名が未入力です",
-      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+      v => !!v || "代表者名が未入力です。",
+      v => (!!v && v.length <= 100) || `代表者名は最大100文字です。`
     ],
     postNumberFirstRules: [
-      v => !!v || "郵便番号が未入力です",
-      v => /^[0-9]*$/.test(v) || "入力は半角数字のみです",
-      v => (!!v && v.length <= 3) || `文字数は3文字以内です`
+      v => !!v || "郵便番号1が未入力です。",
+      v => (!!v && v.length <= 3) || `郵便番号1は最大3文字です。`
     ],
     postNumberLastRules: [
-      v => !!v || "郵便番号が未入力です",
-      v => /^[0-9]*$/.test(v) || "入力は半角数字のみです",
-      v => (!!v && v.length <= 4) || `文字数は4文字以内です`
+      v => !!v || "郵便番号2が未入力です。",
+      v => (!!v && v.length <= 3) || `郵便番号2は最大4文字です。`
     ],
     addressRules: [
-      v => !!v || "住所が未入力です",
-      v => (!!v && v.length <= 100) || `文字数は100文字以内です`
+      v => !!v || "住所が未入力です。",
+      v => (!!v && v.length <= 100) || `文字数は最大100文字です。`
     ],
-    telNumberOneRules: [
-      v => !!v || "電話番号が未入力です",
-      v => /^[0-9]*$/.test(v) || "入力は半角数字のみです",
-      v => (!!v && v.length <= 4) || `文字数は4文字以内です`
+    telNumber1Rules: [
+      v => !!v || "電話番号1が未入力です。",
+      v => (!!v && v.length <= 4) || "電話番号1は最大4文字です。"
     ],
-    telNumberTwoRules: [
-      v => !!v || "電話番号が未入力です",
-      v => /^[0-9]*$/.test(v) || "入力は半角数字のみです",
-      v => (!!v && v.length <= 4) || `文字数は4文字以内です`
+    telNumber2Rules: [
+      v => !!v || "電話番号2が未入力です。",
+      v => (!!v && v.length <= 4) || "電話番号2は最大4文字です。"
     ],
-    telNumberThreeRules: [
-      v => !!v || "電話番号が未入力です",
-      v => /^[0-9]*$/.test(v) || "入力は半角数字のみです",
-      v => (!!v && v.length <= 4) || `文字数は4文字以内です`
+    telNumber3Rules: [
+      v => !!v || "電話番号3が未入力です。",
+      v => (!!v && v.length <= 4) || "電話番号3は最大4文字です。"
     ],
     noteRules: [],
     employeeFirstnameRules: [
-      v => !!v || "姓が未入力です",
-      v => (!!v && v.length <= 25) || `文字数は25文字以内です`
+      v => !!v || "名前（姓）が未入力です。",
+      v => (!!v && v.length <= 25) || `名前（姓）は最大25文字です。`
     ],
     employeeLastnameRules: [
-      v => !!v || "名が未入力です",
-      v => (!!v && v.length <= 25) || `文字数は25文字以内です`
+      v => !!v || "名前（名）が未入力です。",
+      v => (!!v && v.length <= 25) || `名前（名）は最大25文字です。`
     ],
-    staffCodeRules: [],
-    birthdayRules: [v => !!v || "生年月日が未入力です"],
+    staffCodeRules: [
+      v => !!v || "職員コードが未入力です。",
+      v => (!!v && v.length <= 7) || "職員コードは最大7文字です。"
+    ],
+    birthdayRules: [v => !!v || "生年月日が未入力です。"],
     mailAddressRules: [],
     employeeIdRules: [
-      v => !!v || "ログインIDが未入力です",
-      v => /^[A-Za-z0-9]*$/.test(v) || "",
-      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
+      v => !!v || "ログインIDが未入力です。",
+      v => (!!v && v.length <= 50) || `ログインIDは最大50文字です。`
     ],
     passwordRules: [
-      v => !!v || "パスワードが未入力です",
-      v => /^[A-Za-z0-9]*$/.test(v) || "",
-      v => (!!v && v.length <= 50) || `文字数は50文字以内です`
-    ],
-    licenseRules: [v => v.length <= 100 || `文字数は100文字以内です`]
+      v => !!v || "パスワードが未入力です。",
+      v => (!!v && v.length <= 50) || "パスワードは最大50文字です。",
+      v => (!!v && v.length >= 6) || "パスワードは最小6文字です。"
+    ]
   }),
   mounted: function() {
     // 協力会社管理の画面情報をとってきます。
