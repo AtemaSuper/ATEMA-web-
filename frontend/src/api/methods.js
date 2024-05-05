@@ -66,6 +66,38 @@ export default {
   ownWorkerAllService() {
     return Api().get("/ownWorkerAll");
   },
+  testCreateAuthentication() {
+    const item = {
+      uid: "aaaaaa",
+      mailAddress: "kazu01biz@gmail.com",
+      telNumber1: "+8190",
+      telNumber2: "1234",
+      telNumber3: "5678",
+      password: "testAAA",
+      employeeFirstname: "吉田",
+      employeeLastname: "test"
+    };
+    return Api().post("/ownWorkerAll/testCreateAuthentication", item);
+  },
+  testUpdateAuthentication() {
+    const item = {
+      uid: "aaaaaa",
+      mailAddress: "kazu01biz@gmail.com",
+      telNumber1: "+8190",
+      telNumber2: "1234",
+      telNumber3: "5678",
+      password: "testBBB",
+      employeeFirstname: "吉田",
+      employeeLastname: "test"
+    };
+    return Api().post("/ownWorkerAll/testUpdateAuthentication", item);
+  },
+  testDeleteAuthentication() {
+    const item = {
+      uid: "aaaaaa"
+    };
+    return Api().post("/ownWorkerAll/testDeleteAuthentication", item);
+  },
 
   /*
     スタブ

@@ -28,6 +28,78 @@ class authentication {
         res.status(400).send(error);
       });
   }
+
+  /**
+   * FirebaseのAuthenticationのユーザ情報を作成します。
+   *
+   * @param {object} param 入力情報です。
+   *
+   * @returns
+   */
+  async createUserForFirebase(param) {
+    return await admin
+      .auth()
+      .createUser({
+        uid: param.uid,
+        email: param.mailAddress,
+        emailVerified: false,
+        password: param.password,
+        displayName: param.employeeFirstname + param.employeeLastname,
+        disabled: false,
+      })
+      .then((userRecord) => {
+        return userRecord.uid;
+      })
+      .catch(function (err) {
+        console.log(err);
+        return err;
+      });
+  }
+  /**
+   * FirebaseのAuthenticationのユーザ情報を更新します。
+   *
+   * @param {object} param 入力情報です。
+   *
+   * @returns
+   */
+  async updateUserForFirebase(param) {
+    console.log(param.uid);
+    return await admin
+      .auth()
+      .updateUser(param.uid, {
+        email: param.mailAddress,
+        emailVerified: false,
+        password: param.password,
+        displayName: param.employeeFirstname + param.employeeLastname,
+        disabled: false,
+      })
+      .then((userRecord) => {
+        return userRecord.uid;
+      })
+      .catch(function (err) {
+        console.log(err);
+        return err;
+      });
+  }
+  /**
+   * FirebaseのAuthenticationのユーザ情報を削除します。
+   *
+   * @param {object} param 入力情報です。
+   *
+   * @returns
+   */
+  async deleteUserForFirebase(param) {
+    return await admin
+      .auth()
+      .deleteUser(param.uid)
+      .then(() => {
+        return;
+      })
+      .catch(function (err) {
+        console.log(err);
+        return err;
+      });
+  }
 }
 
 module.exports = authentication;

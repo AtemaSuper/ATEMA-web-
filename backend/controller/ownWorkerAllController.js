@@ -10,5 +10,8 @@ app.use("/saveEmployee", ownWorkerAll);
 app.use("/savePost", ownWorkerAll);
 app.use("/deleteEmployee", ownWorkerAll);
 app.use("/deletePost", ownWorkerAll);
+app.use("/testCreateAuthentication", ownWorkerAll);
+app.use("/testUpdateAuthentication", ownWorkerAll);
+app.use("/testDeleteAuthentication", ownWorkerAll);
 
 module.exports = app;

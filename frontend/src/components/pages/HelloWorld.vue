@@ -46,6 +46,12 @@
       >
 
       <v-divider class="my-5" />
+      <h3>firebase authentication</h3>
+      <v-btn @click="createAuthentication()">createAPI test</v-btn>
+      <v-btn @click="updateAuthentication()">updateAPI test</v-btn>
+      <v-btn @click="deleteAuthentication()">deleteAPI test</v-btn>
+
+      <v-divider class="my-5" />
       <div>
         <Counter />
       </div>
@@ -85,6 +91,18 @@ export default {
     },
     async firestoreExcelDownload() {
       await Methods.excelDownload();
+    },
+    async createAuthentication() {
+      const uid = await Methods.testCreateAuthentication();
+      alert("uid:" + uid);
+    },
+    async updateAuthentication() {
+      const uid = await Methods.testUpdateAuthentication();
+      alert("uid:" + uid);
+    },
+    async deleteAuthentication() {
+      const uid = await Methods.testDeleteAuthentication();
+      alert("uid:" + uid);
     }
   }
 };

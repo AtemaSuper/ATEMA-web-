@@ -10,6 +10,9 @@ var employeeDao = new EmployeeDao();
 //役職テーブル
 const PostDao = require("../middle/dao/postDao");
 var postDao = new PostDao();
+//Authentication
+const authenticationDao = require("../middle/dao/authenticationDao");
+const authentication = new authenticationDao();
 
 /**
  * 自社員管理画面のService
@@ -237,6 +240,66 @@ app.post("/deletePost", async function (req, res) {
         messageList: messageList,
       };
       res.status(200).json(data);
+    })
+    .catch(function (err) {
+      console.log(err);
+      //サーバー側での入力値チェックエラーです。
+      if (err.messageList) {
+        res.status(400).json(err);
+        //サーバー側でのシステムエラーです。
+      } else {
+        err.checkResult = false;
+        err.messageList.push(ownWorkerAllLogic.createSytemErrorMessage());
+        res.status(500).json(err);
+      }
+    });
+});
+//FirestoreのAuthenticationを保存します。(テスト)
+app.post("/testCreateAuthentication", async function (req, res) {
+  await authentication
+    .createUserForFirebase(req.body)
+    .then(function (uid) {
+      res.status(200).json(uid);
+    })
+    .catch(function (err) {
+      console.log(err);
+      //サーバー側での入力値チェックエラーです。
+      if (err.messageList) {
+        res.status(400).json(err);
+        //サーバー側でのシステムエラーです。
+      } else {
+        err.checkResult = false;
+        err.messageList.push(ownWorkerAllLogic.createSytemErrorMessage());
+        res.status(500).json(err);
+      }
+    });
+});
+//FirestoreのAuthenticationを更新します。(テスト)
+app.post("/testUpdateAuthentication", async function (req, res) {
+  await authentication
+    .updateUserForFirebase(req.body)
+    .then(function (uid) {
+      res.status(200).json(uid);
+    })
+    .catch(function (err) {
+      console.log(err);
+      //サーバー側での入力値チェックエラーです。
+      if (err.messageList) {
+        res.status(400).json(err);
+        //サーバー側でのシステムエラーです。
+      } else {
+        err.checkResult = false;
+        err.messageList.push(ownWorkerAllLogic.createSytemErrorMessage());
+        res.status(500).json(err);
+      }
+    });
+});
+//FirestoreのAuthenticationを削除します。(テスト)
+app.post("/testDeleteAuthentication", async function (req, res) {
+  await authentication
+    .deleteUserForFirebase(req.body)
+    .then(function (uid) {
+      res.status(200).json(uid);
     })
     .catch(function (err) {
       console.log(err);
