@@ -40,9 +40,10 @@ class authentication {
     return await admin
       .auth()
       .createUser({
-        uid: param.uid,
+        uid: param.employeeId,
         email: param.mailAddress,
         emailVerified: false,
+        phoneNumber: telNumber,
         password: param.password,
         displayName: param.employeeFirstname + param.employeeLastname,
         disabled: false,
@@ -63,12 +64,12 @@ class authentication {
    * @returns
    */
   async updateUserForFirebase(param) {
-    console.log(param.uid);
     return await admin
       .auth()
-      .updateUser(param.uid, {
+      .updateUser(param.employeeId, {
         email: param.mailAddress,
         emailVerified: false,
+        phoneNumber: telNumber,
         password: param.password,
         displayName: param.employeeFirstname + param.employeeLastname,
         disabled: false,
@@ -91,7 +92,9 @@ class authentication {
   async deleteUserForFirebase(param) {
     return await admin
       .auth()
-      .deleteUser(param.uid)
+      .updateUser(param.employeeId, {
+        disabled: true,
+      })
       .then(() => {
         return;
       })

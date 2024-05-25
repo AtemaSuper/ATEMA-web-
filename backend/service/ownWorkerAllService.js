@@ -54,6 +54,7 @@ app.post("/saveEmployee", async function (req, res) {
   var postCheckResponse = {}; //チェック用
   var checkResult = false;
   var messageList = [];
+  var isNew = req.body.employeeId == ""; //true：新規追加、false：更新
   //入力値チェックします。
   await ownWorkerAllLogic
     .checkEmployeeInputData(req.body)
@@ -85,7 +86,21 @@ app.post("/saveEmployee", async function (req, res) {
     .then(function (data) {
       checkResult = data.checkResult;
       messageList = data.messageList;
-
+      req.body.employeeId = data.employeeId;
+      // FirestoreのAuthentication処理
+      // 電話番号を国際電話形式に変換
+      req.body.telNumber = ownWorkerAllLogic.convertTelNumberForGlobal(
+        req.body.telNumber1,
+        req.body.telNumber2,
+        req.body.telNumber3
+      );
+      if (isNew) {
+        return authentication.createUserForFirebase(req.body);
+      } else {
+        return authentication.updateUserForFirebase(req.body);
+      }
+    })
+    .then(function (data) {
       //社員テーブルから社員情報を取得します。
       return employeeDao.selectEmployeeAll(req.body.contractorId);
     })
@@ -178,6 +193,10 @@ app.post("/deleteEmployee", async function (req, res) {
     .then(function (data) {
       checkResult = data.checkResult;
       messageList = data.messageList;
+      //FirestoreのAuthenticationを削除します。
+      return authentication.deleteUserForFirebase(req.body);
+    })
+    .then(function () {
       //社員テーブルから社員情報を取得します。
       return employeeDao.selectEmployeeAll(req.body.contractorId);
     })

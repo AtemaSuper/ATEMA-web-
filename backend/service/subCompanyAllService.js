@@ -13,6 +13,9 @@ var employeeDao = new EmployeeDao();
 //工種テーブル
 const WorkTypeDao = require("../middle/dao/workTypeDao");
 var workTypeDao = new WorkTypeDao();
+//Authentication
+const authenticationDao = require("../middle/dao/authenticationDao");
+const authentication = new authenticationDao();
 
 /**
  * 協力会社管理画面のService
@@ -125,6 +128,7 @@ app.post("/saveSubEmployee", async function (req, res) {
   var workTypeResponse = {};
   var checkResult = false;
   var messageList = [];
+  var isNew = req.body.employeeId == ""; //true：新規追加、false：更新
   //入力値チェックします。
   await subCompanyLogic
     .checkSubCompnayEmployeeInputData(req.body)
@@ -153,7 +157,21 @@ app.post("/saveSubEmployee", async function (req, res) {
     .then(function (data) {
       checkResult = data.checkResult;
       messageList = data.messageList;
-
+      req.body.employeeId = data.employeeId;
+      // FirestoreのAuthentication処理
+      // 電話番号を国際電話形式に変換
+      req.body.telNumber = ownWorkerAllLogic.convertTelNumberForGlobal(
+        req.body.telNumber1,
+        req.body.telNumber2,
+        req.body.telNumber3
+      );
+      if (isNew) {
+        return authentication.createUserForFirebase(req.body);
+      } else {
+        return authentication.updateUserForFirebase(req.body);
+      }
+    })
+    .then(function () {
       //社員テーブルから協力会社員情報を取得します。
       return employeeDao.selectSubEmployeeAll(req.body.contractorId);
     })
@@ -273,6 +291,10 @@ app.post("/deleteSubEmployee", async function (req, res) {
     })
     .then(function (items) {
       workTypeResponse = items;
+      //FirestoreのAuthenticationを削除します。
+      return authentication.deleteUserForFirebase(req.body);
+    })
+    .then(function () {
       //返却用のdata
       var data = {
         subCompanyResponse: subCompanyResponse,

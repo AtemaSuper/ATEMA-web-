@@ -68,7 +68,7 @@ export default {
   },
   testCreateAuthentication() {
     const item = {
-      uid: "aaaaaa",
+      employeeId: "aaaaaa",
       mailAddress: "kazu01biz@gmail.com",
       telNumber1: "+8190",
       telNumber2: "1234",
@@ -81,7 +81,7 @@ export default {
   },
   testUpdateAuthentication() {
     const item = {
-      uid: "aaaaaa",
+      employeeId: "aaaaaa",
       mailAddress: "kazu01biz@gmail.com",
       telNumber1: "+8190",
       telNumber2: "1234",

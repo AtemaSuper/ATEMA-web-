@@ -1234,6 +1234,18 @@ class OwnWorkerAllLogic {
   }
 
   /**
+   * 電話番号を国際電話形式に変換します。
+   * @param {String} tel1 変換前の電話番号1です。
+   * @param {String} tel2 変換前の電話番号2です。
+   * @param {String} tel3 変換前の電話番号3です。
+   *
+   * @returns
+   */
+  convertTelNumberForGlobal(tel1, tel2, tel3) {
+    return commonLogic.convertTelNumberForGlobal(tel1, tel2, tel3);
+  }
+
+  /**
    * サクセスメッセージを作成します。
    *
    * @returns {string} サクセスメッセージです。
