@@ -37,7 +37,7 @@ class PostDao {
         });
       })
       .catch(function (err) {
-        return err;
+        res.status(500).json(err);
       });
     return responce;
   }
@@ -62,7 +62,7 @@ class PostDao {
         return items.data();
       })
       .catch(function (err) {
-        return err;
+        res.status(500).json(err);
       });
     return responce;
   }
@@ -112,13 +112,13 @@ class PostDao {
           return data;
         })
         .catch(function (err) {
-          return err;
+          res.status(500).json(err);
         });
       return responce;
       //更新の場合
     } else {
       const postRef = db
-        .collection("employee")
+        .collection("post")
         .doc(param.contractorId)
         .collection("data")
         .doc(param.postId);
@@ -141,7 +141,7 @@ class PostDao {
           return data;
         })
         .catch(function (err) {
-          return err;
+          res.status(500).json(err);
         });
       return responce;
     }
@@ -182,7 +182,7 @@ class PostDao {
         return data;
       })
       .catch(function (err) {
-        return err;
+        res.status(500).json(err);
       });
     return responce;
   }
