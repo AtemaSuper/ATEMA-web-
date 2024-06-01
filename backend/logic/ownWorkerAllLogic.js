@@ -27,13 +27,14 @@ class OwnWorkerAllLogic {
       var errorMessageList = [];
       var data = {};
       //ログインIDチェック
-      checkLoginId(errorMessageList, param.loginId);
+      // ログインIDはメールアドレスになるので不要
+      // checkLoginId(errorMessageList, param.loginId);
       //パスワードチェック
       checkPassword(errorMessageList, param.password);
       //社員名(姓)チェック
-      checkEmployeeFirstname(errorMessageList, param.employeeFirstname);
+      checkEmployeeFirstname(errorMessageList, param.employeeFirstName);
       //社員名(名)チェック
-      checkEmployeeLastname(errorMessageList, param.employeeLastname);
+      checkEmployeeLastname(errorMessageList, param.employeeLastName);
       //スタッフコードチェック
       checkStaffCode(errorMessageList, param.staffCode);
       //誕生日チェック
@@ -920,7 +921,7 @@ class OwnWorkerAllLogic {
    *
    * @returns
    */
-  checPostInputData(param) {
+  checkPostInputData(param) {
     return new Promise(function (resolve, reject) {
       var errorMessageList = [];
       var data = {};

@@ -123,7 +123,7 @@ app.post("/savePost", async function (req, res) {
   var messageList = [];
   //入力値チェックします。
   await ownWorkerAllLogic
-    .checPostInputData(req.body)
+    .checkPostInputData(req.body)
     .then(function () {
       //役職テーブルに役職情報を保存します。
       return postDao.savePost(req.body);

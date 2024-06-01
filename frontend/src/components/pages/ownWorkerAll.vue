@@ -215,7 +215,7 @@
                     <div v-if="employeeEditFlag">
                       <v-col>
                         <v-text-field
-                          v-model="employeeEditItem.employeeFirstname"
+                          v-model="employeeEditItem.employeeFirstName"
                           label="名前(姓)"
                           outlined
                           dense
@@ -225,7 +225,7 @@
                       </v-col>
                       <v-col>
                         <v-text-field
-                          v-model="employeeEditItem.employeeLastname"
+                          v-model="employeeEditItem.employeeLastName"
                           label="名前(名)"
                           outlined
                           dense
@@ -934,9 +934,9 @@ export default {
     entryFirstMenu: false,
     entryEndMenu: false,
     postPermissionList: [
-      { value: "2", label: "✕" },
+      { value: "0", label: "✕" },
       { value: "1", label: "閲覧のみ" },
-      { value: "0", label: "全て" }
+      { value: "2", label: "全て" }
     ],
     // 入力チェック：自社員追加
     firstNameRules: [
@@ -979,7 +979,7 @@ export default {
       v => (!!v && v.length >= 6) || "パスワードは最小6文字です。"
     ],
     entryFirstDateRules: [v => !!v || "所属期間（始め）が未入力です。"],
-    entryEndDateRules: [v => !!v || "所属期間（終わり）が未入力です。"],
+    entryEndDateRules: [],
     employmentRules: [v => !!v || "雇用形態が未入力です。"],
     // 入力チェック：役職追加
     postNameRules: [
@@ -1097,6 +1097,9 @@ export default {
     },
     // 日付のフォーマット処理です。
     displayDateFormat(date) {
+      if (date === "") {
+        return "";
+      }
       return dayjs(date).format("YYYY/MM/DD");
     },
 
@@ -1145,8 +1148,8 @@ export default {
           employeeId: this.employeeEditItem.employeeId,
           loginId: this.employeeEditItem.loginId,
           password: this.employeeEditItem.password,
-          employeeFirstname: this.employeeEditItem.employeeFirstname,
-          employeeLastname: this.employeeEditItem.employeeLastname,
+          employeeFirstName: this.employeeEditItem.employeeFirstName,
+          employeeLastName: this.employeeEditItem.employeeLastName,
           postId: postId,
           staffCode: this.employeeEditItem.staffCode,
           birthday: this.employeeEditItem.birthday,
@@ -1354,10 +1357,10 @@ function createEmployeeList(response) {
     employee.loginId = employeeResponse[i].loginId;
     employee.password = employeeResponse[i].password;
     employee.employeeName =
-      employeeResponse[i].employeeFirstname +
-      employeeResponse[i].employeeLastname;
-    employee.employeeFirstname = employeeResponse[i].employeeFirstname;
-    employee.employeeLastname = employeeResponse[i].employeeLastname;
+      employeeResponse[i].employeeFirstName +
+      employeeResponse[i].employeeLastName;
+    employee.employeeFirstName = employeeResponse[i].employeeFirstName;
+    employee.employeeLastName = employeeResponse[i].employeeLastName;
     employee.companyName = "テスト会社"; // TODO ログイン情報で取得
     // 選択中の役職を設定
     employee.selectPost = {
@@ -1471,11 +1474,11 @@ function getPostName(postId, postResponse) {
  */
 function getAutnName(auth) {
   if (auth === "0") {
-    return "全て";
+    return "×";
   } else if (auth === "1") {
     return "閲覧のみ";
   } else {
-    return "×";
+    return "全て";
   }
 }
 /**
