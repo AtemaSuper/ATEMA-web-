@@ -393,7 +393,7 @@ export default {
       // 編集の場合
       if(item !== undefined){
         this.clientFieldEditItem = item
-        this.worDialogName = '客先編集'
+        this.clientFieldDialogName = '客先編集'
       // 追加の場合
       }else{
         // 入力項目に初期値を設定
@@ -464,14 +464,14 @@ export default {
       // 編集の場合
       if(item !== undefined){
         this.workFieldEditItem = item
-        this.workFieldDialogName = '客先編集'
+        this.workFieldDialogName = '現場編集'
       // 追加の場合
       }else{
         // 入力項目に初期値を設定
         this.workFieldEditItem = {
           status: '0',
         }
-        this.workFieldDialogName = '客先追加'
+        this.workFieldDialogName = '現場追加'
       }
       this.workFieldDialog = true
     },

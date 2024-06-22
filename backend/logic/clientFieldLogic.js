@@ -283,27 +283,31 @@ class ClientFieldLogic {
    *
    * @param {string} param 画面パラメータです。
    * @param {string} clientFieldResponse 客先情報です。
+   * @param {boolean} isNew 新規かどうかです。
    *
    * @returns
    */
-  checkExistsData(param, clientFieldResponse) {
+  checkExistsData(param, clientFieldResponse, isNew) {
     return new Promise(function (resolve, reject) {
       var errorMessageList = [];
-      //現場情報の入力値の存在チェックを行います。
-      //客先チェック
-      checkClientFieldIdList(
-        errorMessageList,
-        param.clientFieldIdList,
-        clientFieldResponse
-      );
-      var data = {};
-      //エラーがある場合
-      if (errorMessageList.length !== 0) {
-        data = {
-          checkResult: false,
-          messageList: errorMessageList,
-        };
-        reject(data);
+      // 新規の場合は、チェックしません。
+      if (isNew) {
+        //現場情報の入力値の存在チェックを行います。
+        //客先チェック
+        checkClientFieldIdList(
+          errorMessageList,
+          param.clientFieldId,
+          clientFieldResponse
+        );
+        var data = {};
+        //エラーがある場合
+        if (errorMessageList.length !== 0) {
+          data = {
+            checkResult: false,
+            messageList: errorMessageList,
+          };
+          reject(data);
+        }
       }
       resolve();
     });

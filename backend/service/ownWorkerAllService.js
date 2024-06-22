@@ -65,10 +65,7 @@ app.post("/saveEmployee", async function (req, res) {
     .then(function (items) {
       postCheckResponse = items;
       //入力値の存在チェックします。
-      return ownWorkerAllLogic.checkEmployeeExistsData(
-        req.body,
-        postCheckResponse
-      );
+      return ownWorkerAllLogic.checkPostExistsData(req.body, postCheckResponse);
     })
     .then(function () {
       //社員テーブルから社員情報を取得します。

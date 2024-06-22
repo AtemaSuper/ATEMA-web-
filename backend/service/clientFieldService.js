@@ -4,6 +4,9 @@ const app = express();
 //客先Logic
 const ClientFieldLogic = require("../logic/clientFieldLogic");
 var clientFieldLogic = new ClientFieldLogic();
+//現場Logic
+const WorkFieldLogic = require("../logic/workFieldLogic");
+var workFieldLogic = new WorkFieldLogic();
 //客先テーブル
 const ClientFieldDao = require("../middle/dao/clientFieldDao");
 var clientFieldDao = new ClientFieldDao();
@@ -48,6 +51,7 @@ app.post("/saveClientField", async function (req, res) {
   var workFieldResponse = {};
   var checkResult = false;
   var messageList = [];
+  var isNew = req.body.clientFieldId == ""; //true：新規追加、false：更新
   //入力値チェックします。
   await clientFieldLogic
     .checkClientFieldInputData(req.body)
@@ -55,10 +59,9 @@ app.post("/saveClientField", async function (req, res) {
       //客先テーブルから客先情報を取得します。
       return clientFieldDao.selectClientFieldAll(req.body.contractorId);
     })
-    .then(function () {
-      clientFieldResponse = items;
+    .then(function (items) {
       //入力値の存在チェックします。
-      return clientFieldLogic.checkExistsData(req.body, clientFieldResponse);
+      return clientFieldLogic.checkExistsData(req.body, items, isNew);
     })
     .then(function () {
       //客先テーブルに客先情報を保存します。
@@ -67,10 +70,11 @@ app.post("/saveClientField", async function (req, res) {
     .then(function (data) {
       checkResult = data.checkResult;
       messageList = data.messageList;
-      //客先テーブルに客先情報を保存します。
-      return clientFieldDao.saveClientField(req.body);
+      //客先テーブルから客先情報を取得します。
+      return clientFieldDao.selectClientFieldAll(req.body.contractorId);
     })
-    .then(function () {
+    .then(function (items) {
+      clientFieldResponse = items;
       //現場テーブルから現場情報を取得します。
       return workFieldDao.selectWorkFieldAll(req.body.contractorId);
     })
@@ -149,12 +153,29 @@ app.post("/saveWorkField", async function (req, res) {
   var workFieldResponse = {};
   var checkResult = false;
   var messageList = [];
+  var isNew = req.body.workFieldId == ""; //true：新規追加、false：更新
 
   //入力値チェックします。
   await clientFieldLogic
     .checkWorkFieldInputData(req.body)
     .then(function () {
-      //契約テーブルから自社情報を取得します。
+      //客先テーブルから客先情報を取得します。
+      return clientFieldDao.selectClientFieldAll(req.body.contractorId);
+    })
+    .then(function (items) {
+      //入力値の存在チェックします。
+      return clientFieldLogic.checkExistsData(req.body, items, isNew);
+    })
+    .then(function () {
+      //現場テーブルから現場情報を取得します。
+      return workFieldDao.selectWorkFieldAll(req.body.contractorId);
+    })
+    .then(function (items) {
+      //入力値の存在チェックします。
+      return workFieldLogic.checkExistsData(req.body, items, isNew);
+    })
+    .then(function () {
+      //現場テーブルに現場情報を保存します。
       return workFieldDao.saveWorkField(req.body);
     })
     .then(function (data) {

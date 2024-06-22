@@ -330,6 +330,63 @@ class WorkFieldLogic {
   }
 
   /**
+   * 現場の入力値の存在チェックします。
+   *
+   * @param {string} param 画面パラメータです。
+   * @param {object} workFieldResponse 現場情報です。
+   * @param {boolean} isNew 新規かどうかです。
+   *
+   * @returns
+   */
+  checkExistsData(param, workFieldResponse, isNew) {
+    return new Promise(function (resolve, reject) {
+      var errorMessageList = [];
+      // 新規の場合は、チェックしません。
+      if (isNew) {
+        //現場情報の入力値の存在チェックを行います。
+        //客先チェック
+        checkWorkFieldIdList(
+          errorMessageList,
+          param.workFieldId,
+          workFieldResponse
+        );
+        var data = {};
+        //エラーがある場合
+        if (errorMessageList.length !== 0) {
+          data = {
+            checkResult: false,
+            messageList: errorMessageList,
+          };
+          reject(data);
+        }
+      }
+      resolve();
+    });
+
+    /**
+     * 現場をチェックします。
+     *
+     * @param {object} errorMessageList エラーメッセージリストです。
+     * @param {string} value 入力内容です。
+     * @param {object} workFieldResponse 現場情報です。
+     */
+    function checkWorkFieldIdList(errorMessageList, value, workFieldResponse) {
+      for (var i = 0; i < value.length; i++) {
+        var errorMessage1 = commonLogic.checkExists(
+          value[i],
+          workFieldResponse,
+          colum.WORK_FIELD_ID
+        );
+        if (!util.isEmpty(errorMessage1)) {
+          errorMessageList.push(errorMessage1);
+          return;
+        }
+      }
+      return errorMessageList;
+    }
+  }
+
+  /**
    * サクセスメッセージを作成します。
    *
    * @param {string} pageContents

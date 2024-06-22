@@ -33,7 +33,7 @@
             item-key="name"
             class="elevation-1 table"
             rowsPerPage: All
-            height= '300'
+            height= '600'
             @click:row="showEditWorkField"
           >
             <template v-slot:top>
@@ -101,7 +101,7 @@
               </v-col>
               <v-col>
                 <v-select v-model="editItem.selectClientField" :rules="selectClientFieldRules" label="(例)株式会社ABC" :items="clientFieldList" item-text="clientFieldName"
-            item-value="value" return-object outlined required></v-select>
+            item-value="value" return-object outlined required @input="selectedClientField"></v-select>
               </v-col>
             </v-row>
             <v-row>
@@ -113,8 +113,8 @@
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-select  v-model="editItem.selectWorkField" :rules="selectWorkFieldRules" label="(例)現場名A" :items="workFieldList" item-text="workFieldName"
-            item-value="value" return-object outlined required></v-select>
+                <v-select  v-model="editItem.selectWorkField" :rules="selectWorkFieldRules" label="(例)現場名A" :items="tmpWorkFieldList" item-text="workFieldName"
+            item-value="value" return-object outlined required v-bind:disabled="isDisabledSelectWorkField"></v-select>
               </v-col>
             </v-row>
             <v-row>
@@ -194,12 +194,14 @@ export default {
     workFieldDetailList: [],
     clientFieldList: [],
     workFieldList: [],
+    tmpWorkFieldList: [],
     editItem: [],
     worDialogName: '工事編集',
     workFieldDialog: false,
     JobName: '',
     searchWorkField:'',
     constructionName: '',
+    isDisabledSelectWorkField: true,
     // 入力チェック
     jobNoRules: [
       v => !!v || "JobNoが未入力です。",
@@ -284,6 +286,8 @@ export default {
       if(item !== undefined){
         this.editItem = item
         this.worDialogName = '工事編集'
+        this.isDisabledSelectWorkField = false;
+        this.tmpWorkFieldList = createTmpWorkFieldList(this.editItem.selectClientField, this.workFieldList);
       // 追加の場合
       }else{
         // 入力項目に初期値を設定
@@ -292,6 +296,7 @@ export default {
           contractStatus: '0'
         }
         this.worDialogName = '工事追加'
+        this.isDisabledSelectWorkField = true;
       }
       this.workFieldDialog = true
     },
@@ -362,6 +367,11 @@ export default {
         // 削除完了メッセージ表示
         this.$emit('alertMethod', response);
       }
+    },
+    // 客先名選択処理
+    selectedClientField :function (){
+      this.isDisabledSelectWorkField = false;
+      this.tmpWorkFieldList = createTmpWorkFieldList(this.editItem.selectClientField, this.workFieldList);
     }
   }
 }
@@ -403,6 +413,7 @@ function createWorkFieldDetailList (response) {
         clientFieldResponse
       )
     }
+    console.log(workFieldDetailResponse[i].status);
     workFieldDetail.status = String(workFieldDetailResponse[i].status)
     workFieldDetail.statusName = getStatusName(
       workFieldDetailResponse[i].status
@@ -447,6 +458,7 @@ function createWorkFieldList (response) {
     var workField = {}
     workField.workFieldId = workFieldResponse[k].workFieldId
     workField.workFieldName = workFieldResponse[k].workFieldName
+    workField.clientFieldId = workFieldResponse[k].clientFieldId
     workFieldList.push(workField)
   }
   return workFieldList
@@ -496,11 +508,28 @@ function getworkFieldName (workFieldId, workFieldResponse) {
  * @returns
  */
 function getStatusName (status) {
-  if (status === 0) {
+  if (status === "0") {
     return '未進行'
   } else {
     return '進行中'
   }
+}
+/**
+ * 現場名のセレクトボックスに、選択した客先名をもとに紐づく現場名セレクトボックスを作成します。
+ *
+ * @param {string} status ステータスです。
+ *
+ * @private
+ * @returns
+ */
+function createTmpWorkFieldList(selectClientField, workFieldList) {
+  var tmpWorkFieldList = [];
+      for(var i = 0; i < workFieldList.length; i++) {
+        if(selectClientField.clientFieldId === workFieldList[i].clientFieldId) {
+          tmpWorkFieldList.push(workFieldList[i]);
+        }
+      }
+  return tmpWorkFieldList;
 }
 </script>
 

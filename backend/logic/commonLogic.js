@@ -188,8 +188,8 @@ class CommonLogic {
   checkDuplicate(value, response, colum) {
     var check = true;
     //ログインIDのチェックです。
-    if (column.LOGIN_ID == colum) {
-      check = response.find((res) => res.workTypeId == value);
+    if (column.EMPLOYEE_ID == colum) {
+      check = response.find((res) => res.employeeId == value);
     }
     if (check) {
       return util.stringFormat(errorMessage.IS_NOT_EXISTS, colum);

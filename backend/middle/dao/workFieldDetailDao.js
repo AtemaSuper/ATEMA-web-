@@ -128,7 +128,7 @@ class WorkFieldDetailDao {
       const responce = await workFieldDetailRef
         .update({
           jobNo: param.jobNo,
-          workFieldName: param.workFieldName,
+          workFieldDetailName: param.workFieldDetailName,
           workFieldId: param.workFieldId,
           clientFieldId: param.clientFieldId,
           status: param.status,

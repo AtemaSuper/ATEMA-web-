@@ -830,7 +830,7 @@ class OwnWorkerAllLogic {
    *
    * @returns
    */
-  checkEmployeeExistsData(param, postCheckResponse) {
+  checkPostExistsData(param, postCheckResponse) {
     return new Promise(function (resolve, reject) {
       var errorMessageList = [];
       //役職チェック
@@ -869,18 +869,18 @@ class OwnWorkerAllLogic {
   }
 
   /**
-   * 協力会社員の入力値の存在チェックします。
+   * 社員の入力値の存在チェックします。
    *
    * @param {string} param 画面パラメータです。
-   * @param {string} subEmployeeResponse 協力会社員情報です。
+   * @param {string} employeeResponse 社員情報です。
    *
    * @returns
    */
   checkEmployeeExistsData(param, employeeResponse) {
     return new Promise(function (resolve, reject) {
       var errorMessageList = [];
-      //ログインIDチェック
-      checkLoginId(errorMessageList, param.loginId, employeeResponse);
+      //emloyeeIDチェック
+      checkEmployeeId(errorMessageList, param.employeeId, employeeResponse);
       var data = {};
       //エラーがある場合
       if (errorMessageList.length !== 0) {
@@ -894,17 +894,17 @@ class OwnWorkerAllLogic {
     });
 
     /**
-     * ログインIDをチェックします。
+     * emloyeeIDをチェックします。
      *
      * @param {object} errorMessageList エラーメッセージリストです。
      * @param {string} value 入力内容です。
-     * @param {string} employeeResponse 協力会社員情報です。
+     * @param {string} employeeResponse 会社員情報です。
      */
-    function checkLoginId(errorMessageList, value, employeeResponse) {
+    function checkEmployeeId(errorMessageList, value, employeeResponse) {
       var errorMessage1 = commonLogic.checkDuplicate(
         value,
         employeeResponse,
-        colum.LOGIN_ID
+        colum.EMPLOYEE_ID
       );
       if (!util.isEmpty(errorMessage1)) {
         errorMessageList.push(errorMessage1);
