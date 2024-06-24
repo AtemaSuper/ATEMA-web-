@@ -2,8 +2,8 @@ const express = require("express");
 const app = express();
 
 //協力会社Logic
-const SUbCompanyLogic = require("../logic/subCompanyLogic");
-var subCompanyLogic = new SUbCompanyLogic();
+const SubCompanyLogic = require("../logic/subCompanyLogic");
+var subCompanyLogic = new SubCompanyLogic();
 //協力会社テーブル
 const SubCompanyDao = require("../middle/dao/subCompanyDao");
 var subCompanyDao = new SubCompanyDao();
@@ -13,36 +13,128 @@ var employeeDao = new EmployeeDao();
 //工種テーブル
 const WorkTypeDao = require("../middle/dao/workTypeDao");
 var workTypeDao = new WorkTypeDao();
-//Authentication
-const authenticationDao = require("../middle/dao/authenticationDao");
-const authentication = new authenticationDao();
+//共通変数
+var subCompanyResponse = [];
+var subEmployeeResponse = [];
+var workTypeResponse = [];
+var checkResult = false;
+var messageList = [];
+
+/**
+ * 協力会社情報取得処理
+ *
+ * @param {string} contractorId 会社IDです。
+ * @returns
+ */
+const selectSubCompanyAll = function (contractorId) {
+  return new Promise(function (resolve, reject) {
+    subCompanyDao
+      .selectSubCompanyAll(contractorId)
+      .then(function (items) {
+        subCompanyResponse = items;
+        resolve(items);
+      })
+      .catch(function (err) {
+        reject(err);
+      });
+  });
+};
+
+/**
+ * 協力会社員情報取得処理
+ *
+ * @param {string} contractorId 会社IDです。
+ * @returns
+ */
+const selectSubEmployeeAll = function (contractorId) {
+  return new Promise(function (resolve, reject) {
+    employeeDao
+      .selectSubEmployeeAll(contractorId)
+      .then(function (items) {
+        subEmployeeResponse = items;
+        resolve(items);
+      })
+      .catch(function (err) {
+        reject(err);
+      });
+  });
+};
+
+/**
+ * 工種情報取得処理
+ *
+ * @param {string} contractorId 会社IDです。
+ * @returns
+ */
+const selectWorkTypeAll = function (contractorId) {
+  return new Promise(function (resolve, reject) {
+    workTypeDao
+      .selectWorkTypeAll(contractorId)
+      .then(function (items) {
+        workTypeResponse = items;
+        resolve(items);
+      })
+      .catch(function (err) {
+        reject(err);
+      });
+  });
+};
+
+/**
+ * 工種情報存在チェック処理
+ *
+ * @param {string} contractorId 会社IDです。
+ * @param {string} param パラメータです。
+ * @returns
+ */
+const checkSubCompnayExistsData = function (contractorId, param) {
+  return new Promise(function (resolve, reject) {
+    selectWorkTypeAll(contractorId)
+      .then(function (items) {
+        return subCompanyLogic.checkSubCompnayExistsData(param, items);
+      })
+      .then(function () {
+        resolve();
+      })
+      .catch(function (err) {
+        reject(err);
+      });
+  });
+};
+
+/**
+ * 協力会社情報存在チェック処理
+ *
+ * @param {string} contractorId 会社IDです。
+ * @param {string} param パラメータです。
+ * @returns
+ */
+const checkSubCompnayEmployeeExistsData = function (contractorId, param) {
+  return new Promise(function (resolve, reject) {
+    selectSubCompanyAll(contractorId)
+      .then(function (items) {
+        return subCompanyLogic.checkSubCompnayEmployeeExistsData(param, items);
+      })
+      .then(function () {
+        resolve();
+      })
+      .catch(function (err) {
+        reject(err);
+      });
+  });
+};
 
 /**
  * 協力会社管理画面のService
  */
 //協力会社管理の初期表示処理です。
 app.post("/", async function (req, res) {
-  var subCompanyResponse = {};
-  var subEmployeeResponse = {};
-  var workTypeResponse = {};
-
-  //協力会社テーブルから協力会社情報を取得します。
-  await subCompanyDao
-    .selectSubCompanyAll(req.body.contractorId)
-    .then(function (items) {
-      subCompanyResponse = items;
-      //社員テーブルから社員情報を取得します。
-      return employeeDao.selectSubEmployeeAll(req.body.contractorId);
-    })
-    .then(function (items) {
-      subEmployeeResponse = items;
-      //工種テーブルから工種情報を取得します。
-      return workTypeDao.selectWorkTypeAll(req.body.contractorId);
-    })
-    .then(function (items) {
-      workTypeResponse = items;
-      //返却用のdata
-      console.log(subEmployeeResponse);
+  const promises = [];
+  promises.push(selectSubCompanyAll(req.body.contractorId));
+  promises.push(selectSubEmployeeAll(req.body.contractorId));
+  promises.push(selectWorkTypeAll(req.body.contractorId));
+  Promise.all(promises)
+    .then(function () {
       var data = {
         subCompanyResponse: subCompanyResponse,
         subEmployeeResponse: subEmployeeResponse,
@@ -52,50 +144,32 @@ app.post("/", async function (req, res) {
       res.status(200).json(data);
     })
     .catch(function (err) {
-      console.log(err);
-
-      res.status(500).json(err);
+      err = subCompanyLogic.createErrorResponse(err);
+      res.status(err.status).json(err);
     });
 });
+
 //協力会社編集の入力情報を保存します。
 app.post("/saveSubCompany", async function (req, res) {
-  var subCompanyResponse = {};
-  var subEmployeeResponse = {};
-  var workTypeResponse = {};
-  var checkResult = false;
-  var messageList = [];
-  //入力値チェックします。
-  await subCompanyLogic
-    .checSubCompanyInputData(req.body)
+  const promises = [];
+  promises.push(subCompanyLogic.checSubCompanyInputData(req.body));
+  promises.push(checkSubCompnayExistsData(req.body.contractorId, req.body));
+  Promise.all(promises)
     .then(function () {
-      //工種テーブルから工種情報を取得します。
-      return workTypeDao.selectWorkTypeAll(req.body.contractorId);
-    })
-    .then(function (items) {
-      workTypeResponse = items;
-      //入力値の存在チェックします。
-      return subCompanyLogic.checkSubCompnayExistsData(
-        req.body,
-        workTypeResponse
-      );
-    })
-    .then(function () {
-      //社員テーブルに協力会社員情報を保存します。
+      //会社テーブルに協力会社情報を保存します。
       return subCompanyDao.saveSubCompany(req.body);
     })
     .then(function (items) {
       checkResult = items.checkResult;
       messageList = items.messageList;
-      //協力会社テーブルから協力会社情報を取得します。
-      return subCompanyDao.selectSubCompanyAll(req.body.contractorId);
+      // 画面の最新情報を取得します。
+      const promises2 = [];
+      promises2.push(selectSubCompanyAll(req.body.contractorId));
+      promises2.push(selectSubEmployeeAll(req.body.contractorId));
+      promises2.push(selectWorkTypeAll(req.body.contractorId));
+      return Promise.all(promises2);
     })
-    .then(function (items) {
-      subCompanyResponse = items;
-      //社員テーブルから協力会社員情報を取得します。
-      return employeeDao.selectSubEmployeeAll(req.body.contractorId);
-    })
-    .then(function (items) {
-      subEmployeeResponse = items;
+    .then(function () {
       //返却用のdata
       var data = {
         subCompanyResponse: subCompanyResponse,
@@ -107,86 +181,33 @@ app.post("/saveSubCompany", async function (req, res) {
       res.status(200).json(data);
     })
     .catch(function (err) {
-      console.log(err);
-      //サーバー側での入力値チェックエラーです。
-      if (err.messageList) {
-        res.status(400).json(err);
-        //サーバー側でのシステムエラーです。
-      } else {
-        err.checkResult = false;
-        err.messageList.push(subCompanyLogic.createSytemErrorMessage());
-        res.status(500).json(err);
-      }
+      err = subCompanyLogic.createErrorResponse(err);
+      res.status(err.status).json(err);
     });
 });
 //協力会社員情報を保存します。
 app.post("/saveSubEmployee", async function (req, res) {
-  var subCompanyResponse = {};
-  var subEmployeeResponse = {};
-  var companyResponse = {}; //チェック用
-  var employeeResponse = {}; //チェック用
-  var workTypeResponse = {};
-  var checkResult = false;
-  var messageList = [];
-  var isNew = req.body.employeeId == ""; //true：新規追加、false：更新
-  //入力値チェックします。
-  await subCompanyLogic
-    .checkSubCompnayEmployeeInputData(req.body)
-    .then(function () {
-      //社員テーブルから協力会社員情報を取得します。
-      return employeeDao.selectSubEmployeeAll(req.body.contractorId);
-    })
-    .then(function (items) {
-      employeeResponse = items;
-      //社員テーブルから協力社員情報を取得します。
-      return subCompanyDao.selectSubCompanyAll(req.body.contractorId);
-    })
-    .then(function (items) {
-      companyResponse = items;
-      //入力値の存在チェックします。
-      return subCompanyLogic.checkSubCompnayEmployeeExistsData(
-        req.body,
-        employeeResponse,
-        companyResponse
-      );
-    })
+  const promises = [];
+  promises.push(subCompanyLogic.checkSubCompnayEmployeeInputData(req.body));
+  promises.push(
+    checkSubCompnayEmployeeExistsData(req.body.contractorId, req.body)
+  );
+  Promise.all(promises)
     .then(function () {
       //従業員テーブルに協力会社員情報を保存します。
       return employeeDao.saveSubEmployee(req.body);
     })
-    .then(function (data) {
-      checkResult = data.checkResult;
-      messageList = data.messageList;
-      req.body.employeeId = data.employeeId;
-      // FirestoreのAuthentication処理
-      // 電話番号を国際電話形式に変換
-      req.body.telNumber = ownWorkerAllLogic.convertTelNumberForGlobal(
-        req.body.telNumber1,
-        req.body.telNumber2,
-        req.body.telNumber3
-      );
-      if (isNew) {
-        return authentication.createUserForFirebase(req.body);
-      } else {
-        return authentication.updateUserForFirebase(req.body);
-      }
+    .then(function (items) {
+      checkResult = items.checkResult;
+      messageList = items.messageList;
+      // 画面の最新情報を取得します。
+      const promises2 = [];
+      promises2.push(selectSubCompanyAll(req.body.contractorId));
+      promises2.push(selectSubEmployeeAll(req.body.contractorId));
+      promises2.push(selectWorkTypeAll(req.body.contractorId));
+      return Promise.all(promises2);
     })
     .then(function () {
-      //社員テーブルから協力会社員情報を取得します。
-      return employeeDao.selectSubEmployeeAll(req.body.contractorId);
-    })
-    .then(function (items) {
-      subEmployeeResponse = items;
-      //協力会社テーブルから協力社情報を取得します。
-      return subCompanyDao.selectSubCompanyAll(req.body.contractorId);
-    })
-    .then(function (items) {
-      subCompanyResponse = items;
-      //工種テーブルから工種情報を取得します。
-      return workTypeDao.selectWorkTypeAll(req.body.contractorId);
-    })
-    .then(function (items) {
-      workTypeResponse = items;
       //返却用のdata
       var data = {
         subCompanyResponse: subCompanyResponse,
@@ -198,47 +219,26 @@ app.post("/saveSubEmployee", async function (req, res) {
       res.status(200).json(data);
     })
     .catch(function (err) {
-      console.log(err);
-      //サーバー側での入力値チェックエラーです。
-      if (err.messageList.length != 0) {
-        res.status(400).json(err);
-        //サーバー側でのシステムエラーです。
-      } else {
-        err.checkResult = false;
-        err.messageList.push(subCompanyLogic.createSytemErrorMessage());
-        res.status(500).json(err);
-      }
+      err = subCompanyLogic.createErrorResponse(err);
+      res.status(err.status).json(err);
     });
 });
 //協力会社情報を削除します。
 app.post("/deleteSubCompany", async function (req, res) {
-  var subCompanyResponse = {};
-  var subEmployeeResponse = {};
-  var workTypeResponse = {};
-  var checkResult = false;
-  var messageList = [];
-
   //社員テーブルから社員情報を削除します。
   await subCompanyDao
     .deleteSubCompany(req.body)
-    .then(function (data) {
-      checkResult = data.checkResult;
-      messageList = data.messageList;
-      //協力会社テーブルから協力会社情報を取得します。
-      return subCompanyDao.selectSubCompanyAll(req.body.contractorId);
-    })
     .then(function (items) {
-      subCompanyResponse = items;
-      //社員テーブルから協力会社員情報を取得します。
-      return employeeDao.selectSubEmployeeAll(req.body.contractorId);
+      checkResult = items.checkResult;
+      messageList = items.messageList;
+      // 画面の最新情報を取得します。
+      const promises = [];
+      promises.push(selectSubCompanyAll(req.body.contractorId));
+      promises.push(selectSubEmployeeAll(req.body.contractorId));
+      promises.push(selectWorkTypeAll(req.body.contractorId));
+      return Promise.all(promises);
     })
-    .then(function (items) {
-      subEmployeeResponse = items;
-      //工種テーブルから工種情報を取得します。
-      return workTypeDao.selectWorkTypeAll(req.body.contractorId);
-    })
-    .then(function (items) {
-      workTypeResponse = items;
+    .then(function () {
       //返却用のdata
       var data = {
         subCompanyResponse: subCompanyResponse,
@@ -250,49 +250,24 @@ app.post("/deleteSubCompany", async function (req, res) {
       res.status(200).json(data);
     })
     .catch(function (err) {
-      console.log(err);
-      //サーバー側での入力値チェックエラーです。
-      if (err.messageList.length != 0) {
-        res.status(400).json(err);
-        //サーバー側でのシステムエラーです。
-      } else {
-        err.checkResult = false;
-        err.messageList.push(subCompanyLogic.createSytemErrorMessage());
-        res.status(500).json(err);
-      }
+      err = subCompanyLogic.createErrorResponse(err);
+      res.status(err.status).json(err);
     });
 });
 //協力会社員情報を削除します。
 app.post("/deleteSubEmployee", async function (req, res) {
-  var subCompanyResponse = {};
-  var subEmployeeResponse = {};
-  var workTypeResponse = {};
-  var checkResult = false;
-  var messageList = [];
-
   //役職テーブルから役職情報を削除します。
   await employeeDao
     .deleteSubEmployee(req.body)
     .then(function (data) {
       checkResult = data.checkResult;
       messageList = data.messageList;
-      //協力会社テーブルから協力会社情報を取得します。
-      return subCompanyDao.selectSubCompanyAll(req.body.contractorId);
-    })
-    .then(function (items) {
-      subCompanyResponse = items;
-      //社員テーブルから協力会社員情報を取得します。
-      return employeeDao.selectSubEmployeeAll(req.body.contractorId);
-    })
-    .then(function (items) {
-      subEmployeeResponse = items;
-      //工種テーブルから工種情報を取得します。
-      return workTypeDao.selectWorkTypeAll(req.body.contractorId);
-    })
-    .then(function (items) {
-      workTypeResponse = items;
-      //FirestoreのAuthenticationを削除します。
-      return authentication.deleteUserForFirebase(req.body);
+      // 画面の最新情報を取得します。
+      const promises = [];
+      promises.push(selectSubCompanyAll(req.body.contractorId));
+      promises.push(selectSubEmployeeAll(req.body.contractorId));
+      promises.push(selectWorkTypeAll(req.body.contractorId));
+      return Promise.all(promises);
     })
     .then(function () {
       //返却用のdata
@@ -306,16 +281,8 @@ app.post("/deleteSubEmployee", async function (req, res) {
       res.status(200).json(data);
     })
     .catch(function (err) {
-      console.log(err);
-      //サーバー側での入力値チェックエラーです。
-      if (err.messageList.length != 0) {
-        res.status(400).json(err);
-        //サーバー側でのシステムエラーです。
-      } else {
-        err.checkResult = false;
-        err.messageList.push(subCompanyLogic.createSytemErrorMessage());
-        res.status(500).json(err);
-      }
+      err = subCompanyLogic.createErrorResponse(err);
+      res.status(err.status).json(err);
     });
 });
 module.exports = app;

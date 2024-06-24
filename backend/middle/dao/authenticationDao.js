@@ -33,54 +33,45 @@ class authentication {
    * FirebaseのAuthenticationのユーザ情報を作成します。
    *
    * @param {object} param 入力情報です。
+   * @param {boolean} isNew 新規か編集かどうかです。
    *
    * @returns
    */
-  async createUserForFirebase(param) {
-    return await admin
-      .auth()
-      .createUser({
-        uid: param.employeeId,
-        email: param.mailAddress,
-        emailVerified: false,
-        phoneNumber: telNumber,
-        password: param.password,
-        displayName: param.employeeFirstname + param.employeeLastname,
-        disabled: false,
-      })
-      .then((userRecord) => {
-        return userRecord.uid;
-      })
-      .catch(function (err) {
-        console.log(err);
-        return err;
-      });
-  }
-  /**
-   * FirebaseのAuthenticationのユーザ情報を更新します。
-   *
-   * @param {object} param 入力情報です。
-   *
-   * @returns
-   */
-  async updateUserForFirebase(param) {
-    return await admin
-      .auth()
-      .updateUser(param.employeeId, {
-        email: param.mailAddress,
-        emailVerified: false,
-        phoneNumber: telNumber,
-        password: param.password,
-        displayName: param.employeeFirstname + param.employeeLastname,
-        disabled: false,
-      })
-      .then((userRecord) => {
-        return userRecord.uid;
-      })
-      .catch(function (err) {
-        console.log(err);
-        return err;
-      });
+  async updateUserForFirebase(param, isNew) {
+    return new Promise(function (resolve, reject) {
+      if (isNew) {
+        return admin
+          .auth()
+          .createUser({
+            uid: param.employeeId,
+            email: param.mailAddress,
+            emailVerified: false,
+            password: param.password,
+            disabled: false,
+          })
+          .then((userRecord) => {
+            resolve(userRecord.uid);
+          })
+          .catch(function (err) {
+            reject(err);
+          });
+      } else {
+        return admin
+          .auth()
+          .updateUser(param.employeeId, {
+            email: param.mailAddress,
+            emailVerified: false,
+            password: param.password,
+            disabled: false,
+          })
+          .then((userRecord) => {
+            resolve(userRecord.uid);
+          })
+          .catch(function (err) {
+            reject(err);
+          });
+      }
+    });
   }
   /**
    * FirebaseのAuthenticationのユーザ情報を削除します。
@@ -96,11 +87,10 @@ class authentication {
         disabled: true,
       })
       .then(() => {
-        return;
+        resolve();
       })
       .catch(function (err) {
-        console.log(err);
-        return err;
+        reject(err);
       });
   }
 }

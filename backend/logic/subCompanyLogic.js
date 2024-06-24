@@ -527,14 +527,12 @@ class SUbCompanyLogic {
     return new Promise(function (resolve, reject) {
       var errorMessageList = [];
       var data = {};
-      //ログインIDチェック
-      checkLoginId(errorMessageList, param.loginId);
       //パスワードチェック
       checkPassword(errorMessageList, param.password);
       //社員名(姓)チェック
-      checkEmployeeFirstname(errorMessageList, param.employeeFirstname);
+      checkEmployeeFirstname(errorMessageList, param.employeeFirstName);
       //社員名(名)チェック
-      checkEmployeeLastname(errorMessageList, param.employeeLastname);
+      checkEmployeeLastname(errorMessageList, param.employeeLastName);
       //スタッフコードチェック
       checkStaffCode(errorMessageList, param.staffCode);
       //誕生日チェック
@@ -559,126 +557,6 @@ class SUbCompanyLogic {
       }
       resolve();
     });
-
-    // /**
-    //  * 社員IDをチェックします。
-    //  *
-    //  * @param {object} errorMessageList エラーメッセージリストです。
-    //  * @param {string} value 入力内容です。
-    //  */
-    // function checkEmployeeId(errorMessageList, value) {
-    //   //未入力チェックです。
-    //   var errorMessage1 = commonLogic.checkEmpty(
-    //     value,
-    //     colum.EMPLOYEE_ID,
-    //     true
-    //   );
-    //   if (!util.isEmpty(errorMessage1)) {
-    //     errorMessageList.push(errorMessage1);
-    //     return;
-    //   }
-    //   //型チェックです。
-    //   var errorMessage2 = commonLogic.checkType(
-    //     value,
-    //     colum.EMPLOYEE_ID,
-    //     type.STRING
-    //   );
-    //   if (!util.isEmpty(errorMessage2)) {
-    //     errorMessageList.push(errorMessage2);
-    //     return;
-    //   }
-    //   //半角文字チェックです。
-    //   var errorMessage3 = commonLogic.chehckFormat(
-    //     value,
-    //     colum.EMPLOYEE_ID,
-    //     format.HALF
-    //   );
-    //   if (!util.isEmpty(errorMessage3)) {
-    //     errorMessageList.push(errorMessage3);
-    //     return;
-    //   }
-    // }
-
-    // /**
-    //  * 契約IDをチェックします。
-    //  *
-    //  * @param {object} errorMessageList エラーメッセージリストです。
-    //  * @param {string} value 入力内容です。
-    //  */
-    // function checkContractorId(errorMessageList, value) {
-    //   //未入力チェックです。
-    //   var errorMessage1 = commonLogic.checkEmpty(
-    //     value,
-    //     colum.CONTRACTOR_ID,
-    //     true
-    //   );
-    //   if (!util.isEmpty(errorMessage1)) {
-    //     errorMessageList.push(errorMessage1);
-    //     return;
-    //   }
-    //   //型チェックです。
-    //   var errorMessage2 = commonLogic.checkType(
-    //     value,
-    //     colum.CONTRACTOR_ID,
-    //     type.STRING
-    //   );
-    //   if (!util.isEmpty(errorMessage2)) {
-    //     errorMessageList.push(errorMessage2);
-    //     return;
-    //   }
-    //   //半角文字チェックです。
-    //   var errorMessage3 = commonLogic.chehckFormat(
-    //     value,
-    //     colum.CONTRACTOR_ID,
-    //     format.HALF
-    //   );
-    //   if (!util.isEmpty(errorMessage3)) {
-    //     errorMessageList.push(errorMessage3);
-    //     return;
-    //   }
-    // }
-
-    /**
-     * ログインIDをチェックします。
-     *
-     * @param {object} errorMessageList エラーメッセージリストです。
-     * @param {string} value 入力内容です。
-     */
-    function checkLoginId(errorMessageList, value) {
-      //未入力チェックです。
-      var errorMessage1 = commonLogic.checkEmpty(value, colum.LOGIN_ID, true);
-      if (!util.isEmpty(errorMessage1)) {
-        errorMessageList.push(errorMessage1);
-        return;
-      }
-      //型チェックです。
-      var errorMessage2 = commonLogic.checkType(
-        value,
-        colum.LOGIN_ID,
-        type.STRING
-      );
-      if (!util.isEmpty(errorMessage2)) {
-        errorMessageList.push(errorMessage2);
-        return;
-      }
-      //半角文字チェックです。
-      var errorMessage3 = commonLogic.chehckFormat(
-        value,
-        colum.LOGIN_ID,
-        format.HALF
-      );
-      if (!util.isEmpty(errorMessage3)) {
-        errorMessageList.push(errorMessage3);
-        return;
-      }
-      //最大文字数チェックです。
-      var errorMessage4 = commonLogic.checkMaxLength(value, colum.LOGIN_ID, 50);
-      if (!util.isEmpty(errorMessage4)) {
-        errorMessageList.push(errorMessage4);
-        return;
-      }
-    }
-
     /**
      * パスワードをチェックします。
      *
@@ -1418,18 +1296,15 @@ class SUbCompanyLogic {
    * 協力会社員の入力値の存在チェックします。
    *
    * @param {string} param 画面パラメータです。
-   * @param {string} subEmployeeResponse 協力会社員情報です。
-   * @param {string} subCompanyResponse 協力会社情報です。
+   * @param {string} companyResponse 会社情報です。
    *
    * @returns
    */
-  checkSubCompnayEmployeeExistsData(param, employeeResponse, companyResponse) {
+  checkSubCompnayEmployeeExistsData(param, companyResponse) {
     return new Promise(function (resolve, reject) {
       var errorMessageList = [];
-      //ログインIDチェック
-      checkLoginId(errorMessageList, param.loginId, employeeResponse);
       //協力会社チェック
-      checkSubCompanyId(errorMessageList, param.subCompanyId, companyResponse);
+      checkSubCompanyId(errorMessageList, param.companyId, companyResponse);
       var data = {};
       //エラーがある場合
       if (errorMessageList.length !== 0) {
@@ -1441,28 +1316,8 @@ class SUbCompanyLogic {
       }
       resolve();
     });
-
     /**
-     * ログインIDをチェックします。
-     *
-     * @param {object} errorMessageList エラーメッセージリストです。
-     * @param {string} value 入力内容です。
-     * @param {string} employeeResponse 協力会社員情報です。
-     */
-    function checkLoginId(errorMessageList, value, employeeResponse) {
-      var errorMessage1 = commonLogic.checkDuplicate(
-        value,
-        employeeResponse,
-        colum.LOGIN_ID
-      );
-      if (!util.isEmpty(errorMessage1)) {
-        errorMessageList.push(errorMessage1);
-        return;
-      }
-      return errorMessageList;
-    }
-    /**
-     * 工種をチェックします。
+     * 協力会社IDをチェックします。
      *
      * @param {object} errorMessageList エラーメッセージリストです。
      * @param {string} value 入力内容です。
@@ -1515,6 +1370,18 @@ class SUbCompanyLogic {
   }
 
   /**
+   * 電話番号を国際電話形式に変換します。
+   * @param {String} tel1 変換前の電話番号1です。
+   * @param {String} tel2 変換前の電話番号2です。
+   * @param {String} tel3 変換前の電話番号3です。
+   *
+   * @returns
+   */
+  convertTelNumberForGlobal(tel1, tel2, tel3) {
+    return commonLogic.convertTelNumberForGlobal(tel1, tel2, tel3);
+  }
+
+  /**
    * サクセスメッセージを作成します。
    *
    * @returns {string} サクセスメッセージです。
@@ -1524,12 +1391,14 @@ class SUbCompanyLogic {
   }
 
   /**
-   * システムエラーメッセージを作成します。
+   * logicやfirebaseから受け取ったエラー情報をもとに返却するエラーレスポンスを作成します。
    *
-   * @returns {string} システムエラーメッセージです。
+   * @param {object} err エラー情報です。
+   *
+   * @returns 返却するエラーレスポンスです。
    */
-  createSytemErrorMessage() {
-    return errorMessage.SYSTEM_ERROR;
+  createErrorResponse(err) {
+    return commonLogic.createErrorResponse(err);
   }
 }
 

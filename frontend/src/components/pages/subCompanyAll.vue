@@ -633,7 +633,7 @@
                   <div v-if="subEmployeeEditFlag">
                     <v-col>
                       <v-text-field
-                        v-model="subEmployeeEditItem.employeeFirstname"
+                        v-model="subEmployeeEditItem.employeeFirstName"
                         :rules="employeeFirstnameRules"
                         label="名前(姓)"
                         maxlength="25"
@@ -645,7 +645,7 @@
                     </v-col>
                     <v-col>
                       <v-text-field
-                        v-model="subEmployeeEditItem.employeeLastname"
+                        v-model="subEmployeeEditItem.employeeLastName"
                         :rules="employeeLastnameRules"
                         label="名前(名)"
                         maxlength="25"
@@ -781,7 +781,11 @@
                 <v-col cols="3">
                   <div class="item-title">Mail</div>
                 </v-col>
-                <v-col cols="2"> </v-col>
+                <v-col cols="2">
+                  <div v-if="subEmployeeEditFlag" class="item-required">
+                    <v-chip color="red" dark>必須</v-chip>
+                  </div>
+                </v-col>
                 <v-col cols="12" sm="6" md="6">
                   <div v-if="!subEmployeeEditFlag" class="dialog-label">
                     {{ subEmployeeEditItem.mailAddress }}
@@ -846,33 +850,6 @@
                       label=""
                       outlined
                       dense
-                    ></v-text-field>
-                  </div>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col cols="3">
-                  <div class="item-title">ログインID</div>
-                </v-col>
-                <v-col cols="2">
-                  <div v-if="subEmployeeEditFlag" class="item-required">
-                    <v-chip color="red" dark>必須</v-chip>
-                  </div>
-                </v-col>
-                <v-col cols="12" sm="6" md="6">
-                  <div v-if="!subEmployeeEditFlag" class="dialog-label">
-                    {{ subEmployeeEditItem.loginId }}
-                  </div>
-                  <div v-if="subEmployeeEditFlag">
-                    <v-text-field
-                      v-model="subEmployeeEditItem.loginId"
-                      :rules="employeeIdRules"
-                      label="(例)abc001"
-                      maxlength="50"
-                      clearable
-                      clear-icon="mdi-close-circle"
-                      outlined
-                      required
                     ></v-text-field>
                   </div>
                 </v-col>
@@ -1102,10 +1079,9 @@ export default {
       v => (!!v && v.length <= 7) || "職員コードは最大7文字です。"
     ],
     birthdayRules: [v => !!v || "生年月日が未入力です。"],
-    mailAddressRules: [],
-    employeeIdRules: [
-      v => !!v || "ログインIDが未入力です。",
-      v => (!!v && v.length <= 50) || `ログインIDは最大50文字です。`
+    mailAddressRules: [
+      v => !!v || "メールアドレスが未入力です。",
+      v => (!!v && v.length <= 100) || "メールアドレスは最大100文字です。"
     ],
     passwordRules: [
       v => !!v || "パスワードが未入力です。",
@@ -1360,15 +1336,14 @@ export default {
         );
         subCompanyId = selectSubCompanyId.subCompanyId;
       }
-      console.log(subCompanyId);
       if (this.subEmployeeEditFlag) {
         const param = {
           contractorId: this.contractorId,
           userId: this.userId,
           companyId: subCompanyId,
           employeeId: this.subEmployeeEditItem.employeeId,
-          employeeFirstname: this.subEmployeeEditItem.employeeFirstname,
-          employeeLastname: this.subEmployeeEditItem.employeeLastname,
+          employeeFirstName: this.subEmployeeEditItem.employeeFirstName,
+          employeeLastName: this.subEmployeeEditItem.employeeLastName,
           loginId: this.subEmployeeEditItem.loginId,
           password: this.subEmployeeEditItem.password,
           birthday: this.subEmployeeEditItem.birthday,
@@ -1545,10 +1520,10 @@ function createSubEmployeeList(response) {
       )
     };
     subEmployee.employeeName =
-      subEmployeeResponse[i].employeeFirstname +
-      subEmployeeResponse[i].employeeLastname;
-    subEmployee.employeeFirstname = subEmployeeResponse[i].employeeFirstname;
-    subEmployee.employeeLastname = subEmployeeResponse[i].employeeLastname;
+      subEmployeeResponse[i].employeeFirstName +
+      subEmployeeResponse[i].employeeLastName;
+    subEmployee.employeeFirstName = subEmployeeResponse[i].employeeFirstName;
+    subEmployee.employeeLastName = subEmployeeResponse[i].employeeLastName;
     subEmployee.birthday = subEmployeeResponse[i].birthday;
     subEmployee.staffCode = subEmployeeResponse[i].staffCode;
     subEmployee.address = subEmployeeResponse[i].address;

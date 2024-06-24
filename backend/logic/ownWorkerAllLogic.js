@@ -66,84 +66,6 @@ class OwnWorkerAllLogic {
       resolve();
     });
 
-    // /**
-    //  * 社員IDをチェックします。
-    //  *
-    //  * @param {object} errorMessageList エラーメッセージリストです。
-    //  * @param {string} value 入力内容です。
-    //  */
-    // function checkEmployeeId(errorMessageList, value) {
-    //   //未入力チェックです。
-    //   var errorMessage1 = commonLogic.checkEmpty(
-    //     value,
-    //     colum.EMPLOYEE_ID,
-    //     true
-    //   );
-    //   if (!util.isEmpty(errorMessage1)) {
-    //     errorMessageList.push(errorMessage1);
-    //     return;
-    //   }
-    //   //型チェックです。
-    //   var errorMessage2 = commonLogic.checkType(
-    //     value,
-    //     colum.EMPLOYEE_ID,
-    //     type.STRING
-    //   );
-    //   if (!util.isEmpty(errorMessage2)) {
-    //     errorMessageList.push(errorMessage2);
-    //     return;
-    //   }
-    //   //半角文字チェックです。
-    //   var errorMessage3 = commonLogic.chehckFormat(
-    //     value,
-    //     colum.EMPLOYEE_ID,
-    //     format.HALF
-    //   );
-    //   if (!util.isEmpty(errorMessage3)) {
-    //     errorMessageList.push(errorMessage3);
-    //     return;
-    //   }
-    // }
-
-    // /**
-    //  * 契約IDをチェックします。
-    //  *
-    //  * @param {object} errorMessageList エラーメッセージリストです。
-    //  * @param {string} value 入力内容です。
-    //  */
-    // function checkContractorId(errorMessageList, value) {
-    //   //未入力チェックです。
-    //   var errorMessage1 = commonLogic.checkEmpty(
-    //     value,
-    //     colum.CONTRACTOR_ID,
-    //     true
-    //   );
-    //   if (!util.isEmpty(errorMessage1)) {
-    //     errorMessageList.push(errorMessage1);
-    //     return;
-    //   }
-    //   //型チェックです。
-    //   var errorMessage2 = commonLogic.checkType(
-    //     value,
-    //     colum.CONTRACTOR_ID,
-    //     type.STRING
-    //   );
-    //   if (!util.isEmpty(errorMessage2)) {
-    //     errorMessageList.push(errorMessage2);
-    //     return;
-    //   }
-    //   //半角文字チェックです。
-    //   var errorMessage3 = commonLogic.chehckFormat(
-    //     value,
-    //     colum.CONTRACTOR_ID,
-    //     format.HALF
-    //   );
-    //   if (!util.isEmpty(errorMessage3)) {
-    //     errorMessageList.push(errorMessage3);
-    //     return;
-    //   }
-    // }
-
     /**
      * ログインIDをチェックします。
      *
@@ -222,6 +144,17 @@ class OwnWorkerAllLogic {
       var errorMessage4 = commonLogic.checkMaxLength(value, colum.PASSWORD, 50);
       if (!util.isEmpty(errorMessage4)) {
         errorMessageList.push(errorMessage4);
+        return;
+      }
+      //入力範囲チェックです。
+      var errorMessage5 = commonLogic.checkInputRange(
+        value,
+        colum.PASSWORD,
+        6,
+        50
+      );
+      if (!util.isEmpty(errorMessage5)) {
+        errorMessageList.push(errorMessage5);
         return;
       }
     }
@@ -303,115 +236,6 @@ class OwnWorkerAllLogic {
         return;
       }
     }
-
-    // /**
-    //  * 会社IDをチェックします。
-    //  *
-    //  * @param {object} errorMessageList エラーメッセージリストです。
-    //  * @param {string} value 入力内容です。
-    //  */
-    // function checkCompanyId(errorMessageList, value) {
-    //   //未入力チェックです。
-    //   var errorMessage1 = commonLogic.checkEmpty(value, colum.COMPANY_ID, true);
-    //   if (!util.isEmpty(errorMessage1)) {
-    //     errorMessageList.push(errorMessage1);
-    //     return;
-    //   }
-    //   //型チェックです。
-    //   var errorMessage2 = commonLogic.checkType(
-    //     value,
-    //     colum.COMPANY_ID,
-    //     type.STRING
-    //   );
-    //   if (!util.isEmpty(errorMessage2)) {
-    //     errorMessageList.push(errorMessage2);
-    //     return;
-    //   }
-    //   //半角文字チェックです。
-    //   var errorMessage3 = commonLogic.chehckFormat(
-    //     value,
-    //     colum.COMPANY_ID,
-    //     format.HALF
-    //   );
-    //   if (!util.isEmpty(errorMessage3)) {
-    //     errorMessageList.push(errorMessage3);
-    //     return;
-    //   }
-    // }
-
-    // /**
-    //  * 役職IDをチェックします。
-    //  *
-    //  * @param {object} errorMessageList エラーメッセージリストです。
-    //  * @param {string} value 入力内容です。
-    //  */
-    // function checkPostId(errorMessageList, value) {
-    //   //未入力チェックです。
-    //   var errorMessage1 = commonLogic.checkEmpty(value, colum.POST_ID, true);
-    //   if (!util.isEmpty(errorMessage1)) {
-    //     errorMessageList.push(errorMessage1);
-    //     return;
-    //   }
-    //   //型チェックです。
-    //   var errorMessage2 = commonLogic.checkType(
-    //     value,
-    //     colum.POST_ID,
-    //     type.STRING
-    //   );
-    //   if (!util.isEmpty(errorMessage2)) {
-    //     errorMessageList.push(errorMessage2);
-    //     return;
-    //   }
-    //   //半角文字チェックです。
-    //   var errorMessage3 = commonLogic.chehckFormat(
-    //     value,
-    //     colum.POST_ID,
-    //     format.HALF
-    //   );
-    //   if (!util.isEmpty(errorMessage3)) {
-    //     errorMessageList.push(errorMessage3);
-    //     return;
-    //   }
-    // }
-
-    // /**
-    //  * 出退勤IDをチェックします。
-    //  *
-    //  * @param {object} errorMessageList エラーメッセージリストです。
-    //  * @param {string} value 入力内容です。
-    //  */
-    // function checkAttendanceId(errorMessageList, value) {
-    //   //未入力チェックです。
-    //   var errorMessage1 = commonLogic.checkEmpty(
-    //     value,
-    //     colum.ATTENDANCE_ID,
-    //     true
-    //   );
-    //   if (!util.isEmpty(errorMessage1)) {
-    //     errorMessageList.push(errorMessage1);
-    //     return;
-    //   }
-    //   //型チェックです。
-    //   var errorMessage2 = commonLogic.checkType(
-    //     value,
-    //     colum.ATTENDANCE_ID,
-    //     type.STRING
-    //   );
-    //   if (!util.isEmpty(errorMessage2)) {
-    //     errorMessageList.push(errorMessage2);
-    //     return;
-    //   }
-    //   //半角文字チェックです。
-    //   var errorMessage3 = commonLogic.chehckFormat(
-    //     value,
-    //     colum.ATTENDANCE_ID,
-    //     format.HALF
-    //   );
-    //   if (!util.isEmpty(errorMessage3)) {
-    //     errorMessageList.push(errorMessage3);
-    //     return;
-    //   }
-    // }
 
     /**
      * スタッフコードをチェックします。
@@ -1256,12 +1080,14 @@ class OwnWorkerAllLogic {
   }
 
   /**
-   * システムエラーメッセージを作成します。
+   * logicやfirebaseから受け取ったエラー情報をもとに返却するエラーレスポンスを作成します。
    *
-   * @returns {string} システムエラーメッセージです。
+   * @param {object} err エラー情報です。
+   *
+   * @returns 返却するエラーレスポンスです。
    */
-  createSytemErrorMessage() {
-    return errorMessage.SYSTEM_ERROR;
+  createErrorResponse(err) {
+    return commonLogic.createErrorResponse(err);
   }
 }
 

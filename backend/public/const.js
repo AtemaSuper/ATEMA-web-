@@ -19,7 +19,7 @@ ErrorMessage.IS_NOT_DATE_FORMAT = "{0}は日付形式です。";
 /** {0}は最大{1}文字です。 */
 ErrorMessage.IS_OVER_MAX_LENGTH = "{0}は最大{1}文字です。";
 /** {0}の入力範囲は{1}です。 */
-ErrorMessage.IS_NOT_INPUT_RANGE = "{0}の入力範囲は{1}です。";
+ErrorMessage.IS_NOT_INPUT_RANGE = "{0}の入力範囲は{1}文字です。";
 /** {0}は存在しない値です。 */
 ErrorMessage.IS_NOT_EXISTS = "{0}は存在しない値です。";
 

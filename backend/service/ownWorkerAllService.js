@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 
-//協力会社Logic
+//自社員Logic
 const OwnWorkerAllLogic = require("../logic/ownWorkerAllLogic");
 var ownWorkerAllLogic = new OwnWorkerAllLogic();
 //客先テーブル
@@ -13,25 +13,106 @@ var postDao = new PostDao();
 //Authentication
 const authenticationDao = require("../middle/dao/authenticationDao");
 const authentication = new authenticationDao();
+//共通変数
+var employeeResponse = [];
+var postResponse = [];
+var checkResult = false;
+var messageList = [];
+
+/**
+ * 社員情報取得処理
+ *
+ * @param {string} contractorId 会社IDです。
+ * @returns
+ */
+const selectEmployeeAll = function (contractorId) {
+  return new Promise(function (resolve, reject) {
+    employeeDao
+      .selectEmployeeAll(contractorId)
+      .then(function (items) {
+        employeeResponse = items;
+        resolve(items);
+      })
+      .catch(function (err) {
+        reject(err);
+      });
+  });
+};
+
+/**
+ * 役職情報取得処理
+ *
+ * @param {string} contractorId 会社IDです。
+ * @returns
+ */
+const selectPostAll = function (contractorId) {
+  return new Promise(function (resolve, reject) {
+    postDao
+      .selectPostAll(contractorId)
+      .then(function (items) {
+        postResponse = items;
+        resolve(items);
+      })
+      .catch(function (err) {
+        reject(err);
+      });
+  });
+};
+
+/**
+ * 会社員情報重複チェック処理
+ *
+ * @param {string} contractorId 会社IDです。
+ * @param {string} param パラメータです。
+ * @returns
+ */
+const checkEmployeeExistsData = function (contractorId, param) {
+  return new Promise(function (resolve, reject) {
+    selectEmployeeAll(contractorId)
+      .then(function (items) {
+        return ownWorkerAllLogic.checkEmployeeExistsData(param, items);
+      })
+      .then(function () {
+        resolve();
+      })
+      .catch(function (err) {
+        reject(err);
+      });
+  });
+};
+
+/**
+ * 役職情報重複チェック処理
+ *
+ * @param {string} contractorId 会社IDです。
+ * @param {string} param パラメータです。
+ * @returns
+ */
+const checkPostExistsData = function (contractorId, param) {
+  return new Promise(function (resolve, reject) {
+    selectPostAll(contractorId)
+      .then(function (items) {
+        return ownWorkerAllLogic.checkPostExistsData(param, items);
+      })
+      .then(function () {
+        resolve();
+      })
+      .catch(function (err) {
+        reject(err);
+      });
+  });
+};
 
 /**
  * 自社員管理画面のService
  */
 //自社員編集の初期表示処理です。
 app.post("/", async function (req, res) {
-  var employeeResponse = {};
-  var postResponse = {};
-  //社員テーブルから社員情報を取得します。
-  await employeeDao
-    .selectEmployeeAll(req.body.contractorId)
-    .then(function (items) {
-      employeeResponse = items;
-      //役職テーブルから役職情報を取得します。
-      return postDao.selectPostAll(req.body.contractorId);
-    })
-    .then(function (items) {
-      postResponse = items;
-
+  const promises = [];
+  promises.push(selectEmployeeAll(req.body.contractorId));
+  promises.push(selectPostAll(req.body.contractorId));
+  Promise.all(promises)
+    .then(function () {
       //返却用のdata
       var data = {
         employeeResponse: employeeResponse,
@@ -41,73 +122,40 @@ app.post("/", async function (req, res) {
       res.status(200).json(data);
     })
     .catch(function (err) {
-      console.log(err);
-
-      res.status(500).json(err);
+      err = ownWorkerAllLogic.createErrorResponse(err);
+      res.status(err.status).json(err);
     });
 });
+
 //社員編集の入力情報を保存します。
 app.post("/saveEmployee", async function (req, res) {
-  var employeeResponse = {};
-  var postResponse = {};
-  var userResponse = {}; //チェック用
-  var postCheckResponse = {}; //チェック用
-  var checkResult = false;
-  var messageList = [];
   var isNew = req.body.employeeId == ""; //true：新規追加、false：更新
-  //入力値チェックします。
-  await ownWorkerAllLogic
-    .checkEmployeeInputData(req.body)
+  const promises = [];
+  promises.push(ownWorkerAllLogic.checkEmployeeInputData(req.body));
+  promises.push(checkPostExistsData(req.body.contractorId, req.body));
+  promises.push(checkEmployeeExistsData(req.body.contractorId, req.body));
+  Promise.all(promises)
     .then(function () {
-      //役職テーブルから役職情報を取得します。
-      return postDao.selectPostAll(req.body.contractorId);
+      // Authenticationに入力内容を登録します。
+      return authentication.updateUserForFirebase(req.body, isNew);
     })
     .then(function (items) {
-      postCheckResponse = items;
-      //入力値の存在チェックします。
-      return ownWorkerAllLogic.checkPostExistsData(req.body, postCheckResponse);
-    })
-    .then(function () {
-      //社員テーブルから社員情報を取得します。
-      return employeeDao.selectEmployeeAll(req.body.contractorId);
-    })
-    .then(function (items) {
-      userResponse = items;
-      //入力値の存在チェックします。
-      return ownWorkerAllLogic.checkEmployeeExistsData(req.body, userResponse);
-    })
-    .then(function () {
+      if (isNew) {
+        req.body.employeeId = items.employeeId;
+      }
       //社員テーブルに社員情報を保存します。
       return employeeDao.saveEmployee(req.body);
     })
-    .then(function (data) {
-      checkResult = data.checkResult;
-      messageList = data.messageList;
-      req.body.employeeId = data.employeeId;
-      // FirestoreのAuthentication処理
-      // 電話番号を国際電話形式に変換
-      req.body.telNumber = ownWorkerAllLogic.convertTelNumberForGlobal(
-        req.body.telNumber1,
-        req.body.telNumber2,
-        req.body.telNumber3
-      );
-      if (isNew) {
-        return authentication.createUserForFirebase(req.body);
-      } else {
-        return authentication.updateUserForFirebase(req.body);
-      }
-    })
-    .then(function (data) {
-      //社員テーブルから社員情報を取得します。
-      return employeeDao.selectEmployeeAll(req.body.contractorId);
-    })
     .then(function (items) {
-      employeeResponse = items;
-      //役職テーブルから役職情報を取得します。
-      return postDao.selectPostAll(req.body.contractorId);
+      checkResult = items.checkResult;
+      messageList = items.messageList;
+      // 画面の最新情報を取得します。
+      const promises = [];
+      promises.push(selectEmployeeAll(req.body.contractorId));
+      promises.push(selectPostAll(req.body.contractorId));
+      return Promise.all(promises);
     })
-    .then(function (items) {
-      postResponse = items;
+    .then(function () {
       //返却用のdata
       var data = {
         employeeResponse: employeeResponse,
@@ -118,24 +166,12 @@ app.post("/saveEmployee", async function (req, res) {
       res.status(200).json(data);
     })
     .catch(function (err) {
-      console.log(err);
-      //サーバー側での入力値チェックエラーです。
-      if (err.messageList) {
-        res.status(400).json(err);
-        //サーバー側でのシステムエラーです。
-      } else {
-        err.checkResult = false;
-        err.messageList.push(ownWorkerAllLogic.createSytemErrorMessage());
-        res.status(500).json(err);
-      }
+      err = ownWorkerAllLogic.createErrorResponse(err);
+      res.status(err.status).json(err);
     });
 });
 //役職情報を保存します。
 app.post("/savePost", async function (req, res) {
-  var employeeResponse = {};
-  var postResponse = {};
-  var checkResult = false;
-  var messageList = [];
   //入力値チェックします。
   await ownWorkerAllLogic
     .checkPostInputData(req.body)
@@ -143,19 +179,16 @@ app.post("/savePost", async function (req, res) {
       //役職テーブルに役職情報を保存します。
       return postDao.savePost(req.body);
     })
-    .then(function (data) {
-      checkResult = data.checkResult;
-      messageList = data.messageList;
-      //社員テーブルから社員情報を取得します。
-      return employeeDao.selectEmployeeAll(req.body.contractorId);
-    })
     .then(function (items) {
-      employeeResponse = items;
-      //役職テーブルから役職情報を取得します。
-      return postDao.selectPostAll(req.body.contractorId);
+      checkResult = items.checkResult;
+      messageList = items.messageList;
+      // 画面の最新情報を取得します。
+      const promises = [];
+      promises.push(selectEmployeeAll(req.body.contractorId));
+      promises.push(selectPostAll(req.body.contractorId));
+      return Promise.all(promises);
     })
-    .then(function (items) {
-      postResponse = items;
+    .then(function () {
       //返却用のdata
       var data = {
         employeeResponse: employeeResponse,
@@ -166,44 +199,29 @@ app.post("/savePost", async function (req, res) {
       res.status(200).json(data);
     })
     .catch(function (err) {
-      console.log(err);
-      //サーバー側での入力値チェックエラーです。
-      if (err.messageList) {
-        res.status(400).json(err);
-        //サーバー側でのシステムエラーです。
-      } else {
-        err.checkResult = false;
-        err.messageList.push(ownWorkerAllLogic.createSytemErrorMessage());
-        res.status(500).json(err);
-      }
+      err = ownWorkerAllLogic.createErrorResponse(err);
+      res.status(err.status).json(err);
     });
 });
 //社員情報を削除します。
 app.post("/deleteEmployee", async function (req, res) {
-  var employeeResponse = {};
-  var postResponse = {};
-  var checkResult = false;
-  var messageList = [];
   //社員テーブルから社員情報を削除します。
   await employeeDao
     .deleteEmployee(req.body)
-    .then(function (data) {
-      checkResult = data.checkResult;
-      messageList = data.messageList;
+    .then(function (items) {
+      checkResult = items.checkResult;
+      messageList = items.messageList;
       //FirestoreのAuthenticationを削除します。
       return authentication.deleteUserForFirebase(req.body);
     })
     .then(function () {
-      //社員テーブルから社員情報を取得します。
-      return employeeDao.selectEmployeeAll(req.body.contractorId);
+      // 画面の最新情報を取得します。
+      const promises = [];
+      promises.push(selectEmployeeAll(req.body.contractorId));
+      promises.push(selectPostAll(req.body.contractorId));
+      return Promise.all(promises);
     })
-    .then(function (items) {
-      employeeResponse = items;
-      //役職テーブルから役職情報を取得します。
-      return postDao.selectPostAll(req.body.contractorId);
-    })
-    .then(function (items) {
-      postResponse = items;
+    .then(function () {
       //返却用のdata
       var data = {
         employeeResponse: employeeResponse,
@@ -214,40 +232,24 @@ app.post("/deleteEmployee", async function (req, res) {
       res.status(200).json(data);
     })
     .catch(function (err) {
-      console.log(err);
-      //サーバー側での入力値チェックエラーです。
-      if (err.messageList) {
-        res.status(400).json(err);
-        //サーバー側でのシステムエラーです。
-      } else {
-        err.checkResult = false;
-        err.messageList.push(ownWorkerAllLogic.createSytemErrorMessage());
-        res.status(500).json(err);
-      }
+      err = ownWorkerAllLogic.createErrorResponse(err);
+      res.status(err.status).json(err);
     });
 });
 //役職情報を削除します。
 app.post("/deletePost", async function (req, res) {
-  var employeeResponse = {};
-  var postResponse = {};
-  var checkResult = false;
-  var messageList = [];
-  //役職テーブルから役職情報を削除します。
   await postDao
     .deletePost(req.body)
-    .then(function (data) {
-      checkResult = data.checkResult;
-      messageList = data.messageList;
-      //社員テーブルから社員情報を取得します。
-      return employeeDao.selectEmployeeAll(req.body.contractorId);
-    })
     .then(function (items) {
-      employeeResponse = items;
-      //役職テーブルから役職情報を取得します。
-      return postDao.selectPostAll(req.body.contractorId);
+      checkResult = items.checkResult;
+      messageList = items.messageList;
+      // 画面の最新情報を取得します。
+      const promises = [];
+      promises.push(selectEmployeeAll(req.body.contractorId));
+      promises.push(selectPostAll(req.body.contractorId));
+      return Promise.all(promises);
     })
-    .then(function (items) {
-      postResponse = items;
+    .then(function () {
       //返却用のdata
       var data = {
         employeeResponse: employeeResponse,
@@ -258,18 +260,12 @@ app.post("/deletePost", async function (req, res) {
       res.status(200).json(data);
     })
     .catch(function (err) {
-      console.log(err);
-      //サーバー側での入力値チェックエラーです。
-      if (err.messageList) {
-        res.status(400).json(err);
-        //サーバー側でのシステムエラーです。
-      } else {
-        err.checkResult = false;
-        err.messageList.push(ownWorkerAllLogic.createSytemErrorMessage());
-        res.status(500).json(err);
-      }
+      err = ownWorkerAllLogic.createErrorResponse(err);
+      res.status(err.status).json(err);
     });
 });
+
+// 以下、テスト
 //FirestoreのAuthenticationを保存します。(テスト)
 app.post("/testCreateAuthentication", async function (req, res) {
   await authentication

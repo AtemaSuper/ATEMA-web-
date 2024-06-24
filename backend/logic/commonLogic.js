@@ -191,7 +191,7 @@ class CommonLogic {
     if (column.EMPLOYEE_ID == colum) {
       check = response.find((res) => res.employeeId == value);
     }
-    if (check) {
+    if (!check) {
       return util.stringFormat(errorMessage.IS_NOT_EXISTS, colum);
     }
     return "";
@@ -222,6 +222,280 @@ class CommonLogic {
    */
   convertTelNumberForGlobal(tel1, tel2, tel3) {
     return "+81" + tel1.substr(1, tel1.length) + tel2 + tel3;
+  }
+
+  /**
+   * logicやfirebaseから受け取ったエラー情報をもとに返却するエラーレスポンスを作成します。
+   *
+   * @param {object} err エラー情報です。
+   *
+   * @returns 返却するエラーレスポンスです。
+   */
+  createErrorResponse(err) {
+    //サーバー側での入力値チェックエラーです。
+    if (err.messageList !== undefined) {
+      err.status = 400;
+      //firebase側でのチェックエラーです。
+    } else if (err.errorInfo !== undefined) {
+      err.checkResult = false;
+      err.status = createErrorStatusForFirebase(err.errorInfo.code);
+      err.messageList = [createErrorMessageForFirebase(err.errorInfo.code)];
+      //サーバー側でのシステムエラーです。
+    } else {
+      err.checkResult = false;
+      err.status = 500;
+      err.messageList = [errorMessage.SYSTEM_ERROR];
+    }
+    console.log(err);
+    return err;
+
+    /**
+     * firebaseから返却されるerrorInfoのcodeをもとにエラーメッセージを返却します。
+     *
+     * @param {String} code irebaseから返却されるerrorInfoのcodeです。
+     *
+     * @returns エラーメッセージ
+     */
+    function createErrorMessageForFirebase(code) {
+      switch (code) {
+        case "auth/claims-too-large":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/email-already-exists":
+          return "メールアドレスは既に存在する値です。";
+        case "auth/id-token-expired":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/id-token-revoked":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/insufficient-permission":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/internal-error":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-argument":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-claims":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-continue-uri":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-creation-time":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-credential":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-disabled-field":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-display-name":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-dynamic-link-domain":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-email":
+          return "メールアドレスが不正な値です。";
+        case "auth/invalid-email-verified":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-hash-algorithm":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-hash-block-size":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-hash-derived-key-length":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-hash-key":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-hash-memory-cost":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-hash-parallelization":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-hash-rounds":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-hash-salt-separator":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-id-token":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-last-sign-in-time":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-page-token":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-password":
+          return "パスワードが不正な値です。";
+        case "auth/invalid-password-hash":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-password-salt":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-phone-number":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-photo-url":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-provider-data":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-provider-id":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-oauth-responsetype":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-session-cookie-duration":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/invalid-uid":
+          return "employeeIdが不正な値です。";
+        case "auth/invalid-user-import":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/maximum-user-count-exceeded":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/missing-android-pkg-name":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/missing-continue-uri":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/missing-hash-algorithm":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/missing-ios-bundle-id":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/missing-uid":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/missing-oauth-client-secret":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/operation-not-allowed":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/phone-number-already-exists":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/project-not-found":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/reserved-claims":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/session-cookie-expired":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/session-cookie-revoked":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/too-many-requests":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/uid-already-exists":
+          return "employeeIdは既に存在する値です。";
+        case "auth/unauthorized-continue-uri":
+          return "システムエラーです。管理者に問い合わせてください。";
+        case "auth/user-not-found":
+          return "employeeIdは存在しない値です。";
+        default:
+          return "システムエラーです。管理者に問い合わせてください。";
+      }
+    }
+
+    /**
+     * firebaseから返却されるerrorInfoのcodeをもとにエラーステータスを返却します。
+     *
+     * @param {String} code irebaseから返却されるerrorInfoのcodeです。
+     *
+     * @returns ステータス
+     */
+    function createErrorStatusForFirebase(code) {
+      switch (code) {
+        case "auth/claims-too-large":
+          return 500;
+        case "auth/email-already-exists":
+          return 400;
+        case "auth/id-token-expired":
+          return 500;
+        case "auth/id-token-revoked":
+          return 500;
+        case "auth/insufficient-permission":
+          return 500;
+        case "auth/internal-error":
+          return 500;
+        case "auth/invalid-argument":
+          return 500;
+        case "auth/invalid-claims":
+          return 500;
+        case "auth/invalid-continue-uri":
+          return 500;
+        case "auth/invalid-creation-time":
+          return 500;
+        case "auth/invalid-credential":
+          return 500;
+        case "auth/invalid-disabled-field":
+          return 500;
+        case "auth/invalid-display-name":
+          return 500;
+        case "auth/invalid-dynamic-link-domain":
+          return 500;
+        case "auth/invalid-email":
+          return 400;
+        case "auth/invalid-email-verified":
+          return 500;
+        case "auth/invalid-hash-algorithm":
+          return 500;
+        case "auth/invalid-hash-block-size":
+          return 500;
+        case "auth/invalid-hash-derived-key-length":
+          return 500;
+        case "auth/invalid-hash-key":
+          return 500;
+        case "auth/invalid-hash-memory-cost":
+          return 500;
+        case "auth/invalid-hash-parallelization":
+          return 500;
+        case "auth/invalid-hash-rounds":
+          return 500;
+        case "auth/invalid-hash-salt-separator":
+          return 500;
+        case "auth/invalid-id-token":
+          return 500;
+        case "auth/invalid-last-sign-in-time":
+          return 500;
+        case "auth/invalid-page-token":
+          return 500;
+        case "auth/invalid-password":
+          return 400;
+        case "auth/invalid-password-hash":
+          return 500;
+        case "auth/invalid-password-salt":
+          return 500;
+        case "auth/invalid-phone-number":
+          return 500;
+        case "auth/invalid-photo-url":
+          return 500;
+        case "auth/invalid-provider-data":
+          return 500;
+        case "auth/invalid-provider-id":
+          return 500;
+        case "auth/invalid-oauth-responsetype":
+          return 500;
+        case "auth/invalid-session-cookie-duration":
+          return 500;
+        case "auth/invalid-uid":
+          return 400;
+        case "auth/invalid-user-import":
+          return 500;
+        case "auth/maximum-user-count-exceeded":
+          return 500;
+        case "auth/missing-android-pkg-name":
+          return 500;
+        case "auth/missing-continue-uri":
+          return 500;
+        case "auth/missing-hash-algorithm":
+          return 500;
+        case "auth/missing-ios-bundle-id":
+          return 500;
+        case "auth/missing-uid":
+          return 500;
+        case "auth/missing-oauth-client-secret":
+          return 500;
+        case "auth/operation-not-allowed":
+          return 500;
+        case "auth/phone-number-already-exists":
+          return 500;
+        case "auth/project-not-found":
+          return 500;
+        case "auth/reserved-claims":
+          return 500;
+        case "auth/session-cookie-expired":
+          return 500;
+        case "auth/session-cookie-revoked":
+          return 500;
+        case "auth/too-many-requests":
+          return 500;
+        case "auth/uid-already-exists":
+          return 400;
+        case "auth/unauthorized-continue-uri":
+          return 500;
+        case "auth/user-not-found":
+          return 400;
+        default:
+          return 400;
+      }
+    }
   }
 }
 module.exports = CommonLogic;

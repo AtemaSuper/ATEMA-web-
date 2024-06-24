@@ -157,10 +157,9 @@ class EmployeeDao {
         .collection("data");
       const responce = await employeeRef
         .add({
-          loginId: param.loginId,
           password: param.password,
-          employeeFirstname: param.employeeFirstname,
-          employeeLastname: param.employeeLastname,
+          employeeFirstName: param.employeeFirstName,
+          employeeLastName: param.employeeLastName,
           companyId: param.contractorId,
           postId: param.postId,
           staffCode: param.staffCode,
@@ -200,10 +199,9 @@ class EmployeeDao {
         .doc(param.employeeId);
       const responce = await employeeRef
         .update({
-          loginId: param.loginId,
           password: param.password,
-          employeeFirstname: param.employeeFirstname,
-          employeeLastname: param.employeeLastname,
+          employeeFirstName: param.employeeFirstName,
+          employeeFirstName: param.employeeLastName,
           postId: param.postId,
           staffCode: param.staffCode,
           birthday: param.birthday,
@@ -262,10 +260,9 @@ class EmployeeDao {
         .collection("data");
       const responce = await employeeRef
         .add({
-          loginId: param.loginId,
           password: param.password,
-          employeeFirstname: param.employeeFirstname,
-          employeeLastname: param.employeeLastname,
+          employeeFirstName: param.employeeFirstName,
+          employeeLastName: param.employeeLastName,
           companyId: param.companyId,
           staffCode: staffCode,
           birthday: param.birthday,
@@ -301,10 +298,9 @@ class EmployeeDao {
         .doc(param.employeeId);
       const responce = await employeeRef
         .update({
-          loginId: param.loginId,
           password: param.password,
-          employeeFirstname: param.employeeFirstname,
-          employeeLastname: param.employeeLastname,
+          employeeFirstName: param.employeeFirstName,
+          employeeLastName: param.employeeLastName,
           companyId: param.companyId,
           staffCode: staffCode,
           birthday: param.birthday,
