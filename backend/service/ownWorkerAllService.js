@@ -82,7 +82,7 @@ const checkEmployeeExistsData = function (contractorId, param) {
 };
 
 /**
- * 役職情報重複チェック処理
+ * 役職情報存在チェック処理
  *
  * @param {string} contractorId 会社IDです。
  * @param {string} param パラメータです。
@@ -150,10 +150,10 @@ app.post("/saveEmployee", async function (req, res) {
       checkResult = items.checkResult;
       messageList = items.messageList;
       // 画面の最新情報を取得します。
-      const promises = [];
-      promises.push(selectEmployeeAll(req.body.contractorId));
-      promises.push(selectPostAll(req.body.contractorId));
-      return Promise.all(promises);
+      const promises2 = [];
+      promises2.push(selectEmployeeAll(req.body.contractorId));
+      promises2.push(selectPostAll(req.body.contractorId));
+      return Promise.all(promises2);
     })
     .then(function () {
       //返却用のdata

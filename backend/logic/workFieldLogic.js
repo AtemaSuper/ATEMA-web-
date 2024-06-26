@@ -12,11 +12,11 @@ var type = constractor.Type;
 var format = constractor.Format;
 
 /**
- * 工事編集のLogicクラスです。
+ * 現場詳細編集のLogicクラスです。
  */
 class WorkFieldLogic {
   /**
-   * 工事編集の入力情報をチェックします。
+   * 現場詳細編集の入力情報をチェックします。
    *
    * @param {string} param 画面パラメータです。
    *
@@ -393,16 +393,18 @@ class WorkFieldLogic {
    * @returns {string} サクセスメッセージです。
    */
   createSuccessMessage(pageContents) {
-    return util.stringFormat(successMessage.SAVE_INPPUT, "工事情報");
+    return util.stringFormat(successMessage.SAVE_INPPUT, "現場詳細情報");
   }
 
   /**
-   * システムエラーメッセージを作成します。
+   * logicやfirebaseから受け取ったエラー情報をもとに返却するエラーレスポンスを作成します。
    *
-   * @returns {string} システムエラーメッセージです。
+   * @param {object} err エラー情報です。
+   *
+   * @returns 返却するエラーレスポンスです。
    */
-  createSytemErrorMessage() {
-    return errorMessage.SYSTEM_ERROR;
+  createErrorResponse(err) {
+    return commonLogic.createErrorResponse(err);
   }
 }
 

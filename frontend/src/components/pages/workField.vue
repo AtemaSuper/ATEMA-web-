@@ -1,17 +1,17 @@
 <template>
   <v-app id="workField">
-<!-- 工事一覧 -->
+<!-- 現場詳細一覧 -->
     <v-container>
-      <h2>工事一覧</h2>
+      <h2>現場詳細一覧</h2>
       <v-sheet color="white" rounded outlined>
         <v-row align="center" >
           <v-col cols="12" sm="4" md="2"></v-col>
           <v-col cols="12" sm="4" md="4"> </v-col>
           <v-col cols="12" sm="4" md="4"> </v-col>
           <v-col cols="12" sm="4" md="2">
-            <!-- 工事を追加するボタン -->
+            <!-- 現場詳細を追加するボタン -->
             <v-btn @click="showEditWorkField()" outlined elevation="3">
-              工事を追加
+              現場詳細を追加
               <v-icon color="#ff6669">mdi-plus</v-icon>
             </v-btn>
           </v-col>
@@ -67,7 +67,7 @@
           </v-data-table>
         </v-row>
       </v-sheet>
-<!-- 工事編集ダイアログ -->
+<!-- 現場詳細編集ダイアログ -->
       <v-dialog
       v-model="workFieldDialog"
       persistent
@@ -119,14 +119,14 @@
             </v-row>
             <v-row>
               <v-col cols="3">
-                <div class="item-title">工事件名</div>
+                <div class="item-title">現場詳細名</div>
               </v-col>
               <v-col cols="2">
                 <div class="item-required">
                   <v-chip color="red" dark>必須</v-chip></div>
               </v-col>
               <v-col>
-                <v-text-field v-model="editItem.workFieldDetailName" :rules="workFieldDetailNameRules" label="(例)工事件名１－ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
+                <v-text-field v-model="editItem.workFieldDetailName" :rules="workFieldDetailNameRules" label="(例)現場詳細名１－ABC" maxlength='100' clearable clear-icon="mdi-close-circle" outlined required></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -196,7 +196,7 @@ export default {
     workFieldList: [],
     tmpWorkFieldList: [],
     editItem: [],
-    worDialogName: '工事編集',
+    worDialogName: '現場詳細編集',
     workFieldDialog: false,
     JobName: '',
     searchWorkField:'',
@@ -211,8 +211,8 @@ export default {
     selectClientFieldRules: [v => !!v || "客先名が未入力です。"],
     selectWorkFieldRules: [v => !!v || "現場名が未入力です。"],
     workFieldDetailNameRules: [
-      v => !!v || "工事件名が未入力です。",
-      v => (!!v && v.length <= 50) || "工事件名は最大50文字です。"
+      v => !!v || "現場詳細名が未入力です。",
+      v => (!!v && v.length <= 50) || "現場詳細名は最大50文字です。"
     ],
     statusRules: [v => !!v || "客先名が未入力です。"],
     contractStatusRules: [v => !!v || "現場名が未入力です。"],
@@ -244,7 +244,7 @@ export default {
           width: '18%'
         },
         {
-          text: '工事件名',
+          text: '現場詳細名',
           value: 'workFieldDetailName',
           align: 'center',
           width: '18%'
@@ -273,7 +273,7 @@ export default {
       this.clientFieldList = createClientFieldList(response)
       this.workFieldList = createWorkFieldList(response)
     },
-    // 工事一覧の検索処理です。
+    // 現場詳細一覧の検索処理です。
     filterOnlyCapsText (value, search, item) {
       return value != null &&
           search != null &&
@@ -285,7 +285,7 @@ export default {
       // 編集の場合
       if(item !== undefined){
         this.editItem = item
-        this.worDialogName = '工事編集'
+        this.worDialogName = '現場詳細編集'
         this.isDisabledSelectWorkField = false;
         this.tmpWorkFieldList = createTmpWorkFieldList(this.editItem.selectClientField, this.workFieldList);
       // 追加の場合
@@ -295,7 +295,7 @@ export default {
           status: '0',
           contractStatus: '0'
         }
-        this.worDialogName = '工事追加'
+        this.worDialogName = '現場詳細追加'
         this.isDisabledSelectWorkField = true;
       }
       this.workFieldDialog = true
@@ -390,14 +390,14 @@ function createWorkFieldDetailList (response) {
   var workFieldDetailResponse = response.data.workFieldDetailResponse
   var workFieldResponse = response.data.workFieldResponse
   var clientFieldResponse = response.data.clientFieldResponse
-  // 工事一覧表示用に変換します。
+  // 現場詳細一覧表示用に変換します。
   var workFieldDetailList = []
   for (var i = 0; i < workFieldDetailResponse.length; i++) {
     var workFieldDetail = {}
     workFieldDetail.workFieldDetailId = workFieldDetailResponse[i].workFieldDetailId
     workFieldDetail.workFieldDetailName = workFieldDetailResponse[i].workFieldDetailName
     workFieldDetail.jobNo = workFieldDetailResponse[i].jobNo
-    // 選択中の工事件名を設定
+    // 選択中の現場詳細名を設定
     workFieldDetail.selectWorkField = {
       workFieldId: workFieldDetailResponse[i].workFieldId,
       workFieldName: getworkFieldName(

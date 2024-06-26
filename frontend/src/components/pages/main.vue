@@ -186,7 +186,7 @@
                               </v-row>
                               <v-row align="center">
                                 <v-col md="3">
-                                  <p>工事件名</p>
+                                  <p>現場詳細名</p>
                                 </v-col>
                                 <v-spacer />
                                 <v-col cols="12" md="6">

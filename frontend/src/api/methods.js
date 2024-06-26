@@ -135,7 +135,7 @@ export default {
   },
 
   /*
-    工事編集画面
+    現場詳細編集画面
   */
   // 初期表示処理
   getWorkFieldInfo(contractorId) {

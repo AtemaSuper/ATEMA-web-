@@ -259,9 +259,9 @@ app.post("/deleteSubEmployee", async function (req, res) {
   //役職テーブルから役職情報を削除します。
   await employeeDao
     .deleteSubEmployee(req.body)
-    .then(function (data) {
-      checkResult = data.checkResult;
-      messageList = data.messageList;
+    .then(function (items) {
+      checkResult = items.checkResult;
+      messageList = items.messageList;
       // 画面の最新情報を取得します。
       const promises = [];
       promises.push(selectSubCompanyAll(req.body.contractorId));

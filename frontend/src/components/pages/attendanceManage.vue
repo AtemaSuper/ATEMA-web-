@@ -437,7 +437,7 @@
               </v-row>
               <v-row>
                 <v-col cols="12" sm="4" md="4" align="right">
-                  <h4>工事件名:</h4>
+                  <h4>現場詳細名:</h4>
                 </v-col>
                 <v-col cols="12" sm="8" md="8" align="left">
                   <h4>
@@ -554,7 +554,7 @@
                         </v-row>
                         <v-row>
                           <v-col md="3">
-                            <p>工事件名</p>
+                            <p>現場詳細名</p>
                           </v-col>
                           <v-col md="3">
                             <v-chip color="red" dark>必須</v-chip>
