@@ -10,15 +10,22 @@ var contactDao = new ContactDao();
 //工種テーブル
 const WorkTypeDao = require("../middle/dao/workTypeDao");
 var workTypeDao = new WorkTypeDao();
+//共通変数
+var ownCompanyResponse = [];
+var workTypeResponse = [];
+var checkResult = false;
+var messageList = [];
 
-var ownCompanyResponse = {};
-var workTypeResponse = {};
-
-/** 会社情報を取得します。 */
+/**
+ * 自社情報取得処理
+ *
+ * @param {string} contractorId 会社IDです。
+ * @returns
+ */
 const contactFetchAll = function (contractorId) {
   return new Promise(function (resolve, reject) {
     contactDao
-      .selectContactAll(contractorId)
+      .selectContact(contractorId)
       .then(function (items) {
         ownCompanyResponse = items;
         resolve(items);
@@ -29,8 +36,13 @@ const contactFetchAll = function (contractorId) {
   });
 };
 
-/** 会社情報を取得します。 */
-const workTypeFetchAll = function (contractorId) {
+/**
+ * 工種情報取得処理
+ *
+ * @param {string} contractorId 会社IDです。
+ * @returns
+ */
+const selectWorkTypeAll = function (contractorId) {
   return new Promise(function (resolve, reject) {
     workTypeDao
       .selectWorkTypeAll(contractorId)
@@ -39,7 +51,29 @@ const workTypeFetchAll = function (contractorId) {
         resolve(items);
       })
       .catch(function (err) {
-        console.log(err, reject);
+        reject(err);
+      });
+  });
+};
+
+/**
+ * 工種情報存在チェック処理
+ *
+ * @param {string} contractorId 会社IDです。
+ * @param {string} param パラメータです。
+ * @returns
+ */
+const checkExistsData = function (contractorId, param) {
+  return new Promise(function (resolve, reject) {
+    selectWorkTypeAll(contractorId)
+      .then(function (items) {
+        return ownCompanyLogic.checkExistsData(param, items);
+      })
+      .then(function () {
+        resolve();
+      })
+      .catch(function (err) {
+        reject(err);
       });
   });
 };
@@ -51,10 +85,9 @@ const workTypeFetchAll = function (contractorId) {
 app.post("/", async function (req, res) {
   const promises = [];
   promises.push(contactFetchAll(req.body.contractorId));
-  promises.push(workTypeFetchAll(req.body.contractorId));
-
+  promises.push(selectWorkTypeAll(req.body.contractorId));
   Promise.all(promises)
-    .then(async function (result) {
+    .then(async function () {
       //返却用のdata
       var data = {
         ownCompanyResponse: ownCompanyResponse,
@@ -64,38 +97,31 @@ app.post("/", async function (req, res) {
       res.status(200).json(data);
     })
     .catch(function (err) {
-      console.log(err);
-
-      res.status(500).json(err);
+      err = ownCompanyLogic.createErrorResponse(err);
+      res.status(err.status).json(err);
     });
 });
 //自社設定の入力情報を保存します。
 app.post("/save", async function (req, res) {
-  //入力値チェックします。
-  await ownCompanyLogic
-    .checkInputData(req.body)
-    .then(function () {
-      //工種テーブルから工種情報を取得します。
-      return workTypeFetchAll(req.body.contractorId);
-    })
-    .then(function () {
-      //入力値の存在チェックします。
-      return ownCompanyLogic.checkExistsData(req.body, workTypeResponse);
-    })
+  const promises = [];
+  promises.push(ownCompanyLogic.checkInputData(req.body));
+  promises.push(checkExistsData(req.body.contractorId, req.body));
+  Promise.all(promises)
     .then(function () {
       //契約テーブルの自社情報を更新します。
       return contactDao.updateContact(req.body);
     })
-    .then(function (data) {
-      checkResult = data.checkResult;
-      messageList = data.messageList;
-      //契約テーブルから自社情報を取得します。
-      return contactFetchAll(req.body.contractorId);
-    })
     .then(function (items) {
-      ownCompanyResponse = items;
+      checkResult = items.checkResult;
+      messageList = items.messageList;
+      const promises2 = [];
+      promises2.push(contactFetchAll(req.body.contractorId));
+      promises2.push(selectWorkTypeAll(req.body.contractorId));
+      Promise.all(promises2);
+    })
+    .then(function () {
       //dataをレスポンスで返却します。
-      data = {
+      var data = {
         ownCompanyResponse: ownCompanyResponse,
         workTypeResponse: workTypeResponse,
         checkResult: checkResult,
@@ -104,16 +130,8 @@ app.post("/save", async function (req, res) {
       res.status(200).json(data);
     })
     .catch(function (err) {
-      console.log(err);
-      //サーバー側での入力値チェックエラーです。
-      if (err.messageList.length != 0) {
-        res.status(400).json(err);
-        //サーバー側でのシステムエラーです。
-      } else {
-        err.checkResult = false;
-        err.messageList.push(ownCompanyLogic.createSytemErrorMessage());
-        res.status(500).json(err);
-      }
+      err = ownCompanyLogic.createErrorResponse(err);
+      res.status(err.status).json(err);
     });
 });
 

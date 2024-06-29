@@ -6,7 +6,6 @@ const Util = require("../public/util");
 var util = new Util();
 const constractor = require("../public/const");
 var successMessage = constractor.SuccessMessage;
-var errorMessage = constractor.ErrorMessage;
 var colum = constractor.Colum;
 var type = constractor.Type;
 var format = constractor.Format;
@@ -790,198 +789,6 @@ class OwnCompanyLogic {
         return;
       }
     }
-
-    // /**
-    //  * 作成者IDをチェックします。
-    //  *
-    //  * @param {object} errorMessageList エラーメッセージリストです。
-    //  * @param {string} value 入力内容です。
-    //  */
-    // function checkCreateUserId(errorMessageList, value) {
-    //   //未入力チェックです。
-    //   var errorMessage1 = commonLogic.checkEmpty(
-    //     value,
-    //     colum.CREATE_USER_ID,
-    //     true
-    //   );
-    //   if (!util.isEmpty(errorMessage1)) {
-    //     errorMessageList.push(errorMessage1);
-    //     return;
-    //   }
-    //   //型チェックです。
-    //   var errorMessage2 = commonLogic.checkType(
-    //     value,
-    //     colum.CREATE_USER_ID,
-    //     type.STRING
-    //   );
-    //   if (!util.isEmpty(errorMessage2)) {
-    //     errorMessageList.push(errorMessage2);
-    //     return;
-    //   }
-    //   //半角数字チェックです。
-    //   var errorMessage3 = commonLogic.chehckFormat(
-    //     value,
-    //     colum.CREATE_USER_ID,
-    //     format.HALF
-    //   );
-    //   if (!util.isEmpty(errorMessage3)) {
-    //     errorMessageList.push(errorMessage3);
-    //     return;
-    //   }
-    //   //最大文字数チェックです。
-    //   var errorMessage4 = commonLogic.checkMaxLength(
-    //     value,
-    //     colum.CREATE_USER_ID,
-    //     3
-    //   );
-    //   if (!util.isEmpty(errorMessage4)) {
-    //     errorMessageList.push(errorMessage4);
-    //     return;
-    //   }
-    // }
-    // /**
-    //  * 作成日をチェックします。
-    //  *
-    //  * @param {object} errorMessageList エラーメッセージリストです。
-    //  * @param {string} value 入力内容です。
-    //  */
-    // function checkCreateDate(errorMessageList, value) {
-    //   //未入力チェックです。
-    //   var errorMessage1 = commonLogic.checkEmpty(
-    //     value,
-    //     colum.CREATE_DATE,
-    //     true
-    //   );
-    //   if (!util.isEmpty(errorMessage1)) {
-    //     errorMessageList.push(errorMessage1);
-    //     return;
-    //   }
-    //   //型チェックです。
-    //   var errorMessage2 = commonLogic.checkType(
-    //     value,
-    //     colum.CREATE_DATE,
-    //     type.STRING
-    //   );
-    //   if (!util.isEmpty(errorMessage2)) {
-    //     errorMessageList.push(errorMessage2);
-    //     return;
-    //   }
-    //   //時間形式チェックです。
-    //   var errorMessage3 = commonLogic.checkTimeFormat(value, colum.CREATE_DATE);
-    //   if (!util.isEmpty(errorMessage3)) {
-    //     errorMessageList.push(errorMessage3);
-    //     return;
-    //   }
-    // }
-
-    // /**
-    //  * 更新者IDをチェックします。
-    //  *
-    //  * @param {object} errorMessageList エラーメッセージリストです。
-    //  * @param {string} value 入力内容です。
-    //  */
-    // function checkUpdateUserId(errorMessageList, value) {
-    //   //未入力チェックです。
-    //   var errorMessage1 = commonLogic.checkEmpty(
-    //     value,
-    //     colum.UPDATE_USER_ID,
-    //     true
-    //   );
-    //   if (!util.isEmpty(errorMessage1)) {
-    //     errorMessageList.push(errorMessage1);
-    //     return;
-    //   }
-    //   //型チェックです。
-    //   var errorMessage2 = commonLogic.checkType(
-    //     value,
-    //     colum.UPDATE_USER_ID,
-    //     type.STRING
-    //   );
-    //   if (!util.isEmpty(errorMessage2)) {
-    //     errorMessageList.push(errorMessage2);
-    //     return;
-    //   }
-    //   //半角数字チェックです。
-    //   var errorMessage3 = commonLogic.chehckFormat(
-    //     value,
-    //     colum.UPDATE_USER_ID,
-    //     format.HALF
-    //   );
-    //   if (!util.isEmpty(errorMessage3)) {
-    //     errorMessageList.push(errorMessage3);
-    //     return;
-    //   }
-    //   //最大文字数チェックです。
-    //   var errorMessage4 = commonLogic.checkMaxLength(
-    //     value,
-    //     colum.UPDATE_USER_ID,
-    //     3
-    //   );
-    //   if (!util.isEmpty(errorMessage4)) {
-    //     errorMessageList.push(errorMessage4);
-    //     return;
-    //   }
-    // }
-
-    // /**
-    //  * 更新日をチェックします。
-    //  *
-    //  * @param {object} errorMessageList エラーメッセージリストです。
-    //  * @param {string} value 入力内容です。
-    //  */
-    // function checkUpdateDate(errorMessageList, value) {
-    //   //未入力チェックです。
-    //   var errorMessage1 = commonLogic.checkEmpty(
-    //     value,
-    //     colum.UPDATE_DATE,
-    //     true
-    //   );
-    //   if (!util.isEmpty(errorMessage1)) {
-    //     errorMessageList.push(errorMessage1);
-    //     return;
-    //   }
-    //   //型チェックです。
-    //   var errorMessage2 = commonLogic.checkType(
-    //     value,
-    //     colum.UPDATE_DATE,
-    //     type.STRING
-    //   );
-    //   if (!util.isEmpty(errorMessage2)) {
-    //     errorMessageList.push(errorMessage2);
-    //     return;
-    //   }
-    //   //時間形式チェックです。
-    //   var errorMessage3 = commonLogic.checkTimeFormat(value, colum.UPDATE_DATE);
-    //   if (!util.isEmpty(errorMessage3)) {
-    //     errorMessageList.push(errorMessage3);
-    //     return;
-    //   }
-    // }
-
-    // /**
-    //  * 削除フラグをチェックします。
-    //  *
-    //  * @param {object} errorMessageList エラーメッセージリストです。
-    //  * @param {string} value 入力内容です。
-    //  */
-    // function checkDeleteFlg(errorMessageList, value) {
-    //   //未入力チェックです。
-    //   var errorMessage1 = commonLogic.checkEmpty(value, colum.DELETE_FLG, true);
-    //   if (!util.isEmpty(errorMessage1)) {
-    //     errorMessageList.push(errorMessage1);
-    //     return;
-    //   }
-    //   //型チェックです。
-    //   var errorMessage2 = commonLogic.checkType(
-    //     value,
-    //     colum.DELETE_FLG,
-    //     type.BOOLEAN
-    //   );
-    //   if (!util.isEmpty(errorMessage2)) {
-    //     errorMessageList.push(errorMessage2);
-    //     return;
-    //   }
-    // }
   }
   /**
    * 自社設定の入力値の存在チェックします。
@@ -1059,12 +866,14 @@ class OwnCompanyLogic {
   }
 
   /**
-   * システムエラーメッセージを作成します。
+   * logicやfirebaseから受け取ったエラー情報をもとに返却するエラーレスポンスを作成します。
    *
-   * @returns {string} システムエラーメッセージです。
+   * @param {object} err エラー情報です。
+   *
+   * @returns 返却するエラーレスポンスです。
    */
-  createSytemErrorMessage() {
-    return errorMessage.SYSTEM_ERROR;
+  createErrorResponse(err) {
+    return commonLogic.createErrorResponse(err);
   }
 }
 

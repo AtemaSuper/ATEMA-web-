@@ -6,7 +6,6 @@ const Util = require("../public/util");
 var util = new Util();
 const constractor = require("../public/const");
 var successMessage = constractor.SuccessMessage;
-var errorMessage = constractor.ErrorMessage;
 var colum = constractor.Colum;
 var type = constractor.Type;
 var format = constractor.Format;

@@ -437,7 +437,7 @@ export default {
       attendancePatternList: [],
       attendanceTimehh: "",
       attendanceTimemm: "",
-      workingHours: "",
+      workingHours: 0,
       tardyTime: "0",
       roundingTime: "0",
       foundationMenu: false,
@@ -570,28 +570,6 @@ export default {
       this.attendancePatternList =
         response.data.ownCompanyResponse.attendancePattern;
     },
-    /** 時間詳細ダイアログ保存ボタン押下処理 */
-    focusoutTimeInput(item) {},
-    /** 時間詳細ダイアログ保存ボタン押下処理 */
-    updateAttendancePattern(column, item, items, index) {
-      // 勤怠開始時間の場合
-      if (column === "workStartTime") {
-        JSON.parse(JSON.stringify(this.attendancePatternList))[
-          index
-        ].workStartTime = items;
-        // 勤怠終了時間の場合
-      } else if (column === "workEndTime") {
-        JSON.parse(JSON.stringify(this.attendancePatternList))[
-          index
-        ].workEndTime = items;
-        // 勤怠時間
-      } else if (column === "workingHours") {
-        JSON.parse(JSON.stringify(this.attendancePatternList))[
-          index
-        ].workingHours = items;
-      }
-      console.log(this.attendancePatternList);
-    },
     /** 日付のフォーマット処理です。 */
 
     displayDateFormat(date) {
@@ -672,6 +650,10 @@ export default {
         }
         // 勤怠情報の保存ボタン押下の場合
       } else {
+        // typeにNumberつけてもNumber型になってくれないので変換
+        this.attendancePatternList = this.convertTypeForWorkingHours(
+          this.attendancePatternList
+        );
         const param = {
           contractorId: this.contractorId,
           userId: this.userId,
@@ -773,6 +755,15 @@ export default {
         subCompanyPullDown.push(workType);
       }
       return subCompanyPullDown;
+    },
+    /** workingHoursの方を変換します。 */
+    convertTypeForWorkingHours(attendancePatternList) {
+      for (var i = 0; i < attendancePatternList.length; i++) {
+        attendancePatternList[i].workingHours = Number(
+          attendancePatternList[i].workingHours
+        );
+      }
+      return attendancePatternList;
     }
   }
 };
