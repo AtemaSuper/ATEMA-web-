@@ -274,16 +274,8 @@ app.post("/testCreateAuthentication", async function (req, res) {
       res.status(200).json(uid);
     })
     .catch(function (err) {
-      console.log(err);
-      //サーバー側での入力値チェックエラーです。
-      if (err.messageList) {
-        res.status(400).json(err);
-        //サーバー側でのシステムエラーです。
-      } else {
-        err.checkResult = false;
-        err.messageList.push(ownWorkerAllLogic.createSytemErrorMessage());
-        res.status(500).json(err);
-      }
+      err = ownWorkerAllLogic.createErrorResponse(err);
+      res.status(err.status).json(err);
     });
 });
 //FirestoreのAuthenticationを更新します。(テスト)
@@ -294,16 +286,8 @@ app.post("/testUpdateAuthentication", async function (req, res) {
       res.status(200).json(uid);
     })
     .catch(function (err) {
-      console.log(err);
-      //サーバー側での入力値チェックエラーです。
-      if (err.messageList) {
-        res.status(400).json(err);
-        //サーバー側でのシステムエラーです。
-      } else {
-        err.checkResult = false;
-        err.messageList.push(ownWorkerAllLogic.createSytemErrorMessage());
-        res.status(500).json(err);
-      }
+      err = ownWorkerAllLogic.createErrorResponse(err);
+      res.status(err.status).json(err);
     });
 });
 //FirestoreのAuthenticationを削除します。(テスト)
@@ -314,16 +298,8 @@ app.post("/testDeleteAuthentication", async function (req, res) {
       res.status(200).json(uid);
     })
     .catch(function (err) {
-      console.log(err);
-      //サーバー側での入力値チェックエラーです。
-      if (err.messageList) {
-        res.status(400).json(err);
-        //サーバー側でのシステムエラーです。
-      } else {
-        err.checkResult = false;
-        err.messageList.push(ownWorkerAllLogic.createSytemErrorMessage());
-        res.status(500).json(err);
-      }
+      err = ownWorkerAllLogic.createErrorResponse(err);
+      res.status(err.status).json(err);
     });
 });
 module.exports = app;

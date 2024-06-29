@@ -413,7 +413,6 @@ function createWorkFieldDetailList (response) {
         clientFieldResponse
       )
     }
-    console.log(workFieldDetailResponse[i].status);
     workFieldDetail.status = String(workFieldDetailResponse[i].status)
     workFieldDetail.statusName = getStatusName(
       workFieldDetailResponse[i].status

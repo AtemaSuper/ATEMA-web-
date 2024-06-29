@@ -31,7 +31,7 @@ const contactFetchAll = function (contractorId) {
         resolve(items);
       })
       .catch(function (err) {
-        console.log(err, reject);
+        reject(err);
       });
   });
 };

@@ -47,7 +47,6 @@ var attendanceManageResponse = [];
 var clientFieldResponse = [];
 var contactResponse = [];
 var employeeResponse = [];
-var postResponse = {};
 var workFieldResponse = [];
 var workFieldDetailResponse = [];
 var selectJob = {};
@@ -106,7 +105,7 @@ const selectEmployee = function (contractorId, employeeId) {
         resolve(items);
       })
       .catch(function (err) {
-        console.log(err, reject);
+        reject(err);
       });
   });
 };
@@ -125,7 +124,7 @@ const employeeFecthAll = function (contractorId) {
         resolve(items);
       })
       .catch(function (err) {
-        console.log(err, reject);
+        reject(err);
       });
   });
 };
@@ -145,7 +144,7 @@ const contactFecthAll = function (contractorId) {
         resolve(items);
       })
       .catch(function (err) {
-        console.log(err, reject);
+        reject(err);
       });
   });
 };
@@ -164,7 +163,7 @@ const clientFieldFecthAll = function (contractorId) {
         resolve(items);
       })
       .catch(function (err) {
-        console.log(err, reject);
+        reject(err);
       });
   });
 };
@@ -183,7 +182,7 @@ const workFieldFecthAll = function (contractorId) {
         resolve(items);
       })
       .catch(function (err) {
-        console.log(err, reject);
+        reject(err);
       });
   });
 };
@@ -202,7 +201,7 @@ const workFieldDetailFecthAll = function (contractorId) {
         resolve(items);
       })
       .catch(function (err) {
-        console.log(err, reject);
+        reject(err);
       });
   });
 };
@@ -285,7 +284,7 @@ const attendanceManageFind = function (contractorId, employeeId) {
         resolve(items);
       })
       .catch(function (err) {
-        console.log(err, reject);
+        reject(err);
       });
   });
 };
@@ -305,7 +304,7 @@ const attendanceManageFindAll = function (contractorId) {
         resolve(items);
       })
       .catch(function (err) {
-        console.log(err, reject);
+        reject(err);
       });
   });
 };
@@ -502,7 +501,7 @@ const addAttendanceForSubEmployee = function (contractorId, subEmployeeItems) {
         resolve(subEmployeeItems);
       })
       .catch(function (err) {
-        console.log(err, reject);
+        reject(err);
       });
   });
 };
@@ -534,9 +533,8 @@ app.post("/showAttendanceDialog", async function (req, res) {
       res.status(200).json(data);
     })
     .catch((err) => {
-      console.log(err);
-
-      res.status(500).json(err);
+      err = mainLogic.createErrorResponse(err);
+      res.status(err.status).json(err);
     });
 });
 //勤怠先入力情報のチェック処理をします。
@@ -589,16 +587,8 @@ app.post("/check", async function (req, res) {
       res.status(200).json(data);
     })
     .catch((err) => {
-      console.log(err);
-      //サーバー側での入力値チェックエラーです。
-      if (err.messageList) {
-        res.status(400).json(err);
-        //サーバー側でのシステムエラーです。
-      } else {
-        err.checkResult = false;
-        err.messageList = mainLogic.createSytemErrorMessage();
-        res.status(500).json(err);
-      }
+      err = mainLogic.createErrorResponse(err);
+      res.status(err.status).json(err);
     });
 });
 
@@ -607,7 +597,7 @@ app.post("/save", async function (req, res) {
   const promises = [];
   const checkPromises = [];
 
-  promises.push(mainLogic.checkInputData(req.body.selectJob));
+  promises.push(mainLogic.checkInputData(req.body));
   promises.push(mainLogic.checkInputAttendanceData(req.body));
   promises.push(workFieldDetailFecthAll(req.body.contractorId));
   promises.push(employeeFecthAll(req.body.contractorId));
@@ -648,16 +638,8 @@ app.post("/save", async function (req, res) {
         res.status(200).json(data);
       })
       .catch((err) => {
-        console.log(err);
-        //サーバー側での入力値チェックエラーです。
-        if (err.messageList) {
-          res.status(400).json(err);
-          //サーバー側でのシステムエラーです。
-        } else {
-          err.checkResult = false;
-          err.messageList = mainLogic.createSytemErrorMessage();
-          res.status(500).json(err);
-        }
+        err = mainLogic.createErrorResponse(err);
+        res.status(err.status).json(err);
       });
     // 協力会社選択時
   } else {
@@ -694,16 +676,8 @@ app.post("/save", async function (req, res) {
         res.status(200).json(data);
       })
       .catch((err) => {
-        console.log(err);
-        //サーバー側での入力値チェックエラーです。
-        if (err.messageList) {
-          res.status(400).json(err);
-          //サーバー側でのシステムエラーです。
-        } else {
-          err.checkResult = false;
-          err.messageList = mainLogic.createSytemErrorMessage();
-          res.status(500).json(err);
-        }
+        err = mainLogic.createErrorResponse(err);
+        res.status(err.status).json(err);
       });
   }
 });
@@ -760,9 +734,8 @@ app.post("/getSubEmployeeList", async function (req, res) {
       res.status(200).json(data);
     })
     .catch((err) => {
-      console.log(err);
-
-      res.status(500).json(err);
+      err = mainLogic.createErrorResponse(err);
+      res.status(err.status).json(err);
     });
 });
 

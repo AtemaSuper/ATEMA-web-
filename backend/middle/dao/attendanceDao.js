@@ -229,7 +229,6 @@ class AttendanceDao {
    */
   async getAttendanceByEmployeeIdList(date, contractorId, employeeIdList) {
     const db = admin.firestore();
-    console.log(employeeIdList);
     const attendanceRef = db
       .collection("attendance")
       .doc(contractorId)

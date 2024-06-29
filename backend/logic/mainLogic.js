@@ -93,7 +93,6 @@ class MainLogic {
      * @param {string} value 入力内容です。
      */
     function checkSelectedEmployee(errorMessageList, value) {
-      console.log(value);
       //未入力チェックです。
       var errorMessage1 = commonLogic.checkEmpty(value, colum.EMPLOYEE, true);
       if (!util.isEmpty(errorMessage1)) {
@@ -663,12 +662,14 @@ class MainLogic {
   }
 
   /**
-   * システムエラーメッセージを作成します。
+   * logicやfirebaseから受け取ったエラー情報をもとに返却するエラーレスポンスを作成します。
    *
-   * @returns {string} システムエラーメッセージです。
+   * @param {object} err エラー情報です。
+   *
+   * @returns 返却するエラーレスポンスです。
    */
-  createSytemErrorMessage() {
-    return util.stringFormat(errorMessage.SYSTEM_ERROR);
+  createErrorResponse(err) {
+    return commonLogic.createErrorResponse(err);
   }
 }
 

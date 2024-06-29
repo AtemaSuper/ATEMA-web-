@@ -150,7 +150,7 @@
                                 <v-col cols="12" md="6">
                                   <v-select
                                     v-model="selectJob.selectClientField"
-                                    v-on:change="selectCleintField"
+                                    v-on:change="selectedCleintField"
                                     label="(例)株式会社ABC"
                                     :items="clientFieldList"
                                     item-text="clientFieldName"
@@ -172,7 +172,8 @@
                                   <v-select
                                     v-model="selectJob.selectWorkField"
                                     label="(例)株式会社ABC"
-                                    v-on:change="this.selectWorkField"
+                                    v-on:change="selectedWorkField"
+                                    v-bind:disabled="isDisabledSelectWorkField"
                                     :items="workFieldList"
                                     item-text="workFieldName"
                                     item-value="value"
@@ -192,6 +193,9 @@
                                 <v-col cols="12" md="6">
                                   <v-select
                                     v-model="selectJob.selectWorkFieldDetail"
+                                    v-bind:disabled="
+                                      isDisabledSelectWorkFieldDetail
+                                    "
                                     label="(例)株式会社ABC"
                                     :items="workFieldDetailList"
                                     item-text="workFieldDetailName"
@@ -397,7 +401,9 @@ export default {
     selectedEmployeeNameLabel: "",
     isErrorSelectedEmployee: false,
     errorSelectedEmployeeLabel: "",
-    isShowSubAttendanceEditDialog: false
+    isShowSubAttendanceEditDialog: false,
+    isDisabledSelectWorkField: true,
+    isDisabledSelectWorkFieldDetail: true
   }),
   methods: {
     // サーバーから返ってくる値をログに出力したいのでasyncとawaitを行う
@@ -544,8 +550,6 @@ export default {
         this.attendancePatternList = response.data.attendancePatternList;
         this.noteContents = response.data.noteContents;
         this.stepperCount = 2;
-        // 保存完了メッセージ表示
-        // this.$emit('alertMethod', response)
       } catch (err) {
         let response = err.response;
         // エラーメッセージ表示
@@ -568,8 +572,7 @@ export default {
           this.userInfo.menuActivity.subCompanyManageAuth === "2"
       };
       try {
-        let response = await Methods.saveAttendance(param);
-        console.log(response);
+        await Methods.saveAttendance(param);
         this.stepperCount = 1;
         this.isShowAttendanceEditDialog = false;
       } catch (err) {
@@ -648,15 +651,20 @@ export default {
           workFieldDetail.workFieldDetailName = this.workFieldDetailResponse[
             i
           ].workFieldDetailName;
+          workFieldDetail.jobNo = this.workFieldDetailResponse[i].jobNo;
           workFieldDetailList.push(workFieldDetail);
         }
       }
       return workFieldDetailList;
     },
     /** 客先セレクトボックス押下処理 */
-    selectCleintField() {
+    selectedCleintField() {
+      this.isDisabledSelectWorkField = false;
       // 現場セレクトボックスを作成します。
       this.workFieldList = this.createWorkFieldList();
+      // 現場詳細セレクトボックスを作成します。
+      this.workFieldDetailList = [];
+      this.isDisabledSelectWorkFieldDetail = true;
       this.detailEdit = {
         employeeId: this.detailEdit.employeeId,
         jobNo: "",
@@ -668,21 +676,22 @@ export default {
         workFieldDetailName: ""
       };
     },
-    // /** 現場セレクトボックス押下処理 */
-    // selectWorkField() {
-    //   // 現場詳細セレクトボックスを作成します。
-    //   this.workFieldDetailList = this.createWorkFieldDetailLiist();
-    //   this.detailEdit = {
-    //     employeeId: this.detailEdit.employeeId,
-    //     jobNo: "",
-    //     selectClientField: this.detailEdit.selectClientField,
-    //     selectWorkField: this.detailEdit.selectWorkField,
-    //     selectWorkFieldDetail: "",
-    //     clientFieldName: this.detailEdit.clientFieldName,
-    //     workFieldName: this.detailEdit.workFieldName,
-    //     workFieldDetailName: ""
-    //   };
-    // },
+    /** 現場セレクトボックス押下処理 */
+    selectedWorkField() {
+      this.isDisabledSelectWorkFieldDetail = false;
+      // 現場詳細セレクトボックスを作成します。
+      this.workFieldDetailList = this.createWorkFieldDetailLiist();
+      this.detailEdit = {
+        employeeId: this.detailEdit.employeeId,
+        jobNo: "",
+        selectClientField: this.detailEdit.selectClientField,
+        selectWorkField: this.detailEdit.selectWorkField,
+        selectWorkFieldDetail: "",
+        clientFieldName: this.detailEdit.clientFieldName,
+        workFieldName: this.detailEdit.workFieldName,
+        workFieldDetailName: ""
+      };
+    },
     /** 従業員名リスト作成処理 */
     createSelectedEmployeeNameLabel() {
       if (this.selectedEmployee.length === 0) {
