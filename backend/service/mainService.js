@@ -259,11 +259,11 @@ const setSelectJob = function () {
     }
   }
   // if (selectJob === {}) {
-  selectJob.jobNo = "";
-  setWorkFieldDetail.selectClientField = {};
-  setWorkFieldDetail.selectWorkField = {};
-  setWorkFieldDetail.selectWorkFieldDetail = {};
-  setWorkFieldDetail.isSaveFlag = false;
+  // selectJob.jobNo = "";
+  // setWorkFieldDetail.selectClientField = {};
+  // setWorkFieldDetail.selectWorkField = {};
+  // setWorkFieldDetail.selectWorkFieldDetail = {};
+  // setWorkFieldDetail.isSaveFlag = false;
   // }
   selectJob = setWorkFieldDetail;
 };
@@ -506,6 +506,32 @@ const addAttendanceForSubEmployee = function (contractorId, subEmployeeItems) {
   });
 };
 /**
+ * 選択した社員のemployeeIDを返します。
+ * 第一優先：自社員ID
+ * 第二優先：一番目の協力会社員ID
+ * （同じステータスの社員しか同時に更新できないため、上の優先にしてる）
+ *
+ * @param {Object} param 画面情報です。
+ *
+ * @returns {String} selectedEmployeeId
+ */
+const getSelectedEmployeeId = function (param) {
+  var selectedEmployee = param.selectedEmployee;
+  var employeeId = param.employeeId;
+  var selectedEmployeeId = "";
+  for (var i in selectedEmployee) {
+    if (selectedEmployee[i].subEmployeeId == employeeId) {
+      selectedEmployeeId = employeeId;
+      break;
+    } else if (selectedEmployeeId == "") {
+      selectedEmployeeId = selectedEmployee[i].subEmployeeId;
+      break;
+    }
+  }
+  return selectedEmployeeId;
+};
+
+/**
  * トップ画面のService
  */
 //メイン画面の初期表示処理です。
@@ -556,10 +582,8 @@ app.post("/check", async function (req, res) {
       );
     })
     .then(async function () {
-      return await attendanceManageFind(
-        req.body.contractorId,
-        req.body.employeeId
-      );
+      var employeeId = getSelectedEmployeeId(req.body);
+      return await attendanceManageFind(req.body.contractorId, employeeId);
     })
     .then(async function () {
       getAttendancePattern();

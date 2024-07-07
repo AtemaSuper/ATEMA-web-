@@ -1359,6 +1359,7 @@ class SUbCompanyLogic {
       for (var j in subCompanyResponse) {
         var subCompany = subCompanyResponse[j];
         if (subCompany.subCompanyId == subEmployee.companyId) {
+          subEmployeeItem.subCompanyId = subCompany.subCompanyId;
           subEmployeeItem.subCompanyName = subCompany.subCompanyName;
           break;
         }

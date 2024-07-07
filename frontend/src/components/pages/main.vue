@@ -487,7 +487,8 @@ export default {
           this.isShowAttendanceEditDialog = true;
           let response = await Methods.getAttendance(
             this.contractorId,
-            this.userId
+            this.userId,
+            []
           );
           // レスポンスから画面情報をセットする
           this.clientFieldList = this.createClientFieldList(response);
@@ -509,7 +510,8 @@ export default {
         this.isShowAttendanceEditDialog = true;
         let response = await Methods.getAttendance(
           this.contractorId,
-          this.userId
+          this.userId,
+          this.selectedEmployee
         );
         // レスポンスから画面情報をセットする
         this.clientFieldList = this.createClientFieldList(response);

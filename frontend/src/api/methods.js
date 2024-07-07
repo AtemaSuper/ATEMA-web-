@@ -243,8 +243,12 @@ export default {
     トップ画面（勤怠入力）
   */
   // 勤怠入力ダイアログ初期表示処理
-  getAttendance(contractorId, employeeId) {
-    const item = { contractorId: contractorId, employeeId: employeeId };
+  getAttendance(contractorId, employeeId, selectedEmployee) {
+    const item = {
+      contractorId: contractorId,
+      employeeId: employeeId,
+      selectedEmployee: selectedEmployee
+    };
     return Api().post("/main/showAttendanceDialog", item);
   },
   // 勤怠先入力チェック処理

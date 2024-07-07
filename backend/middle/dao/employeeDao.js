@@ -201,7 +201,7 @@ class EmployeeDao {
         .update({
           password: param.password,
           employeeFirstName: param.employeeFirstName,
-          employeeFirstName: param.employeeLastName,
+          employeeLastName: param.employeeLastName,
           postId: param.postId,
           staffCode: param.staffCode,
           birthday: param.birthday,
