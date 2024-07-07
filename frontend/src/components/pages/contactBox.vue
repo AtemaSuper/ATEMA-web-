@@ -1,6 +1,6 @@
 <template>
   <v-app id="contactBox">
-<!-- 通知一覧 -->
+    <!-- 通知一覧 -->
     <v-main>
       <v-container>
         <v-sheet color="white" rounded outlined>
@@ -60,14 +60,23 @@
                           scrollable
                           locale="jp-ja"
                           :day-format="
-                            (startDate) => new Date(startDate).getDate()
+                            startDate => new Date(startDate).getDate()
                           "
                         >
-                          <v-btn color="#ff6669" class="white--text" rounded @click="$refs.startDateMenu.save(startDate)">
+                          <v-btn
+                            color="#ff6669"
+                            class="white--text"
+                            rounded
+                            @click="$refs.startDateMenu.save(startDate)"
+                          >
                             OK
                           </v-btn>
-                          <v-btn class="#f5f5f5" rounded @click="startDateMenu = false">
-                              キャンセル
+                          <v-btn
+                            class="#f5f5f5"
+                            rounded
+                            @click="startDateMenu = false"
+                          >
+                            キャンセル
                           </v-btn>
                         </v-date-picker>
                       </v-menu>
@@ -101,13 +110,22 @@
                           no-title
                           scrollable
                           locale="jp-ja"
-                          :day-format="(endDate) => new Date(endDate).getDate()"
+                          :day-format="endDate => new Date(endDate).getDate()"
                         >
-                          <v-btn color="#ff6669" class="white--text" rounded @click="$refs.endDateMenu.save(endDate)">
+                          <v-btn
+                            color="#ff6669"
+                            class="white--text"
+                            rounded
+                            @click="$refs.endDateMenu.save(endDate)"
+                          >
                             OK
                           </v-btn>
-                          <v-btn class="#f5f5f5" rounded @click="endDateMenu = false">
-                              キャンセル
+                          <v-btn
+                            class="#f5f5f5"
+                            rounded
+                            @click="endDateMenu = false"
+                          >
+                            キャンセル
                           </v-btn>
                         </v-date-picker>
                       </v-menu>
@@ -166,150 +184,161 @@
 
 <script>
 /** 外部コンポーネントの呼び出し */
-import Methods from '@/api/methods'
+import Methods from "@/api/methods";
 import dayjs from "dayjs";
 import ja from "dayjs/locale/ja";
 
 dayjs.locale(ja);
 
 export default {
-  name: 'contactBox',
-  components: {
-  },
+  name: "contactBox",
+  components: {},
   data: () => ({
     // TODO ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
-    userId: '6tQPHzHQwlGErXeLSzt1',
+    userId: "6tQPHzHQwlGErXeLSzt1",
     // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
     // ※複数社契約になった場合、セッションで契約IDを保持して、
     // ※そのIDをもとに検索するように修正
-    contractorId: '00000001',
-    //* * 自社員一覧 */ 
+    contractorId: "00000001",
+    //* * 自社員一覧 */
     alertList: [],
     //  values for our select.
     statusList: [
-      {text: '全て', value: null},
-      {text: '既読', value: true},
-      {text: '未読', value: false}
+      { text: "全て", value: null },
+      { text: "既読", value: true },
+      { text: "未読", value: false }
     ],
     statusItems: [
-      {text: '既読', value: true},
-      {text: '未読', value: false}
+      { text: "既読", value: true },
+      { text: "未読", value: false }
     ],
     // menu models
     startDateMenu: false,
     endDateMenu: false,
     // Filter models.
-    search: '',
+    search: "",
     statusFilterValue: null,
     startDate: null,
     endDate: null
   }),
-  mounted: function () {
+  mounted: function() {
     // 通知管理の画面情報をとってきます。
-    this.getEmployeeInfo()
+    this.getEmployeeInfo();
   },
   computed: {
     /** v-tableのヘッダーを設定 */
-    headers () {
+    headers() {
       return [
         {
-          text: '状態',
-          value: 'status',
-          align: 'center',
+          text: "状態",
+          value: "status",
+          align: "center",
           filter: this.statusFilter,
-          width: '10%'
+          width: "10%"
         },
         {
-          text: 'タイトル',
-          value: 'titleName',
-          align: 'center',
-          width: '10%'
+          text: "タイトル",
+          value: "titleName",
+          align: "center",
+          width: "10%"
         },
-        { text: '送信者',
-          value: 'sendEmployeeName',
-          align: 'center',
-          width: '20%' },
-        { text: '内容',
-          value: 'sendDetail',
-          align: 'center',
-          width: '40%' },
-        { text: '送信日時',
-          value: 'sendDate',
-          align: 'center',
-          width: '20%',
-          filter: this.dateFilter }
-      ]
-    },
+        {
+          text: "送信者",
+          value: "sendEmployeeName",
+          align: "center",
+          width: "20%"
+        },
+        { text: "内容", value: "sendDetail", align: "center", width: "40%" },
+        {
+          text: "送信日時",
+          value: "sendDate",
+          align: "center",
+          width: "20%",
+          filter: this.dateFilter
+        }
+      ];
+    }
   },
   methods: {
-       // 初期表示処理です。
-    async getEmployeeInfo () {
-      let response = await Methods.getAlertInfo(this.contractorId)
+    // 初期表示処理です。
+    async getEmployeeInfo() {
+      let response = await Methods.getAlertInfo(this.contractorId);
       // レスポンスから画面情報をセットする
-      this.alertList = createAlertList(response)
+      this.alertList = createAlertList(response);
     },
     // 日付のフォーマット処理です。
     displayDateFormat(date) {
       return dayjs(date).format("YYYY/MM/DD");
     },
     /**
-       * Filter for status column.
-       * @param value Value is items
-       * @returns {boolean}
-       */
-    statusFilter (value) {
+     * Filter for status column.
+     * @param value Value is items
+     * @returns {boolean}
+     */
+    statusFilter(value) {
       // ステータスを選択していない・全ての場合はこの処理
       if (this.statusFilterValue === null) {
-        return true
+        return true;
       }
       // <v-select>にて選択されたステータスと一致するアイテムをリターン
-      return value === this.statusFilterValue
-    }, /**
-       * Filter for startDate column.
-       * @param value Value is items
-       * @returns {boolean}
-       */
-    dateFilter (value) {
+      return value === this.statusFilterValue;
+    },
+    /**
+     * Filter for startDate column.
+     * @param value Value is items
+     * @returns {boolean}
+     */ dateFilter(value) {
       // 日付が選択されていない（偽＝初期値）の場合全件表示
-      if (!this.startDate && !this.endDate) return value
+      if (!this.startDate && !this.endDate) return value;
       // 2つの日付が指定されている場合
       // 開始日時を0時に設定'T00:00:00'=00:00:00 / 終了時間を23次59分59秒に設定'T23:59:59'=23:59:59
       else if (this.startDate && this.endDate) {
-        if (new Date(value) >= new Date(this.startDate + 'T00:00:00') && new Date(value) <= new Date(this.endDate + 'T23:59:59')) { return value }
-        return console.log('no mach data')
-      } else if (this.startDate || this.endDate) { // どちらか一方が選択されている場合
+        if (
+          new Date(value) >= new Date(this.startDate + "T00:00:00") &&
+          new Date(value) <= new Date(this.endDate + "T23:59:59")
+        ) {
+          return value;
+        }
+        return console.log("no mach data");
+      } else if (this.startDate || this.endDate) {
+        // どちらか一方が選択されている場合
         if (this.startDate) {
-          return new Date(value) >= new Date(this.startDate + 'T00:00:00') ? value : console.error('no mach data')
-        } else return new Date(value) <= new Date(this.endDate + 'T23:59:59') ? value : console.error('no mach data')
+          return new Date(value) >= new Date(this.startDate + "T00:00:00")
+            ? value
+            : console.error("no mach data");
+        } else
+          return new Date(value) <= new Date(this.endDate + "T23:59:59")
+            ? value
+            : console.error("no mach data");
       }
     },
     /** ステータスカラーの変更 */
-    getColor (status) {
-      return status ? 'green' : 'red'
+    getColor(status) {
+      return status ? "green" : "red";
     },
     /** データ変更処理 */
-    async changeStatus (item) {
+    async changeStatus(item) {
       const param = {
         contractorId: this.contractorId,
         userId: this.userId,
         alertId: item.alertId,
         status: item.status
-      }
+      };
       try {
-          // 保存処理
-          let response = await Methods.saveStatus(param)
-          // レスポンスから画面情報をセットする
-          this.alertList = createAlertList(response)
-          // 保存完了メッセージ表示
-          this.$emit('alertMethod', response);
-        }catch (err){
-          let response = err.response;
-          // エラーメッセージ表示
-          this.$emit('alertMethod', response)
-        }
+        // 保存処理
+        let response = await Methods.saveStatus(param);
+        // レスポンスから画面情報をセットする
+        this.alertList = createAlertList(response);
+        // 保存完了メッセージ表示
+        this.$emit("alertMethod", response);
+      } catch (err) {
+        let response = err.response;
+        // エラーメッセージ表示
+        this.$emit("alertMethod", response);
+      }
     }
   }
-}
+};
 //
 // privateメソッドです。
 //
@@ -321,26 +350,29 @@ export default {
  * @returns
  *
  */
-function createAlertList (response) {
-  var alertResponse = response.data.alertResponse
-  var employeeResponse = response.data.employeeResponse
+function createAlertList(response) {
+  var alertResponse = response.data.alertResponse;
+  var employeeResponse = response.data.employeeResponse;
   // 通知一覧表示用に変換します。
-  var alertList = []
+  var alertList = [];
   for (var i = 0; i < alertResponse.length; i++) {
-    var alert = {}
-    alert.alertId = alertResponse[i].alertId
-    alert.titleName = alertResponse[i].titleName
-    alert.employeeId = alertResponse[i].employeeId
-    alert.status = alertResponse[i].status
-    alert.sendDetail = alertResponse[i].sendDetail
-    alert.sendDate = alertResponse[i].sendDate
-    alert.sendEmployeeName = getEmployeeName(alertResponse[i].senderId, employeeResponse)
-    alert.createUserId = alertResponse[i].createUserId
-    alert.updateUserId = alertResponse[i].updateUserId
-    alertList.push(alert)
+    var alert = {};
+    alert.alertId = alertResponse[i].alertId;
+    alert.titleName = alertResponse[i].titleName;
+    alert.employeeId = alertResponse[i].employeeId;
+    alert.status = alertResponse[i].status;
+    alert.sendDetail = alertResponse[i].sendDetail;
+    alert.sendDate = alertResponse[i].sendDate;
+    alert.sendEmployeeName = getEmployeeName(
+      alertResponse[i].senderId,
+      employeeResponse
+    );
+    alert.createUserId = alertResponse[i].createUserId;
+    alert.updateUserId = alertResponse[i].updateUserId;
+    alertList.push(alert);
   }
 
-  return alertList
+  return alertList;
 }
 /**
  * 社員IDをもとに社員名を取得します。
@@ -351,17 +383,18 @@ function createAlertList (response) {
  * @private
  * @returns
  */
-function getEmployeeName (senderId, employeeResponse) {
-  var employeeName = ''
+function getEmployeeName(senderId, employeeResponse) {
+  var employeeName = "";
   for (var j = 0; j < employeeResponse.length; j++) {
     if (senderId === employeeResponse[j].employeeId) {
-      employeeName = employeeResponse[j].employeeFirstname + employeeResponse[j].employeeLastname
+      employeeName =
+        employeeResponse[j].employeeFirstName +
+        employeeResponse[j].employeeLastName;
     }
   }
-  return employeeName
+  return employeeName;
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>
+<style scoped></style>

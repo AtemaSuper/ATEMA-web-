@@ -25,12 +25,14 @@ class AlertLogic {
   }
 
   /**
-   * システムエラーメッセージを作成します。
+   * logicやfirebaseから受け取ったエラー情報をもとに返却するエラーレスポンスを作成します。
    *
-   * @returns {string} システムエラーメッセージです。
+   * @param {object} err エラー情報です。
+   *
+   * @returns 返却するエラーレスポンスです。
    */
-  createSytemErrorMessage() {
-    return errorMessage.SYSTEM_ERROR;
+  createErrorResponse(err) {
+    return commonLogic.createErrorResponse(err);
   }
 }
 
