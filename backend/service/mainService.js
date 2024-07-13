@@ -50,7 +50,7 @@ var employeeResponse = [];
 var workFieldResponse = [];
 var workFieldDetailResponse = [];
 var selectJob = {};
-var selecAtttendancePattern = {};
+var selecAtttendancePattern = undefined;
 var attendancePatternList = [];
 var checkResult = false;
 var messageList = [];
@@ -425,7 +425,6 @@ const getAttendancePattern = function () {
  * @param {string} attenDancePatternId
  */
 const getSelectAttendancePattern = function (attenDancePatternId) {
-  selecAtttendancePattern = {};
   for (var i in attendancePatternList) {
     if (attendancePatternList[i].patternId === attenDancePatternId) {
       selecAtttendancePattern = attendancePatternList[i];
@@ -435,21 +434,28 @@ const getSelectAttendancePattern = function (attenDancePatternId) {
 /**
  * 勤怠ステータスを取得します。
  *
- * @param {*} selectStatus
+ * @param {object} attendanceManageResponse 出退勤情報
+ *
+ * @returns {Object} selectStatus
  */
-const getSelectStatus = function (status) {
-  switch (status) {
-    case "0":
-      return { text: "出勤", value: "0" };
-    case "1":
-      return { text: "休憩", value: "1" };
-    case "2":
-      return { text: "戻り", value: "2" };
-    case "3":
-      return { text: "退勤", value: "3" };
-    default:
-      return { text: "出勤", value: "0" };
+const getSelectStatus = function (attendanceManageResponse) {
+  if (attendanceManageResponse !== undefined) {
+    switch (attendanceManageResponse.status) {
+      case "0":
+        if (attendanceManageResponse.restStart === "") {
+          return { text: "休憩", value: "1" };
+        } else {
+          return { text: "退勤", value: "2" };
+        }
+      case "1":
+        return { text: "戻り", value: "0" };
+      case "2":
+        return { text: "退勤", value: "2" };
+      default:
+        return { text: "出勤", value: "0" };
+    }
   }
+  return { text: "出勤", value: "0" };
 };
 /**
  * 勤怠ステータスのリストを取得します。
@@ -457,20 +463,33 @@ const getSelectStatus = function (status) {
  *
  * @param {*} statusValue
  */
-const getStatusList = function (statusValue) {
-  var statusList = [];
-  var tmpStatusList = [
-    { text: "出勤", value: "0" },
-    { text: "休憩", value: "1" },
-    { text: "戻り", value: "2" },
-    { text: "退勤", value: "3" },
-  ];
-  if (!statusValue == "0") {
-    for (var i = statusValue; i <= 3; i++) {
-      statusList.push(tmpStatusList[i]);
+const getStatusList = function (attendanceManageResponse) {
+  // attendanceManageResponse.status がない：出勤
+  // attendanceManageResponse.status が0：出勤、休憩、退勤
+  // attendanceManageResponse.status が1：戻り、退勤
+  // attendanceManageResponse.status が2：退勤
+  if (attendanceManageResponse === undefined) {
+    return [{ text: "出勤", value: "0" }];
+  } else {
+    var status = attendanceManageResponse.status;
+    switch (status) {
+      case "0":
+        return [
+          { text: "出勤", value: "0" },
+          { text: "休憩", value: "1" },
+          { text: "退勤", value: "2" },
+        ];
+      case "1":
+        return [
+          { text: "戻り", value: "0" },
+          { text: "退勤", value: "2" },
+        ];
+      case "2":
+        return [{ text: "退勤", value: "2" }];
+      default:
+        return [{ text: "出勤", value: "0" }];
     }
   }
-  return statusList;
 };
 /**
  * 協力会社員情報に出退勤情報を追加します。
@@ -587,19 +606,17 @@ app.post("/check", async function (req, res) {
     })
     .then(async function () {
       getAttendancePattern();
-      var selectStatus = {};
       var noteContents = "";
-      // 取得できない場合は、まだ出勤していないので「0：出勤」を設定
-      if (attendanceManageResponse === undefined) {
-        selectStatus = { text: "出勤", value: "0" };
-      } else {
+      // 出勤済みの場合、勤怠パターンと備考を取得
+      selecAtttendancePattern = undefined;
+      if (attendanceManageResponse !== undefined) {
         getSelectAttendancePattern(
           attendanceManageResponse.attendancePatternId
         );
-        selectStatus = getSelectStatus(attendanceManageResponse.status);
         noteContents = attendanceManageResponse.noteContents;
       }
-      var statusList = getStatusList(selectStatus.value);
+      var statusList = getStatusList(attendanceManageResponse);
+      var selectStatus = getSelectStatus(attendanceManageResponse);
       var data = {
         selectStatus: selectStatus,
         selecAtttendancePattern: selecAtttendancePattern,

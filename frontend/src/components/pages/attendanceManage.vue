@@ -711,8 +711,7 @@ export default {
   methods: {
     /** 初期表示処理 */
     async getAttendanceInfo() {
-      // this.displayDate = dayjs(new Date()).format("YYYY-MM-DD");
-      this.displayDate = dayjs("2022-07-01").format("YYYY-MM-DD");
+      this.displayDate = dayjs(new Date()).format("YYYY-MM-DD");
       await this.findAttendanceListAsync(this.displayDate);
     },
     async findAttendanceListAsync(displayDate) {
@@ -804,18 +803,6 @@ export default {
           return "休憩中";
         case "2":
           return "退勤中";
-        case "3":
-          return "残業中";
-        case "4":
-          return "早退";
-        case "5":
-          return "早出";
-        case "6":
-          return "遅出";
-        case "7":
-          return "深夜";
-        case "8":
-          return "欠勤";
       }
     },
     /** ステータスカラーの変更処理 */
@@ -1043,7 +1030,7 @@ export default {
         .add(1, "day")
         .hour(5);
 
-      const toTime = dayjs("2022-07-01" + endTime);
+      const toTime = dayjs(this.displayDate + endTime);
 
       if (fromTimeRange < toTime && toTimeRange > toTime) {
         const overTimeHour = toTime.diff(fromTimeRange, "hour");

@@ -487,7 +487,7 @@ class AttendanceManageLogic {
   createUpdateItemForAttendance(param, workFieldDetailResponse, isNew) {
     var selecAtttendancePattern = param.selecAtttendancePattern;
     var selectStatus = param.selectStatus;
-    var updateKey = getUpdateKey(selectStatus.value);
+    var updateKey = getUpdateKey(param.selectStatus);
     var workFieldDetail = getWorkFieldDetail(
       workFieldDetailResponse,
       param.selectJob
@@ -534,14 +534,16 @@ class AttendanceManageLogic {
      * @returns
      */
     function getUpdateKey(selectStatus) {
-      switch (selectStatus) {
+      switch (selectStatus.value) {
         case "0":
-          return "start";
+          if (selectStatus.text === "出勤") {
+            return "start";
+          } else {
+            return "restEnd";
+          }
         case "1":
           return "restStart";
         case "2":
-          return "restEnd";
-        case "3":
           return "end";
         default:
           return "start";
@@ -585,12 +587,14 @@ class AttendanceManageLogic {
   }
 
   /**
-   * システムエラーメッセージを作成します。
+   * logicやfirebaseから受け取ったエラー情報をもとに返却するエラーレスポンスを作成します。
    *
-   * @returns {string} システムエラーメッセージです。
+   * @param {object} err エラー情報です。
+   *
+   * @returns 返却するエラーレスポンスです。
    */
-  createSytemErrorMessage() {
-    return util.stringFormat(successMessage.SYSTEM_ERROR);
+  createErrorResponse(err) {
+    return commonLogic.createErrorResponse(err);
   }
 }
 

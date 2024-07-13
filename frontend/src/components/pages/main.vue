@@ -262,6 +262,7 @@
                             outlined
                             dense
                             color="info"
+                            v-bind:disabled="isDisabledAtttendancePattern"
                           />
                         </v-col>
                       </v-row>
@@ -345,7 +346,7 @@ export default {
     this.getToDay();
     this.getToTime();
     this.menuAuthorityMapper();
-    this.employeeId = this.userInfo.userName;
+    this.employeeId = this.userInfo.userId;
   },
   computed: {
     displayAuthorityList: function() {
@@ -388,6 +389,7 @@ export default {
     selectWorkField: "",
     selectStatus: {},
     selecAtttendancePattern: {},
+    isDisabledAtttendancePattern: false,
     statusList: [],
     attendancePatternList: [],
     noteContents: "",
@@ -548,6 +550,8 @@ export default {
         // レスポンスから画面情報をセットする
         this.selectStatus = response.data.selectStatus;
         this.selecAtttendancePattern = response.data.selecAtttendancePattern;
+        this.isDisabledAtttendancePattern =
+          this.selecAtttendancePattern !== undefined;
         this.statusList = response.data.statusList;
         this.attendancePatternList = response.data.attendancePatternList;
         this.noteContents = response.data.noteContents;
@@ -745,8 +749,6 @@ export default {
         case "1":
           return "休憩中";
         case "2":
-          return "出勤中";
-        case "3":
           return "退勤中";
         default:
           return "未出勤";
