@@ -231,8 +231,15 @@ export default {
     excel出力テスト
   */
   // 勤怠入力ダイアログ初期表示処理
-  excelDownload(contractorId, employeeId) {
-    const item = { contractorId: contractorId, employeeId: employeeId };
-    return Api().post("/excel", item);
+  excelDownload(contractorId, employeeIds, targetYearMonth) {
+    const userInfo = {
+      contractorId: contractorId,
+      employeeIds: employeeIds,
+      targetYearMonth: targetYearMonth
+    };
+    return Api().get("/excel", {
+      responseType: "blob",
+      params: userInfo
+    });
   }
 };

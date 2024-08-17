@@ -9,6 +9,8 @@ if (admin.apps.length === 0) {
     credential: admin.credential.cert(serviceAccount),
   });
 }
+const dayjs = require("dayjs");
+
 //本日の日時を取得
 //TODO ここで取得していいのか検討
 var date = new Date();
@@ -117,7 +119,7 @@ class AttendanceDao {
   }
 
   /**
-   * 指定された日時範囲に対する勤怠情報一覧を取得します。
+   * 指定された日時に対する勤怠情報一覧を取得します。
    *
    * @param {string} contractorId 契約IDです。
    * @param {string} employeeId 社員IDです。
@@ -216,6 +218,53 @@ class AttendanceDao {
         });
       return responce;
     }
+  }
+
+  /**
+   * 年月日ごとに分かれているFirebase Firestoreのコレクションから一か月分のデータを取得します。
+   * @param {string} contractorId 契約者番号です。
+   * @param {Array<string>} employeeIds 従業員IDの配列です。
+   * @param {Date} startDate 取得したいデータの開始日です。
+   * @param {Date} endDate 取得したいデータの終了日です。
+   * @returns {Promise<object>} 取得したデータを従業員IDごとにまとめたオブジェクトを含むPromiseオブジェクトです。
+   */
+  async fetchMonthlyData(
+    contractorId,
+    employeeAttendanceList,
+    startDate,
+    endDate
+  ) {
+    const db = admin.firestore();
+    startDate = dayjs(startDate);
+    endDate = dayjs(endDate);
+    while (startDate <= endDate) {
+      const formattedDate = dayjs(startDate).format("YYYY-MM-DD"); // YYYY-MM-DD形式に変換
+      const collectionRef = db
+        .collection("attendance")
+        .doc(contractorId)
+        .collection(formattedDate);
+      try {
+        // コレクションの存在を確認する
+        const collectionSnapshot = await collectionRef.limit(1).get();
+
+        if (!collectionSnapshot.empty) {
+          // employeeIdsのいずれかの従業員IDに一致するドキュメントをクエリする
+          for (const employee of employeeAttendanceList) {
+            const docRef = collectionRef.doc(employee.employeeId);
+            const doc = await docRef.get();
+
+            if (doc.exists) {
+              employee.attendanceList.push(doc.data());
+            }
+          }
+        }
+      } catch (error) {
+        console.error(`Error fetching data for ${formattedDate}: `, error);
+      }
+      // 次の日に進む
+      startDate = dayjs(startDate).add(1, "day");
+    }
+    return employeeAttendanceList;
   }
 }
 

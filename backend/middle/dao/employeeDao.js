@@ -68,6 +68,33 @@ class EmployeeDao {
     return responce;
   }
   /**
+   * 社員IDをもとに社員名を取得します。
+   *
+   * @param {string} contractorId 契約IDです。
+   * @param {string} employeeId 社員IDです。
+   *
+   * @returns
+   */
+  async selectEmployeeName(contractorId, employeeId) {
+    const db = admin.firestore();
+    const employeeRef = db
+      .collection("employee")
+      .doc(contractorId)
+      .collection("data")
+      .doc(employeeId);
+
+    const responce = await employeeRef
+      .get()
+      .then(function (items) {
+        const data = items.data();
+        return data ? data.employeeFirstName + data.employeeLastName : null;
+      })
+      .catch(function (err) {
+        return err;
+      });
+    return responce;
+  }
+  /**
    * 自社員情報一覧を取得します。
    *
    * @param {string} contractorId 契約IDです。

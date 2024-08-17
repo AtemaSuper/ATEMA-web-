@@ -41,7 +41,14 @@
 
       <v-divider class="my-5" />
       <h3>firebase excel download</h3>
-      <v-btn @click="firestoreExcelDownload('workTypeId', '00000001')"
+      <v-btn
+        @click="
+          firestoreExcelDownload(
+            '00000001',
+            ['Xvpbe7wX5pWa01NDHsBR', 'zzU5wkp3UWXSsQHCGWhzE56hoOT2'],
+            '2023-12-01'
+          )
+        "
         >API test</v-btn
       >
 
@@ -83,21 +90,20 @@ export default {
       }
       await Methods.stubImport(collectionName, documentName, this.documentId);
     },
-    async firestoreExcelDownload() {
-      await Methods.excelDownload();
+    async firestoreExcelDownload(contractorId, employeeIds, targetYearMonth) {
       // APIエンドポイントからExcelデータのバッファを取得
-      const response = await Methods.excelDownload();
-      console.log(response);
-
-      // バッファを受け取り、Excelファイルとしてダウンロード
-      const blob = new Blob([response.data], {
-        type:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-      });
-
+      // TODO:複数人、所属会社べつなどに対応できるようにする例）種類を区別する引数を追加してスイッチ分で分岐したい
+      // TODO: 帳票ごとの処理はバックエンドで実行
+      const response = await Methods.excelDownload(
+        contractorId,
+        employeeIds,
+        targetYearMonth
+      );
+      const exportFileName =
+        targetYearMonth + "_" + contractorId + "_" + "個人別";
       const link = document.createElement("a");
-      link.href = window.URL.createObjectURL(blob);
-      link.download = "example.xlsx"; // ダウンロード時のファイル名
+      link.href = window.URL.createObjectURL(response.data);
+      link.download = `${exportFileName}.xlsx`; // ダウンロード時のファイル名
       link.click();
     }
   }
