@@ -92,8 +92,9 @@ export default {
           return "Header";
         case "/workField":
           return "Header";
-        case "/contactBox":
-          return "Header";
+        // 一旦機能として非公開
+        // case "/contactBox":
+        //   return "Header";
         case "/ownWorkerAll":
           return "Header";
         default:
@@ -132,8 +133,9 @@ export default {
       switch (this.$route.path) {
         case "/attendanceManage":
           return true;
-        case "/contactBox":
-          return true;
+        // 一旦機能として非公開
+        // case "/contactBox":
+        //   return true;
         case "/ownCompany":
           return true;
         case "/ownWorkerAll":
@@ -153,8 +155,9 @@ export default {
       switch (this.$route.path) {
         case "/attendanceManage":
           return "出退勤管理";
-        case "/contactBox":
-          return "通知BOX";
+        // 一旦機能として非公開
+        // case "/contactBox":
+        //   return "通知BOX";
         case "/ownWorkerAll":
           return "自社員管理/役職管理";
         case "/ownCompany":

@@ -10,7 +10,8 @@ import WorkField from "@/components/pages/workField";
 import AttendanceManage from "@/components/pages/attendanceManage";
 import SubCompanyAll from "@/components/pages/subCompanyAll";
 import Main from "@/components/pages/main";
-import ContactBox from "@/components/pages/contactBox";
+// 一旦機能として非公開
+// import ContactBox from "@/components/pages/contactBox";
 import OwnWorkerAll from "@/components/pages/ownWorkerAll";
 
 import PasswordReset from "@/components/pages/passwordReset";
@@ -74,12 +75,13 @@ const router = new Router({
       name: "attendanceManage",
       component: AttendanceManage
     },
-    {
-      /** contactBox.vue */
-      path: "/contactBox",
-      name: "contactBox",
-      component: ContactBox
-    },
+    // 一旦機能として非公開
+    // {
+    //   /** contactBox.vue */
+    //   path: "/contactBox",
+    //   name: "contactBox",
+    //   component: ContactBox
+    // },
     {
       /** ownWorkerAll.vue */
       path: "/ownWorkerAll",

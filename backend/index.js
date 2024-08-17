@@ -7,7 +7,8 @@ const constractor = require("./public/const");
 const attendanceManageController = require("./controller/attendanceManageController");
 const authenticationController = require("./controller/authenticationController");
 const clientFieldController = require("./controller/clientFieldController");
-const contactBoxController = require("./controller/contactBoxController");
+// 一旦機能として非公開
+// const contactBoxController = require("./controller/contactBoxController");
 const loginController = require("./controller/loginController");
 const mainController = require("./controller/mainController");
 const ownCompanyController = require("./controller/ownCompanyController");
@@ -30,7 +31,8 @@ app.set("column", constractor.Colum);
 
 app.use("/attendanceManage", attendanceManageController);
 app.use("/clientField", clientFieldController);
-app.use("/contactBox", contactBoxController);
+// 一旦機能として非公開
+// app.use("/contactBox", contactBoxController);
 app.use("/login", loginController);
 app.use("/main", mainController);
 app.use("/ownCompany", ownCompanyController);

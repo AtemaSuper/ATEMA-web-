@@ -372,7 +372,8 @@ export default {
     ],
     menuAuthorityList: [
       { type: "page", value: "attendanceManage", permission: false },
-      { type: "page", value: "contactBox", permission: false },
+      // 一旦機能として非公開
+      // { type: "page", value: "contactBox", permission: false },
       { type: "page", value: "workField", permission: false },
       { type: "page", value: "subCompanyAll", permission: false },
       { type: "page", value: "ownWorkerAll", permission: false },
@@ -414,8 +415,9 @@ export default {
       switch (item) {
         case "attendanceManage":
           return "出退勤管理";
-        case "contactBox":
-          return "管理者通知";
+        // 一旦機能として非公開
+        // case "contactBox":
+        //   return "管理者通知";
         case "workField":
           return "客先・現場編集";
         case "subCompanyAll":
@@ -435,10 +437,11 @@ export default {
             item.permission =
               this.userInfo.menuActivity.attendanceManageAuth !== "0";
             break;
-          case "contactBox":
-            item.permission =
-              this.userInfo.menuActivity.attendanceManageAuth === "2";
-            break;
+          // 一旦機能として非公開
+          // case "contactBox":
+          //   item.permission =
+          //     this.userInfo.menuActivity.attendanceManageAuth === "2";
+          //   break;
           case "workField":
             item.permission =
               this.userInfo.menuActivity.attendanceManageAuth === "2";
