@@ -98,35 +98,10 @@
               class="elevation-1"
             >
               <!-- status Row -->
-              <template v-slot:[`item.status`]="{ item, index }">
-                <v-edit-dialog
-                  :return-value.sync="item.status"
-                  save-text="保存"
-                  cancel-text="キャンセル"
-                  large
-                  @save="
-                    updateAttendanceListAsync(
-                      item.employeeId,
-                      'status',
-                      item.status,
-                      index
-                    )
-                  "
-                >
-                  <v-chip :color="getColor(toStringStatus(item.status))" dark>
-                    {{ toStringStatus(item.status) }}
-                  </v-chip>
-                  <template v-slot:input>
-                    <div class="mt-4 text-h6">ステータスを変更</div>
-                    <v-select
-                      v-model="item.status"
-                      :items="statusItems"
-                      outlined
-                      autofocus
-                      class="mt-5"
-                    />
-                  </template>
-                </v-edit-dialog>
+              <template v-slot:[`item.status`]="{ item }">
+                <v-chip :color="getColor(toStringStatus(item.status))" dark>
+                  {{ toStringStatus(item.status) }}
+                </v-chip>
               </template>
 
               <!-- workFieldDetail Row -->
