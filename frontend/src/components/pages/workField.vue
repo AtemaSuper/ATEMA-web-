@@ -181,16 +181,13 @@
 <script>
 /** 外部コンポーネントの呼び出し */
 import Methods from '@/api/methods'
+import store from "../../store/index";
 export default {
   components: {
   },
   data: () => ({
-    // TODO ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
-    userId: '6tQPHzHQwlGErXeLSzt1',
-    // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
-    // ※複数社契約になった場合、セッションで契約IDを保持して、
-    // ※そのIDをもとに検索するように修正
-    contractorId: '00000001',
+    // ログインユーザ情報
+    userInfo: {},
     workFieldDetailList: [],
     clientFieldList: [],
     workFieldList: [],
@@ -218,6 +215,8 @@ export default {
     contractStatusRules: [v => !!v || "現場名が未入力です。"],
   }),
   mounted: function () {
+    // storeからユーザ情報を取得します。
+    this.userInfo = store.getters.userInfo;
     // 現場編集の画面情報をとってきます。
     this.getWorkFieldInfo()
   },
@@ -267,7 +266,7 @@ export default {
   methods: {
     // 初期表示処理です。
     async getWorkFieldInfo () {
-      let response = await Methods.getWorkFieldInfo(this.contractorId)
+      let response = await Methods.getWorkFieldInfo(this.userInfo.contractorId)
       // レスポンスから画面情報をセットする
       this.workFieldDetailList = createWorkFieldDetailList(response)
       this.clientFieldList = createClientFieldList(response)
@@ -320,8 +319,8 @@ export default {
         workFieldId = selectWorkField.workFieldId;
       }
       const param = {
-        contractorId: this.contractorId,
-        userId: this.userId,
+        contractorId: this.userInfo.contractorId,
+        userId: this.userInfo.userId,
         workFieldDetailId: this.editItem.workFieldDetailId,
         workFieldDetailName: this.editItem.workFieldDetailName,
         jobNo: this.editItem.jobNo,
@@ -349,8 +348,8 @@ export default {
     // 削除ボタン押下処理
     async onClickDelete (item) {
       const param = {
-        contractorId: this.contractorId,
-        userId: this.userId,
+        contractorId: this.userInfo.contractorId,
+        userId: this.userInfo.userId,
         workFieldDetailId: item.workFieldDetailId
       }
       // 削除処理

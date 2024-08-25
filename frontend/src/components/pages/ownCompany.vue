@@ -418,6 +418,7 @@
 import Methods from "@/api/methods";
 import dayjs from "dayjs";
 import ja from "dayjs/locale/ja";
+import store from "../../store/index";
 
 dayjs.locale(ja);
 
@@ -426,12 +427,8 @@ export default {
   props: ["showContents"],
   data() {
     return {
-      // TODO ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
-      userId: "6tQPHzHQwlGErXeLSzt1",
-      // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
-      // ※複数社契約になった場合、セッションで契約IDを保持して、
-      // ※そのIDをもとに検索するように修正
-      contractorId: "00000001",
+      // ログインユーザ情報
+      userInfo: {},
       ownCompanyData: { workTypeIdList: [] },
       workTypePullDown: [],
       attendancePatternList: [],
@@ -489,6 +486,8 @@ export default {
     };
   },
   mounted: function() {
+    // storeからユーザ情報を取得します。
+    this.userInfo = store.getters.userInfo;
     // 自社設定の画面情報をとってきます。
     this.getOwnComapanyInfo();
   },
@@ -563,7 +562,9 @@ export default {
     /** 初期表示処理です。 */
 
     async getOwnComapanyInfo() {
-      let response = await Methods.getOwnComapanyInfo(this.contractorId);
+      let response = await Methods.getOwnComapanyInfo(
+        this.userInfo.contractorId
+      );
       // レスポンスから画面情報をセットする
       this.ownCompanyData = this.createOwnCompanyData(response);
       this.workTypePullDown = this.createWorkTypePullDown(response);
@@ -622,8 +623,8 @@ export default {
         );
         let workTypeIdList = selectworkTypeId.map(item => item.workTypeId);
         const param = {
-          contractorId: this.contractorId,
-          userId: this.userId,
+          contractorId: this.userInfo.contractorId,
+          userId: this.userInfo.userId,
           pageContents: this.pageContents,
           contractorName: this.ownCompanyData.contractorName,
           foundation: this.ownCompanyData.foundation,
@@ -655,8 +656,8 @@ export default {
           this.attendancePatternList
         );
         const param = {
-          contractorId: this.contractorId,
-          userId: this.userId,
+          contractorId: this.userInfo.contractorId,
+          userId: this.userInfo.userId,
           pageContents: this.pageContents,
           attendancePatternList: this.attendancePatternList,
           tardyTime: this.ownCompanyData.tardyTime,

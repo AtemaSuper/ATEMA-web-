@@ -187,11 +187,11 @@
                 </v-col>
                 <v-col cols="12" sm="6" md="6">
                   <div v-if="!subCompanyEditFlag" class="dialog-label">
-                    {{ subCompanyEditItem.subCompanyName }}
+                    {{ subCompanyEditItem.subContractorName }}
                   </div>
                   <div v-if="subCompanyEditFlag">
                     <v-text-field
-                      v-model="subCompanyEditItem.subCompanyName"
+                      v-model="subCompanyEditItem.subContractorName"
                       :rules="companyRules"
                       label="(例)株式会社ABC"
                       maxlength="50"
@@ -601,18 +601,18 @@
                 </v-col>
                 <v-col cols="12" sm="6" md="6">
                   <div v-if="!subEmployeeEditFlag" class="dialog-label">
-                    {{ subEmployeeEditItem.subCompanyName }}
+                    {{ subEmployeeEditItem.subContractorName }}
                   </div>
                   <div v-if="subEmployeeEditFlag">
                     <v-select
                       v-model="subEmployeeEditItem.selectSubCompanyList"
-                      item-text="subCompanyName"
+                      item-text="subContractorName"
                       item-value="value"
                       return-object
                       :items="subCompanyPullDown"
                       label="協力会社を選択してください。"
                       solo
-                      name="subCompanyName"
+                      name="subContractorName"
                     ></v-select>
                   </div>
                 </v-col>
@@ -993,18 +993,15 @@
 import Methods from "@/api/methods";
 import dayjs from "dayjs";
 import ja from "dayjs/locale/ja";
+import store from "../../store/index";
 
 dayjs.locale(ja);
 
 export default {
   name: "subCompanyAll",
   data: () => ({
-    // TODO ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
-    userId: "6tQPHzHQwlGErXeLSzt1",
-    // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
-    // ※複数社契約になった場合、セッションで契約IDを保持して、
-    // ※そのIDをもとに検索するように修正
-    contractorId: "00000001",
+    // ログインユーザ情報
+    userInfo: {},
     //* * 協力会社一覧 */
     subCompanyList: [],
     workTypePullDown: [],
@@ -1090,6 +1087,8 @@ export default {
     ]
   }),
   mounted: function() {
+    // storeからユーザ情報を取得します。
+    this.userInfo = store.getters.userInfo;
     // 協力会社管理の画面情報をとってきます。
     this.getSubCompanyInfo();
   },
@@ -1101,7 +1100,7 @@ export default {
           text: "会社名",
           align: "center",
           sortable: false,
-          value: "subCompanyName",
+          value: "subContractorName",
           width: "20%"
         },
         {
@@ -1131,7 +1130,7 @@ export default {
         },
         {
           text: "所属会社",
-          value: "subCompanyName",
+          value: "subContractorName",
           align: "center",
           width: "30%"
         },
@@ -1150,7 +1149,9 @@ export default {
 
     // 初期表示処理です。
     async getSubCompanyInfo() {
-      let response = await Methods.getSubCompanyInfo(this.contractorId);
+      let response = await Methods.getSubCompanyInfo(
+        this.userInfo.contractorId
+      );
       // レスポンスから画面情報をセットする
       this.subCompanyList = createSubCompanyList(response);
       this.subEmployeeList = createSubEmployeeList(response);
@@ -1189,7 +1190,7 @@ export default {
       } else {
         // 入力項目に初期値を設定
         this.subCompanyEditItem = {
-          subCompanyId: "",
+          subContractorId: "",
           workTypeIdList: [{}]
         };
         this.subCompanyDialogName = "協力会社追加";
@@ -1217,10 +1218,10 @@ export default {
         );
         let workTypeIdList = selectworkTypeId.map(item => item.workTypeId);
         const param = {
-          contractorId: this.contractorId,
-          userId: this.userId,
-          subCompanyId: this.subCompanyEditItem.subCompanyId,
-          subCompanyName: this.subCompanyEditItem.subCompanyName,
+          contractorId: this.userInfo.contractorId,
+          userId: this.userInfo.userId,
+          subContractorId: this.subCompanyEditItem.subContractorId,
+          subContractorName: this.subCompanyEditItem.subContractorName,
           foundation: this.subCompanyEditItem.foundation,
           leaderName: this.subCompanyEditItem.leaderName,
           postNumber1: this.subCompanyEditItem.postNumber1,
@@ -1258,7 +1259,7 @@ export default {
     // 協力会社編集ダイアログの閉じる・戻るボタン処理です。
     onClickSubCompanyCancelBtn() {
       // 新規の場合、戻るがないので閉じます。
-      if (this.subCompanyEditItem.subCompanyId === "") {
+      if (this.subCompanyEditItem.subContractorId === "") {
         this.subCompanyEditFlag = false;
         this.subCompanyDialog = false;
       } else if (this.subCompanyEditFlag) {
@@ -1271,15 +1272,15 @@ export default {
     },
     // 協力会社削除確認ダイアログ表示処理です。
     showDeleteSubCompanyConfirm(item) {
-      this.deleteSubcompanyItem.subCompanyId = item.subCompanyId;
+      this.deleteSubcompanyItem.subContractorId = item.subContractorId;
       this.subCompanyDeleteConfirmDialog = true;
     },
     // 削除ボタン押下処理(自社員)
     async onClickDeleteSubCompany() {
       const param = {
-        contractorId: this.contractorId,
-        userId: this.userId,
-        subCompanyId: this.deleteSubcompanyItem.subCompanyId
+        contractorId: this.userInfo.contractorId,
+        userId: this.userInfo.userId,
+        subContractorId: this.deleteSubcompanyItem.subContractorId
       };
       try {
         // 削除処理
@@ -1328,19 +1329,19 @@ export default {
     },
     // 協力会社員編集ダイアログの編集・保存ボタン処理です。
     async onClickSubEmployeeEditBtn() {
-      var subCompanyId = "";
+      var subContractorId = "";
       // 工種は工種IDだけ渡します。
       if (this.subEmployeeEditItem.selectSubCompanyList != null) {
-        let selectSubCompanyId = JSON.parse(
+        let selectSubContractorId = JSON.parse(
           JSON.stringify(this.subEmployeeEditItem.selectSubCompanyList)
         );
-        subCompanyId = selectSubCompanyId.subCompanyId;
+        subContractorId = selectSubContractorId.subContractorId;
       }
       if (this.subEmployeeEditFlag) {
         const param = {
-          contractorId: this.contractorId,
-          userId: this.userId,
-          companyId: subCompanyId,
+          contractorId: this.userInfo.contractorId,
+          userId: this.userInfo.userId,
+          subContractorId: subContractorId,
           employeeId: this.subEmployeeEditItem.employeeId,
           employeeFirstName: this.subEmployeeEditItem.employeeFirstName,
           employeeLastName: this.subEmployeeEditItem.employeeLastName,
@@ -1400,8 +1401,8 @@ export default {
     // 削除ボタン押下処理(自社員)
     async onClickDeleteSubEmployee() {
       const param = {
-        contractorId: this.contractorId,
-        userId: this.userId,
+        contractorId: this.userInfo.contractorId,
+        userId: this.userInfo.userId,
         employeeId: this.deleteSubEmployeeItem.employeeId
       };
       // 削除処理
@@ -1454,8 +1455,8 @@ function createSubCompanyList(response) {
   var subCompanyList = [];
   for (var i = 0; i < subCompanyResponse.length; i++) {
     var subCompany = {};
-    subCompany.subCompanyId = subCompanyResponse[i].subCompanyId;
-    subCompany.subCompanyName = subCompanyResponse[i].subCompanyName;
+    subCompany.subContractorId = subCompanyResponse[i].subContractorId;
+    subCompany.subContractorName = subCompanyResponse[i].subContractorName;
     subCompany.foundation = subCompanyResponse[i].foundation;
     subCompany.leaderName = subCompanyResponse[i].leaderName;
     subCompany.postNumber1 = subCompanyResponse[i].postNumber1;
@@ -1506,16 +1507,16 @@ function createSubEmployeeList(response) {
     subEmployee.employeeId = subEmployeeResponse[i].employeeId;
     subEmployee.loginId = subEmployeeResponse[i].loginId;
     subEmployee.password = subEmployeeResponse[i].password;
-    subEmployee.companyId = subEmployeeResponse[i].companyId;
-    subEmployee.subCompanyName = getCompanyName(
-      subEmployeeResponse[i].companyId,
+    subEmployee.contractorId = subEmployeeResponse[i].contractorId;
+    subEmployee.subContractorName = getContractorName(
+      subEmployeeResponse[i].contractorId,
       subCompanyResponse
     );
     // 選択中の協力会社を設定
     subEmployee.selectSubCompanyList = {
-      subCompanyId: subEmployeeResponse[i].companyId,
-      subCompanyName: getCompanyName(
-        subEmployeeResponse[i].companyId,
+      subContractorId: subEmployeeResponse[i].contractorId,
+      subContractorName: getContractorName(
+        subEmployeeResponse[i].contractorId,
         subCompanyResponse
       )
     };
@@ -1568,8 +1569,8 @@ function createSubCompanyPullDown(response) {
   var subCompanyPullDown = [];
   for (var k = 0; k < subCompanyResponse.length; k++) {
     var company = {};
-    company.subCompanyId = subCompanyResponse[k].subCompanyId;
-    company.subCompanyName = subCompanyResponse[k].subCompanyName;
+    company.subContractorId = subCompanyResponse[k].subContractorId;
+    company.subContractorName = subCompanyResponse[k].subContractorName;
     subCompanyPullDown.push(company);
   }
   return subCompanyPullDown;
@@ -1601,14 +1602,14 @@ function getWorkTypeName(workTypeId, workTypeResponse) {
  * @private
  * @returns
  */
-function getCompanyName(subCompanyId, subCompanyResponse) {
-  var subCompanyName = "";
+function getContractorName(subContractorId, subCompanyResponse) {
+  var subContractorName = "";
   for (var i = 0; i < subCompanyResponse.length; i++) {
-    if (subCompanyId === subCompanyResponse[i].subCompanyId) {
-      subCompanyName = subCompanyResponse[i].subCompanyName;
+    if (subContractorId === subCompanyResponse[i].subContractorId) {
+      subContractorName = subCompanyResponse[i].subContractorName;
     }
   }
-  return subCompanyName;
+  return subContractorName;
 }
 </script>
 

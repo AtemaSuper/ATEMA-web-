@@ -603,6 +603,7 @@
 import Methods from "@/api/methods";
 import dayjs from "dayjs";
 import ja from "dayjs/locale/ja";
+import store from "../../store/index";
 
 dayjs.locale(ja);
 
@@ -610,12 +611,8 @@ export default {
   name: "attendanceManage",
   components: {},
   data: () => ({
-    // TODO ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
-    userId: "6tQPHzHQwlGErXeLSzt1",
-    // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
-    // ※複数社契約になった場合、セッションで契約IDを保持して、
-    // ※そのIDをもとに検索するように修正
-    contractorId: "00000001",
+    // ログインユーザ情報
+    userInfo: {},
     contractorInfo: {},
     clientFieldList: [],
     workFieldList: [],
@@ -655,6 +652,8 @@ export default {
     attendanceTimemm: ""
   }),
   mounted: async function() {
+    // storeからユーザ情報を取得します。
+    this.userInfo = store.getters.userInfo;
     // 出退勤管理の画面情報をとってきます。
     this.getAttendanceInfo();
   },
@@ -738,7 +737,7 @@ export default {
           .format("YYYY-MM-DDTHH:mm:ss.SSS[Z]")
       ];
       let response = await Methods.findAttendanceListAsync(
-        this.contractorId,
+        this.userInfo.contractorId,
         this.specifiedDateRangeOfStart,
         this.specifiedDateRangeOfEnd
       );
@@ -758,7 +757,7 @@ export default {
       }
       try {
         let response = await Methods.updateAttendanceListAsync(
-          this.contractorId,
+          this.userInfo.contractorId,
           employeeId,
           clumns,
           items
@@ -1093,7 +1092,7 @@ export default {
       }
       try {
         let response = await Methods.updateJobNo(
-          this.contractorId,
+          this.userInfo.contractorId,
           this.detailEdit.employeeId,
           this.fieldEditTab,
           this.detailEdit.jobNo,

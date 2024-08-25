@@ -1,7 +1,7 @@
 {
   "results": [
     {
-      "subCompanyName": "株式会社KYOURYOKU",
+      "subContractorName": "株式会社KYOURYOKU",
       "foundation": "1995-11-11",
       "leaderName": "協力　する夫",
       "postNumber1": "010",
@@ -17,7 +17,7 @@
       "deleteFlg": false
     },
     {
-      "subCompanyName": "株式会社KYOURYOKU2",
+      "subContractorName": "株式会社KYOURYOKU2",
       "foundation": "1996-11-11",
       "leaderName": "協力　する代",
       "postNumber1": "010",

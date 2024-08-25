@@ -916,7 +916,7 @@ class OwnWorkerAllLogic {
       //未入力チェックです。
       var errorMessage1 = commonLogic.checkEmpty(
         value,
-        colum.SUB_COMPANY_MANAGE_AUTH,
+        colum.SUB_CONTRACTOR_MANAGE_AUTH,
         true
       );
       if (!util.isEmpty(errorMessage1)) {
@@ -926,7 +926,7 @@ class OwnWorkerAllLogic {
       //型チェックです。
       var errorMessage2 = commonLogic.checkType(
         value,
-        colum.SUB_COMPANY_MANAGE_AUTH,
+        colum.SUB_CONTRACTOR_MANAGE_AUTH,
         type.STRING
       );
       if (!util.isEmpty(errorMessage2)) {
@@ -936,7 +936,7 @@ class OwnWorkerAllLogic {
       //半角数字チェックです。
       var errorMessage3 = commonLogic.chehckFormat(
         value,
-        colum.SUB_COMPANY_MANAGE_AUTH,
+        colum.SUB_CONTRACTOR_MANAGE_AUTH,
         format.HALF_WITH_NUMBER
       );
       if (!util.isEmpty(errorMessage3)) {
@@ -946,7 +946,7 @@ class OwnWorkerAllLogic {
       //入力範囲チェックです。
       var errorMessage4 = commonLogic.checkInputRange(
         value,
-        colum.SUB_COMPANY_MANAGE_AUTH,
+        colum.SUB_CONTRACTOR_MANAGE_AUTH,
         0,
         3
       );
@@ -966,7 +966,7 @@ class OwnWorkerAllLogic {
       //未入力チェックです。
       var errorMessage1 = commonLogic.checkEmpty(
         value,
-        colum.OWN_COMPANY_MANAGE_AUTH,
+        colum.OWN_CONTRACTOR_MANAGE_AUTH,
         true
       );
       if (!util.isEmpty(errorMessage1)) {
@@ -976,7 +976,7 @@ class OwnWorkerAllLogic {
       //型チェックです。
       var errorMessage2 = commonLogic.checkType(
         value,
-        colum.OWN_COMPANY_MANAGE_AUTH,
+        colum.OWN_CONTRACTOR_MANAGE_AUTH,
         type.STRING
       );
       if (!util.isEmpty(errorMessage2)) {
@@ -986,7 +986,7 @@ class OwnWorkerAllLogic {
       //半角数字チェックです。
       var errorMessage3 = commonLogic.chehckFormat(
         value,
-        colum.OWN_COMPANY_MANAGE_AUTH,
+        colum.OWN_CONTRACTOR_MANAGE_AUTH,
         format.HALF_WITH_NUMBER
       );
       if (!util.isEmpty(errorMessage3)) {
@@ -996,7 +996,7 @@ class OwnWorkerAllLogic {
       //入力範囲チェックです。
       var errorMessage4 = commonLogic.checkInputRange(
         value,
-        colum.OWN_COMPANY_MANAGE_AUTH,
+        colum.OWN_CONTRACTOR_MANAGE_AUTH,
         0,
         3
       );

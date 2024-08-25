@@ -158,8 +158,8 @@ class CommonLogic {
       check = response.find((res) => res.workFieldId == value);
     }
     //協力会社IDのチェックです。
-    if (column.SUB_COMPANY_ID == colum) {
-      check = response.find((res) => res.subCompanyId == value);
+    if (column.SUB_CONTRACTOR_ID == colum) {
+      check = response.find((res) => res.subContractorId == value);
     }
     //役職IDのチェックです。
     if (column.POST_ID == colum) {

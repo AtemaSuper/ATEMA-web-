@@ -82,8 +82,8 @@
                 {{ item.name }}
               </template>
               <!-- companyName Row -->
-              <template v-slot:[`item.companyName`]="{ item }">
-                {{ item.companyName }}
+              <template v-slot:[`item.contractorName`]="{ item }">
+                {{ item.contractorName }}
               </template>
               <!-- postName Row -->
               <template v-slot:[`item.postLabel`]="{ item }">
@@ -898,6 +898,7 @@
 import Methods from "@/api/methods";
 import dayjs from "dayjs";
 import ja from "dayjs/locale/ja";
+import store from "../../store/index";
 
 dayjs.locale(ja);
 
@@ -905,12 +906,8 @@ export default {
   name: "ownWorkerAll",
   components: {},
   data: () => ({
-    // TODO ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
-    userId: "6tQPHzHQwlGErXeLSzt1",
-    // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
-    // ※複数社契約になった場合、セッションで契約IDを保持して、
-    // ※そのIDをもとに検索するように修正
-    contractorId: "00000001",
+    // ログインユーザ情報
+    userInfo: {},
     //* * 自社員一覧 */
     employeeList: [],
     postList: [],
@@ -997,6 +994,8 @@ export default {
     payPlanAuthRules: [v => !!v || "権限（プラン・支払い）が未入力です。"]
   }),
   mounted: function() {
+    // storeからユーザ情報を取得します。
+    this.userInfo = store.getters.userInfo;
     // 自社員管理の画面情報をとってきます。
     this.getEmployeeInfo();
   },
@@ -1013,7 +1012,7 @@ export default {
         },
         {
           text: "所属会社",
-          value: "companyName",
+          value: "contractorName",
           align: "center",
           sortable: false,
           width: "30%"
@@ -1089,9 +1088,12 @@ export default {
 
     // 初期表示処理です。
     async getEmployeeInfo() {
-      let response = await Methods.getEmployeeInfo(this.contractorId);
+      let response = await Methods.getEmployeeInfo(this.userInfo.contractorId);
       // レスポンスから画面情報をセットする
-      this.employeeList = createEmployeeList(response);
+      this.employeeList = createEmployeeList(
+        response,
+        this.userInfo.contractorName
+      );
       this.postList = createPostList(response);
       this.selectPostList = createSelectPostList(response);
     },
@@ -1143,8 +1145,8 @@ export default {
           postId = selectPost.postId;
         }
         const param = {
-          contractorId: this.contractorId,
-          userId: this.userId,
+          contractorId: this.userInfo.contractorId,
+          userId: this.userInfo.userId,
           employeeId: this.employeeEditItem.employeeId,
           loginId: this.employeeEditItem.loginId,
           password: this.employeeEditItem.password,
@@ -1167,7 +1169,10 @@ export default {
           // 保存処理
           let response = await Methods.saveEmployee(param);
           // レスポンスから画面情報をセットする
-          this.employeeList = createEmployeeList(response);
+          this.employeeList = createEmployeeList(
+            response,
+            this.userInfo.contractorName
+          );
           this.postList = createPostList(response);
           this.selectPostList = createSelectPostList(response);
           this.employeeEditFlag = false;
@@ -1215,15 +1220,18 @@ export default {
     // 削除ボタン押下処理(自社員)
     async onClickDeleteEmployee() {
       const param = {
-        contractorId: this.contractorId,
-        userId: this.userId,
+        contractorId: this.userInfo.contractorId,
+        userId: this.userInfo.userId,
         employeeId: this.deleteEmployeeItem.employeeId
       };
       try {
         // 削除処理
         let response = await Methods.deleteEmployee(param);
         // レスポンスから画面情報をセットする
-        this.employeeList = createEmployeeList(response);
+        this.employeeList = createEmployeeList(
+          response,
+          this.userInfo.contractorName
+        );
         this.postList = createPostList(response);
         this.selectPostList = createSelectPostList(response);
         this.employeeDeleteConfirmDialog = false;
@@ -1271,8 +1279,8 @@ export default {
     // 役職ダイアログの編集・保存ボタン処理です。
     async onClickPostEditBtn() {
       const param = {
-        contractorId: this.contractorId,
-        userId: this.userId,
+        contractorId: this.userInfo.contractorId,
+        userId: this.userInfo.userId,
         postId: this.postEditItem.postId,
         postName: this.postEditItem.postName,
         attendanceManageAuth: this.postEditItem.attendanceManageAuth,
@@ -1285,7 +1293,10 @@ export default {
         // 保存処理
         let response = await Methods.savePost(param);
         // レスポンスから画面情報をセットする
-        this.employeeList = createEmployeeList(response);
+        this.employeeList = createEmployeeList(
+          response,
+          this.userInfo.contractorName
+        );
         this.postList = createPostList(response);
         this.selectPostList = createSelectPostList(response);
         this.postDialog = false;
@@ -1319,14 +1330,17 @@ export default {
     // 削除ボタン押下処理(役職)
     async onClickDeletePost() {
       const param = {
-        contractorId: this.contractorId,
-        userId: this.userId,
+        contractorId: this.userInfo.contractorId,
+        userId: this.userInfo.userId,
         postId: this.deletePostItem.postId
       };
       // 削除処理
       let response = await Methods.deletePost(param);
       // レスポンスから画面情報をセットする
-      this.employeeList = createEmployeeList(response);
+      this.employeeList = createEmployeeList(
+        response,
+        this.userInfo.contractorName
+      );
       this.postList = createPostList(response);
       this.selectPostList = createSelectPostList(response);
       this.postDeleteConfirmDialog = false;
@@ -1346,7 +1360,7 @@ export default {
  * @returns
  *
  */
-function createEmployeeList(response) {
+function createEmployeeList(response, contractorName) {
   var employeeResponse = response.data.employeeResponse;
   var postResponse = response.data.postResponse;
   // 自社員一覧表示用に変換します。
@@ -1361,7 +1375,7 @@ function createEmployeeList(response) {
       employeeResponse[i].employeeLastName;
     employee.employeeFirstName = employeeResponse[i].employeeFirstName;
     employee.employeeLastName = employeeResponse[i].employeeLastName;
-    employee.companyName = "テスト会社"; // TODO ログイン情報で取得
+    employee.contractorName = contractorName;
     // 選択中の役職を設定
     employee.selectPost = {
       postId: employeeResponse[i].postId,

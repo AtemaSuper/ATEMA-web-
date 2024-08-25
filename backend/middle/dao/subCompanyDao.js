@@ -32,7 +32,7 @@ class SubCompanyDao {
       .then(function (items) {
         return items.docs.map((doc) => {
           var data = doc.data();
-          data.subCompanyId = doc.id;
+          data.subContractorId = doc.id;
           return data;
         });
       })
@@ -60,7 +60,7 @@ class SubCompanyDao {
       date.getDate();
 
     //新規の場合
-    if (param.subCompanyId == "") {
+    if (param.subContractorId == "") {
       var note = param.note == null ? "" : param.note;
       const subCompanyRef = db
         .collection("subCompany")
@@ -68,7 +68,7 @@ class SubCompanyDao {
         .collection("data");
       const responce = await subCompanyRef
         .add({
-          subCompanyName: param.subCompanyName,
+          subContractorName: param.subContractorName,
           foundation: param.foundation,
           leaderName: param.leaderName,
           postNumber1: param.postNumber1,
@@ -102,10 +102,10 @@ class SubCompanyDao {
         .collection("subCompany")
         .doc(param.contractorId)
         .collection("data")
-        .doc(param.subCompanyId);
+        .doc(param.subContractorId);
       const responce = await subCompanyRef
         .update({
-          subCompanyName: param.subCompanyName,
+          subContractorName: param.subContractorName,
           foundation: param.foundation,
           leaderName: param.leaderName,
           postNumber1: param.postNumber1,
@@ -144,7 +144,7 @@ class SubCompanyDao {
       .collection("subCompany")
       .doc(param.contractorId)
       .collection("data")
-      .doc(param.subCompanyId);
+      .doc(param.subContractorId);
     //日付を取得します。
     var date = new Date();
     var updateDate =

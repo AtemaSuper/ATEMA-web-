@@ -81,7 +81,7 @@ class EmployeeDao {
       .doc(contractorId)
       .collection("data")
       .where("deleteFlg", "==", false)
-      .where("companyId", "==", contractorId);
+      .where("contractorId", "==", contractorId);
 
     const responce = await employeeRef
       .get()
@@ -112,7 +112,7 @@ class EmployeeDao {
       .collection("data")
       // TODO firestoreだとwhereを2つ使用して絞り込めないのでなんとかする
       // .where("deleteFlg", "==", false);
-      .where("companyId", "!=", contractorId);
+      .where("contractorId", "!=", contractorId);
 
     const responce = await employeeRef
       .get()
@@ -160,7 +160,7 @@ class EmployeeDao {
           password: param.password,
           employeeFirstName: param.employeeFirstName,
           employeeLastName: param.employeeLastName,
-          companyId: param.contractorId,
+          contractorId: param.contractorId,
           postId: param.postId,
           staffCode: param.staffCode,
           birthday: param.birthday,
@@ -263,7 +263,7 @@ class EmployeeDao {
           password: param.password,
           employeeFirstName: param.employeeFirstName,
           employeeLastName: param.employeeLastName,
-          companyId: param.companyId,
+          contractorId: param.contractorId,
           staffCode: staffCode,
           birthday: param.birthday,
           address: param.address,
@@ -301,7 +301,7 @@ class EmployeeDao {
           password: param.password,
           employeeFirstName: param.employeeFirstName,
           employeeLastName: param.employeeLastName,
-          companyId: param.companyId,
+          contractorId: param.contractorId,
           staffCode: staffCode,
           birthday: param.birthday,
           address: param.address,

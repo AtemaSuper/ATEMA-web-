@@ -740,7 +740,7 @@ app.post("/getSubEmployeeList", async function (req, res) {
         employeeResponse.employeeFirstName +
         " " +
         employeeResponse.employeeLastName;
-      employeeItem.subCompanyName = contactResponse.contractorName;
+      employeeItem.subContractorName = contactResponse.contractorName;
       subEmployeeItems.push(employeeItem);
       //協力会社テーブルから協力会社情報を取得します。
       return await subCompanyDao.selectSubCompanyAll(req.body.contractorId);

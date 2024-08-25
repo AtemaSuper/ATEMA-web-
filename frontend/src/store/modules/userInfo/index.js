@@ -1,8 +1,8 @@
 const state = {
   userInfo: {
     employeeId: "",
-    companyName: "",
-    companyId: "",
+    contractorName: "",
+    contractorId: "",
     userName: "",
     postName: "",
     menuActivity: {
@@ -34,8 +34,8 @@ const mutations = {
   /** store内データ更新箇所 */
   setUserInfo(state, userInfo) {
     state.userInfo.employeeId = userInfo.employeeId;
-    state.userInfo.companyName = userInfo.companyName;
-    state.userInfo.companyId = userInfo.companyId;
+    state.userInfo.contractorName = userInfo.contractorName;
+    state.userInfo.contractorId = userInfo.contractorId;
     state.userInfo.userId = userInfo.userId;
     state.userInfo.userName = userInfo.userName;
     state.userInfo.postName = userInfo.postName;

@@ -51,7 +51,7 @@ Format.HALF_WITH_NUMBER = "半角数字";
 /** テーブルのカラム名 */
 const Colum = {};
 /** 会社名 */
-Colum.COMPANY_NAME = "会社名";
+Colum.CONTRACTOR_NAME = "会社名";
 /** 設立 */
 Colum.FOUNDATION = "設立";
 /** 代表者名 */
@@ -107,7 +107,7 @@ Colum.EMPLOYEE_FIRST_NAME = "社員名(姓)";
 /** 社員名(名) */
 Colum.EMPLOYEE_LAST_NAME = "社員名(名)";
 /** 会社ID */
-Colum.COMPANY_ID = "会社ID";
+Colum.CONTRACTOR_ID = "会社ID";
 /** スタッフコード */
 Colum.STAFF_CODE = "スタッフコード";
 /** 誕生日 */
@@ -147,9 +147,9 @@ Colum.NOTE_CONTENTS = "備考";
 /** 契約形態 */
 Colum.CONTACT_STATUS = "契約形態";
 /** 協力会社名 */
-Colum.SUB_COMPANY_NAME = "協力会社名";
+Colum.SUB_CONTRACTOR_NAME = "協力会社名";
 /** 協力会社ID */
-Colum.SUB_COMPANY_ID = "協力会社ID";
+Colum.SUB_CONTRACTOR_ID = "協力会社ID";
 /** 役職名 */
 Colum.POST_NAME = "役職名";
 /** 役職ID */
@@ -159,9 +159,9 @@ Colum.ATTENDANCE_AUTH = "出退勤管理権限";
 /** 自社員管理権限 */
 Colum.OWNWORKER_MANAGE_AUTH = "自社員管理権限";
 /** 協力会社管理権限 */
-Colum.SUB_COMPANY_MANAGE_AUTH = "協力会社管理権限";
+Colum.SUB_CONTRACTOR_MANAGE_AUTH = "協力会社管理権限";
 /** 自社設定権限 */
-Colum.OWN_COMPANY_MANAGE_AUTH = "自社設定権限";
+Colum.OWN_CONTRACTOR_MANAGE_AUTH = "自社設定権限";
 /** 支払い設定権限 */
 Colum.PAY_PLAN_AUTH = "支払い設定権限";
 /** 通知ID */

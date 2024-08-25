@@ -10,7 +10,7 @@
     </router-link>
     <v-spacer></v-spacer>
     <v-toolbar-title class="header-user-info"
-      >{{ userInfo.companyName }} ( {{ userInfo.companyId }} )
+      >{{ userInfo.contractorName }} ( {{ userInfo.contractorId }} )
       |</v-toolbar-title
     >
     <v-toolbar-title class="header-user-info"
@@ -112,10 +112,11 @@ export default {
           alert("signOut_faild", error);
         });
     }
+  },
+  mounted: function() {
+    // storeからユーザ情報を取得します。
+    this.userInfo = store.getters.userInfo;
   }
-  // mounted: {
-  //   // TODO ユーザ情報を受けとる
-  // }
 };
 </script>
 

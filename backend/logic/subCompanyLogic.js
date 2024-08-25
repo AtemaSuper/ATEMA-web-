@@ -25,7 +25,7 @@ class SUbCompanyLogic {
     return new Promise(function (resolve, reject) {
       var errorMessageList = [];
       //協力会社名チェック
-      checkSubCompanyName(errorMessageList, param.subCompanyName);
+      checkSubCompanyName(errorMessageList, param.subContractorName);
       //設立チェック
       checkFoundation(errorMessageList, param.foundation);
       //代表者名チェック
@@ -65,11 +65,11 @@ class SUbCompanyLogic {
      * @param {object} errorMessageList エラーメッセージリストです。
      * @param {string} value 入力内容です。
      */
-    function checkSubCompanyId(errorMessageList, value) {
+    function checkSubContractorId(errorMessageList, value) {
       //未入力チェックです。
       var errorMessage1 = commonLogic.checkEmpty(
         value,
-        colum.SUB_COMPANY_ID,
+        colum.SUB_CONTRACTOR_ID,
         true
       );
       if (!util.isEmpty(errorMessage1)) {
@@ -79,7 +79,7 @@ class SUbCompanyLogic {
       //型チェックです。
       var errorMessage2 = commonLogic.checkType(
         value,
-        colum.SUB_COMPANY_ID,
+        colum.SUB_CONTRACTOR_ID,
         type.STRING
       );
       if (!util.isEmpty(errorMessage2)) {
@@ -89,7 +89,7 @@ class SUbCompanyLogic {
       //半角文字チェックです。
       var errorMessage3 = commonLogic.chehckFormat(
         value,
-        colum.SUB_COMPANY_ID,
+        colum.SUB_CONTRACTOR_ID,
         format.HALF
       );
       if (!util.isEmpty(errorMessage3)) {
@@ -108,7 +108,7 @@ class SUbCompanyLogic {
       //未入力チェックです。
       var errorMessage1 = commonLogic.checkEmpty(
         value,
-        colum.SUB_COMPANY_NAME,
+        colum.SUB_CONTRACTOR_NAME,
         true
       );
       if (!util.isEmpty(errorMessage1)) {
@@ -118,7 +118,7 @@ class SUbCompanyLogic {
       //型チェックです。
       var errorMessage2 = commonLogic.checkType(
         value,
-        colum.SUB_COMPANY_NAME,
+        colum.SUB_CONTRACTOR_NAME,
         type.STRING
       );
       if (!util.isEmpty(errorMessage2)) {
@@ -128,7 +128,7 @@ class SUbCompanyLogic {
       //最大文字数チェックです。
       var errorMessage3 = commonLogic.checkMaxLength(
         value,
-        colum.SUB_COMPANY_NAME,
+        colum.SUB_CONTRACTOR_NAME,
         100
       );
       if (!util.isEmpty(errorMessage3)) {
@@ -1303,7 +1303,11 @@ class SUbCompanyLogic {
     return new Promise(function (resolve, reject) {
       var errorMessageList = [];
       //協力会社チェック
-      checkSubCompanyId(errorMessageList, param.companyId, companyResponse);
+      checkSubContractorId(
+        errorMessageList,
+        param.subContractorId,
+        companyResponse
+      );
       var data = {};
       //エラーがある場合
       if (errorMessageList.length !== 0) {
@@ -1322,11 +1326,11 @@ class SUbCompanyLogic {
      * @param {string} value 入力内容です。
      * @param {string} companyResponse 協力会社情報です。
      */
-    function checkSubCompanyId(errorMessageList, value, companyResponse) {
+    function checkSubContractorId(errorMessageList, value, companyResponse) {
       var errorMessage1 = commonLogic.checkExists(
         value,
         companyResponse,
-        colum.SUB_COMPANY_ID
+        colum.SUB_CONTRACTOR_ID
       );
       if (!util.isEmpty(errorMessage1)) {
         errorMessageList.push(errorMessage1);
@@ -1358,9 +1362,9 @@ class SUbCompanyLogic {
         subEmployee.employeeFirstName + " " + subEmployee.employeeLastName;
       for (var j in subCompanyResponse) {
         var subCompany = subCompanyResponse[j];
-        if (subCompany.subCompanyId == subEmployee.companyId) {
-          subEmployeeItem.subCompanyId = subCompany.subCompanyId;
-          subEmployeeItem.subCompanyName = subCompany.subCompanyName;
+        if (subCompany.subContractorId == subEmployee.contractorId) {
+          subEmployeeItem.subContractorId = subCompany.subContractorId;
+          subEmployeeItem.subContractorName = subCompany.subContractorName;
           break;
         }
       }

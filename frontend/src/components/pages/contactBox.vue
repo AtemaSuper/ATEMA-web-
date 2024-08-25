@@ -187,6 +187,7 @@
 import Methods from "@/api/methods";
 import dayjs from "dayjs";
 import ja from "dayjs/locale/ja";
+import store from "../../store/index";
 
 dayjs.locale(ja);
 
@@ -194,12 +195,8 @@ export default {
   name: "contactBox",
   components: {},
   data: () => ({
-    // TODO ログイン認証処理が完了したら、画面で持ってるemployeeIDをセットする
-    userId: "6tQPHzHQwlGErXeLSzt1",
-    // ※現在(2022/03/01)は、契約が一社のため、固定でIDを設定
-    // ※複数社契約になった場合、セッションで契約IDを保持して、
-    // ※そのIDをもとに検索するように修正
-    contractorId: "00000001",
+    // ログインユーザ情報
+    userInfo: {},
     //* * 自社員一覧 */
     alertList: [],
     //  values for our select.
@@ -222,6 +219,8 @@ export default {
     endDate: null
   }),
   mounted: function() {
+    // storeからユーザ情報を取得します。
+    this.userInfo = store.getters.userInfo;
     // 通知管理の画面情報をとってきます。
     this.getEmployeeInfo();
   },
@@ -262,7 +261,7 @@ export default {
   methods: {
     // 初期表示処理です。
     async getEmployeeInfo() {
-      let response = await Methods.getAlertInfo(this.contractorId);
+      let response = await Methods.getAlertInfo(this.userInfo.contractorId);
       // レスポンスから画面情報をセットする
       this.alertList = createAlertList(response);
     },
@@ -319,8 +318,8 @@ export default {
     /** データ変更処理 */
     async changeStatus(item) {
       const param = {
-        contractorId: this.contractorId,
-        userId: this.userId,
+        contractorId: this.userInfo.contractorId,
+        userId: this.userInfo.userId,
         alertId: item.alertId,
         status: item.status
       };

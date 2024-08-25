@@ -357,7 +357,7 @@ export default {
     // ログインユーザ情報
     userInfo: store.getters.userInfo,
     userId: store.getters.userInfo.userId,
-    contractorId: store.getters.userInfo.companyId,
+    contractorId: store.getters.userInfo.contractorId,
     clientFieldList: [],
     workFieldList: [],
     workFieldDetailList: [],
@@ -397,7 +397,7 @@ export default {
     isShowAttendanceEditDialog: false,
     subEmployeeHeaders: [
       { text: "名前", value: "subEmployeeName" },
-      { text: "会社名", value: "subCompanyName" },
+      { text: "会社名", value: "subContractorName" },
       { text: "ステータス", value: "status" }
     ],
     subEmployeeItems: [],

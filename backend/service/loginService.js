@@ -49,8 +49,8 @@ app.post("/getUserInfo", async function (req, res) {
     .then(function () {
       var userInfo = {
         employeeId: req.body.employeeId,
-        companyName: contactResponse.contractorName,
-        companyId: contractorId,
+        contractorName: contactResponse.contractorName,
+        contractorId: contractorId,
         userName:
           employeeResponse.employeeFirstName +
           employeeResponse.employeeLastName,

@@ -85,7 +85,7 @@ class OwnCompanyLogic {
       //未入力チェックです。
       var errorMessage1 = commonLogic.checkEmpty(
         value,
-        colum.COMPANY_NAME,
+        colum.CONTRACTOR_NAME,
         true
       );
       if (!util.isEmpty(errorMessage1)) {
@@ -95,7 +95,7 @@ class OwnCompanyLogic {
       //型チェックです。
       var errorMessage2 = commonLogic.checkType(
         value,
-        colum.COMPANY_NAME,
+        colum.CONTRACTOR_NAME,
         type.STRING
       );
       if (!util.isEmpty(errorMessage2)) {
@@ -105,7 +105,7 @@ class OwnCompanyLogic {
       //最大文字数チェックです。
       var errorMessage3 = commonLogic.checkMaxLength(
         value,
-        colum.COMPANY_NAME,
+        colum.CONTRACTOR_NAME,
         100
       );
       if (!util.isEmpty(errorMessage3)) {
