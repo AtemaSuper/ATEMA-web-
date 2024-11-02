@@ -29,6 +29,8 @@ class AttendanceManageLogic {
       var errorMessageList = [];
       //ステータスチェック
       checkStatus(errorMessageList, param.items, param.clumns);
+      //サブステータスチェック
+      checkSubStatus(errorMessageList, param.items, param.clumns);
       //出勤開始時間チェック
       checkStart(errorMessageList, param.items, param.clumns);
       //休憩開始時間チェック
@@ -91,7 +93,7 @@ class AttendanceManageLogic {
         value,
         colum.STATUS,
         0,
-        8
+        3
       );
       if (!util.isEmpty(errorMessage4)) {
         errorMessageList.push(errorMessage4);
@@ -99,6 +101,55 @@ class AttendanceManageLogic {
       }
     }
 
+    /**
+     * サブステータスをチェックします。
+     *
+     * @param {object} errorMessageList エラーメッセージリストです。
+     * @param {string} value 入力内容です。
+     * @param {string} clumns チェック対象です。
+     */
+    function checkSubStatus(errorMessageList, value, clumns) {
+      if (clumns != "subStatus") {
+        return;
+      }
+      //未入力チェックです。
+      var errorMessage1 = commonLogic.checkEmpty(value, colum.SUB_STATUS, true);
+      if (!util.isEmpty(errorMessage1)) {
+        errorMessageList.push(errorMessage1);
+        return;
+      }
+      //型チェックです。
+      var errorMessage2 = commonLogic.checkType(
+        value,
+        colum.SUB_STATUS,
+        type.STRING
+      );
+      if (!util.isEmpty(errorMessage2)) {
+        errorMessageList.push(errorMessage2);
+        return;
+      }
+      //半角数字チェックです。
+      var errorMessage3 = commonLogic.chehckFormat(
+        value,
+        colum.SUB_STATUS,
+        format.HALF_WITH_NUMBER
+      );
+      if (!util.isEmpty(errorMessage3)) {
+        errorMessageList.push(errorMessage3);
+        return;
+      }
+      //入力範囲チェックです。
+      var errorMessage4 = commonLogic.checkInputRange(
+        value,
+        colum.SUB_STATUS,
+        0,
+        6
+      );
+      if (!util.isEmpty(errorMessage4)) {
+        errorMessageList.push(errorMessage4);
+        return;
+      }
+    }
     /**
      * 出勤時間をチェックします。
      *
@@ -486,7 +537,7 @@ class AttendanceManageLogic {
    */
   createUpdateItemForAttendance(param, workFieldDetailResponse, isNew) {
     var selecAtttendancePattern = param.selecAtttendancePattern;
-    var selectStatus = param.selectStatus;
+    var selectStatus = param.selectStatus ? param.selectStatus : "0";
     var updateKey = getUpdateKey(param.selectStatus);
     var workFieldDetail = getWorkFieldDetail(
       workFieldDetailResponse,
@@ -501,6 +552,7 @@ class AttendanceManageLogic {
           ? ""
           : param.noteContents,
         status: selectStatus.value,
+        subStatus: "0", //新規の場合は「0：なし」をセット
         workFieldDetailId: workFieldDetail.workFieldDetailId,
         start: updateKey == "start" ? param.saveTime : "",
         restStart: updateKey == "restStart" ? param.saveTime : "",

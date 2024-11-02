@@ -99,9 +99,58 @@
             >
               <!-- status Row -->
               <template v-slot:[`item.status`]="{ item }">
-                <v-chip :color="getColor(toStringStatus(item.status))" dark>
+                <v-chip
+                  :color="getStatusColor(toStringStatus(item.status))"
+                  dark
+                >
                   {{ toStringStatus(item.status) }}
                 </v-chip>
+              </template>
+
+              <!-- subStatus Row -->
+              <template v-slot:[`item.subStatus`]="{ item, index }">
+                <v-edit-dialog
+                  :return-value.sync="item.subStatus"
+                  save-text="保存"
+                  cancel-text="キャンセル"
+                  large
+                  @save="
+                    updateAttendanceListAsync(
+                      item.employeeId,
+                      'subStatus',
+                      item.subStatus.value,
+                      index
+                    )
+                  "
+                >
+                  <v-chip
+                    :color="
+                      getSubStatusColor(toStringSubStatus(item.subStatus))
+                    "
+                    dark
+                  >
+                    {{ toStringSubStatus(item.subStatus) }}
+                  </v-chip>
+                  <template v-slot:input>
+                    <v-row justify="center" class="align-center">
+                      <v-col>
+                        <v-select
+                          v-model="item.subStatus"
+                          :items="subStatusList"
+                          item-text="text"
+                          item-value="value"
+                          return-object
+                          outlined
+                          required
+                          class="v-text-field--subStatus"
+                          type="text"
+                          maxlength="1"
+                          dense
+                        />
+                      </v-col>
+                    </v-row>
+                  </template>
+                </v-edit-dialog>
               </template>
 
               <!-- workFieldDetail Row -->
@@ -597,20 +646,19 @@ export default {
     roundingTime: 0,
     search: "",
     status: "",
+    subStatus: "",
     menu: false,
     displayDate: "",
     specifiedDateRangeTo: "",
     specifiedDateRangeFrom: "",
-    statusItems: [
-      { text: "出勤中", value: "0" },
-      { text: "休憩中", value: "1" },
-      { text: "退勤中", value: "2" },
-      { text: "残業中", value: "3" },
-      { text: "早退", value: "4" },
-      { text: "早出", value: "5" },
-      { text: "遅出", value: "6" },
-      { text: "深夜", value: "7" },
-      { text: "欠勤", value: "8" }
+    subStatusList: [
+      { text: "なし", value: "0" },
+      { text: "残業中", value: "1" },
+      { text: "早退", value: "2" },
+      { text: "早出", value: "3" },
+      { text: "遅出", value: "4" },
+      { text: "深夜", value: "5" },
+      { text: "欠勤", value: "6" }
     ],
     contractItems: [
       { text: "請負", value: 0 },
@@ -650,6 +698,16 @@ export default {
             if (!this.status) return true;
 
             return value < parseInt(this.status);
+          }
+        },
+        {
+          text: "サブステータス",
+          value: "subStatus",
+          align: "center",
+          filter: value => {
+            if (!this.subStatus) return true;
+
+            return value < parseInt(this.subStatus);
           }
         },
         {
@@ -779,11 +837,40 @@ export default {
           return "退勤中";
       }
     },
+    /** ステータス変換処理 */
+    toStringSubStatus(statusCode) {
+      switch (statusCode) {
+        case "0":
+          return "-　　";
+        case "1":
+          return "残業中";
+        case "2":
+          return "早退";
+        case "3":
+          return "早出";
+        case "4":
+          return "遅出";
+        case "5":
+          return "深夜";
+        case "6":
+          return "欠勤";
+      }
+    },
     /** ステータスカラーの変更処理 */
-    getColor(status) {
+    getStatusColor(status) {
       if (status === "出勤中") return "green";
       else if (status === "休憩中") return "orange";
       else return "red";
+    },
+    /** サブステータスカラーの変更処理 */
+    getSubStatusColor(status) {
+      if (status === "残業中") return "orange";
+      else if (status === "早退") return "orange";
+      else if (status === "早出") return "yellow";
+      else if (status === "遅出") return "yellow";
+      else if (status === "深夜") return "yellow";
+      else if (status === "欠勤") return "red";
+      else return "gray";
     },
     /** 契約表示処理 */
     toStringContractStatus(statusCode) {
@@ -1206,5 +1293,9 @@ export default {
 <style scoped>
 .v-text-field--inputTime {
   max-width: 50px;
+}
+.v-text-field--subStatus {
+  max-width: 150px;
+  margin-top: 10px;
 }
 </style>

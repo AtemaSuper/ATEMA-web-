@@ -192,6 +192,8 @@ Colum.WORK_TYPE_NAME = "工種名";
 Colum.WORK_TYPE_ID = "工種ID";
 /** ステータス */
 Colum.STATUS = "ステータス";
+/** サブステータス */
+Colum.SUB_STATUS = "サブステータス";
 /** 勤怠ステータス */
 Colum.ATTENDANCE_STATUS = "勤怠ステータス";
 /** 勤怠パターン */
